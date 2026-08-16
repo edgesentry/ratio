@@ -3,12 +3,17 @@
 テーゼ実証の最小経路:
 
 ```
-スタブ WoT TD → 生を data/raw に保管 → 共有可能プロダクト JSON-LD
+薄い WoT TD（examples/td/*.td.json）→ 生を data/raw に保管 → 共有可能プロダクト JSON-LD
     → SHACL → ODS／industry ハンドオフ（stub | http）
 S2: さらに data/queue にストア → リンク復帰で flush
 ```
 
-生は **publish しない**。外に出る候補はプロダクトだけ。
+生は **publish しない**。外に出る候補はプロダクトだけ。TD の `forms.href` は `local://`（生の egress なし）。
+
+| シナリオ | TD |
+|----------|-----|
+| K1 | [`examples/td/k1-robot.td.json`](../examples/td/k1-robot.td.json) |
+| S1 / S2 | [`examples/td/s-engine-vib.td.json`](../examples/td/s-engine-vib.td.json)（同一センサ；S2 はキュー方針のみ異なる） |
 
 パッケージ管理は **uv**（`pyproject.toml` + `uv.lock`）。
 
@@ -26,8 +31,11 @@ uv sync
 ```bash
 cd poc
 
-# 北九州 K1（既定 stub）
+# 北九州 K1（既定 TD + stub handoff）
 uv run ratio-poc --scenario K1
+
+# TD を差し替え（薄い SI）
+uv run ratio-poc --scenario K1 --td ../examples/td/k1-robot.td.json
 
 # industry スタブへ HTTP
 uv run ratio-poc-serve          # 端末 A

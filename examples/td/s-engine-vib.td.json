@@ -1,0 +1,24 @@
+{
+  "@context": "https://www.w3.org/2022/wot/td/v1.1",
+  "id": "urn:td:setouchi-engine-vib-01",
+  "title": "Stub vessel engine vibration sensor",
+  "@type": "Thing",
+  "description": "Setouchi PoC (S1 online / S2 store-and-forward). Same thin TD; link policy differs by scenario.",
+  "securityDefinitions": {
+    "nosec_sc": { "scheme": "nosec" }
+  },
+  "security": "nosec_sc",
+  "properties": {
+    "shaftVibration": {
+      "type": "object",
+      "description": "Raw shaft vibration quanta; stay onboard under local:// custody.",
+      "forms": [
+        {
+          "href": "local://storage/S1/shaftVibration",
+          "op": ["readproperty"],
+          "contentType": "application/octet-stream"
+        }
+      ]
+    }
+  }
+}

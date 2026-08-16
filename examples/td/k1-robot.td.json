@@ -1,0 +1,24 @@
+{
+  "@context": "https://www.w3.org/2022/wot/td/v1.1",
+  "id": "urn:td:kitakyushu-robot-01",
+  "title": "Stub weld/assemble cell robot",
+  "@type": "Thing",
+  "description": "Kitakyushu PoC (K1). Thin TD only — raw waveforms stay under local:// custody.",
+  "securityDefinitions": {
+    "nosec_sc": { "scheme": "nosec" }
+  },
+  "security": "nosec_sc",
+  "properties": {
+    "vibrationWaveform": {
+      "type": "object",
+      "description": "Raw vibration quanta; Ratio stores locally and never publishes via ODS.",
+      "forms": [
+        {
+          "href": "local://storage/K1/vibrationWaveform",
+          "op": ["readproperty"],
+          "contentType": "application/octet-stream"
+        }
+      ]
+    }
+  }
+}

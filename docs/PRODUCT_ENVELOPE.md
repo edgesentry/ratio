@@ -72,7 +72,7 @@ K／S で **同一封筒**を使う。サイト差は `domain`・語彙・任意
 実装: [`../poc`](../poc)（`uv sync` → `uv run ratio-poc`。手順は [`../poc/README.md`](../poc/README.md)）
 
 ```
-スタブ TD → raw → data/raw/
+薄い TD（`examples/td/*.td.json`）→ raw → data/raw/
 JSON-LD インスタンス → data/out/
     → rdflib + pyshacl（schemas/shareable-product.shacl.ttl）
     → conforms なら ODS ハンドオフ・スタブ（SDK 未接続）

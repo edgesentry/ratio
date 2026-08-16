@@ -1,4 +1,4 @@
-"""Minimal Ratio PoC pipeline: stub TD → local raw → shareable product → SHACL → ODS stub."""
+"""Minimal Ratio PoC pipeline: thin TD file → local raw → shareable product → SHACL → ODS stub."""
 
 from __future__ import annotations
 
@@ -18,6 +18,7 @@ from ratio_poc import queue as product_queue
 # poc/src/ratio_poc/cli.py → repo root
 ROOT = Path(__file__).resolve().parents[3]
 SCHEMA_DIR = ROOT / "schemas"
+TD_DIR = ROOT / "examples" / "td"
 CONTEXT_PATH = SCHEMA_DIR / "shareable-product.context.jsonld"
 SHACL_PATH = SCHEMA_DIR / "shareable-product.shacl.ttl"
 DATA_RAW = ROOT / "data" / "raw"
@@ -28,11 +29,7 @@ SCENARIOS = {
         "domain": "kitakyushu_factory",
         "source_device": "did:example:kitakyushu-factory-robot-01",
         "produced_by": "urn:ratio:node:kitakyushu-poc-01",
-        "td": {
-            "id": "urn:td:kitakyushu-robot-01",
-            "title": "Stub weld/assemble cell robot",
-            "properties": {"vibrationWaveform": {"type": "object"}},
-        },
+        "td_path": TD_DIR / "k1-robot.td.json",
         "physical_context": {"motorRPM": 1450, "temperatureCelsius": 42.5},
         "raw_prefix": "raw_wave",
     },
@@ -40,11 +37,7 @@ SCENARIOS = {
         "domain": "setouchi_maritime",
         "source_device": "did:example:setouchi-vessel-engine-vib-01",
         "produced_by": "urn:ratio:node:setouchi-poc-01",
-        "td": {
-            "id": "urn:td:setouchi-engine-vib-01",
-            "title": "Stub vessel engine vibration sensor",
-            "properties": {"shaftVibration": {"type": "object"}},
-        },
+        "td_path": TD_DIR / "s-engine-vib.td.json",
         "physical_context": {"shaftRPM": 98, "temperatureCelsius": 61.2},
         "raw_prefix": "raw_shaft",
     },
@@ -52,16 +45,22 @@ SCENARIOS = {
         "domain": "setouchi_maritime",
         "source_device": "did:example:setouchi-vessel-engine-vib-01",
         "produced_by": "urn:ratio:node:setouchi-poc-01",
-        "td": {
-            "id": "urn:td:setouchi-engine-vib-01",
-            "title": "Stub vessel engine vibration sensor (store-and-forward)",
-            "properties": {"shaftVibration": {"type": "object"}},
-        },
+        "td_path": TD_DIR / "s-engine-vib.td.json",
         "physical_context": {"shaftRPM": 98, "temperatureCelsius": 61.2},
         "raw_prefix": "raw_shaft",
         "queue": True,
     },
 }
+
+
+def load_td(path: Path) -> dict:
+    if not path.is_file():
+        raise SystemExit(f"TD file not found: {path}")
+    td = json.loads(path.read_text(encoding="utf-8"))
+    for key in ("id", "title"):
+        if key not in td:
+            raise SystemExit(f"TD missing required field '{key}': {path}")
+    return td
 
 
 def load_context() -> dict:
@@ -199,10 +198,13 @@ def run(
     ods_url: str | None = None,
     *,
     offline: bool = False,
+    td_path: Path | None = None,
 ) -> int:
     if scenario not in SCENARIOS:
         raise SystemExit(f"unknown scenario: {scenario}")
     cfg = SCENARIOS[scenario]
+    path = Path(td_path) if td_path else Path(cfg["td_path"])
+    td = load_td(path)
     use_queue = bool(cfg.get("queue"))
     now = datetime.now(timezone.utc)
     ts = now.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -210,7 +212,11 @@ def run(
     product_id = f"urn:uuid:{uuid.uuid4()}"
     stem = f"{scenario.lower()}-{product_id.split(':')[-1][:8]}"
 
-    print(f"[1] stub TD: {cfg['td']['id']} — {cfg['td']['title']}")
+    try:
+        rel = path.resolve().relative_to(ROOT)
+    except ValueError:
+        rel = path
+    print(f"[1] thin TD: {td['id']} — {td['title']} ← {rel}")
     raw_path, pointer = write_raw(scenario, cfg, stamp)
     print(f"[2] raw custody: {raw_path.relative_to(ROOT)} ({pointer})")
 
@@ -301,6 +307,12 @@ def main() -> None:
         help="Do not attempt handoff (S2: enqueue only)",
     )
     parser.add_argument(
+        "--td",
+        type=Path,
+        default=None,
+        help="Override thin WoT TD JSON path (default: examples/td per scenario)",
+    )
+    parser.add_argument(
         "--flush-queue",
         action="store_true",
         help="Publish all queued shareable products (S2 store-and-forward)",
@@ -314,6 +326,7 @@ def main() -> None:
             ods_mode=args.ods,
             ods_url=args.ods_url,
             offline=args.offline,
+            td_path=args.td,
         )
     )
 
