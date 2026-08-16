@@ -1,0 +1,28 @@
+{
+  "@context": "../schemas/shareable-product.context.jsonld",
+  "@type": ["ShareableProduct"],
+  "id": "urn:uuid:b22c3d4e-5f67-89ab-cdef-0123456789ab",
+  "sourceDevice": "did:example:setouchi-vessel-engine-vib-01",
+  "timestamp": "2026-08-16T08:40:00Z",
+  "domain": "setouchi_maritime",
+  "scenario": "S2",
+  "inference": {
+    "task": "anomaly_detection",
+    "result": "vibration_abnormal",
+    "confidence": 0.91,
+    "physicalContext": {
+      "shaftRPM": 98,
+      "temperatureCelsius": 61.2
+    }
+  },
+  "dataGovernance": {
+    "policyRef": "urn:odrl:policy:internal-only-rawdata",
+    "rawDataPointer": "local://onboard/raw_shaft_20260816_061200.bin",
+    "shaclConforms": true
+  },
+  "provenance": {
+    "producedBy": "urn:ratio:node:setouchi-poc-01",
+    "queueDepth": 3,
+    "firstBufferedAt": "2026-08-16T06:12:00Z"
+  }
+}

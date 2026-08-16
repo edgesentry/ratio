@@ -1,0 +1,63 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "ratio": "https://edgesentry.dev/ratio/v0#",
+    "ShareableProduct": "ratio:ShareableProduct",
+    "id": "@id",
+    "type": "@type",
+    "sourceDevice": {
+      "@id": "ratio:sourceDevice",
+      "@type": "@id"
+    },
+    "timestamp": {
+      "@id": "ratio:timestamp",
+      "@type": "xsd:dateTime"
+    },
+    "domain": "ratio:domain",
+    "scenario": "ratio:scenario",
+    "inference": "ratio:inference",
+    "task": "ratio:task",
+    "result": "ratio:result",
+    "confidence": {
+      "@id": "ratio:confidence",
+      "@type": "xsd:double"
+    },
+    "physicalContext": "ratio:physicalContext",
+    "motorRPM": {
+      "@id": "ratio:motorRPM",
+      "@type": "xsd:double"
+    },
+    "temperatureCelsius": {
+      "@id": "ratio:temperatureCelsius",
+      "@type": "xsd:double"
+    },
+    "shaftRPM": {
+      "@id": "ratio:shaftRPM",
+      "@type": "xsd:double"
+    },
+    "dataGovernance": "ratio:dataGovernance",
+    "policyRef": {
+      "@id": "ratio:policyRef",
+      "@type": "@id"
+    },
+    "rawDataPointer": "ratio:rawDataPointer",
+    "shaclConforms": {
+      "@id": "ratio:shaclConforms",
+      "@type": "xsd:boolean"
+    },
+    "provenance": "ratio:provenance",
+    "producedBy": {
+      "@id": "ratio:producedBy",
+      "@type": "@id"
+    },
+    "queueDepth": {
+      "@id": "ratio:queueDepth",
+      "@type": "xsd:integer"
+    },
+    "firstBufferedAt": {
+      "@id": "ratio:firstBufferedAt",
+      "@type": "xsd:dateTime"
+    }
+  }
+}

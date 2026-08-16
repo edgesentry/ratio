@@ -1,0 +1,93 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix ratio: <https://edgesentry.dev/ratio/v0#> .
+
+# Minimal SHACL for Ratio shareable products (PoC).
+# Raw payloads must not appear; rawDataPointer must stay local:// if present.
+
+ratio:ShareableProductShape
+    a sh:NodeShape ;
+    sh:targetClass ratio:ShareableProduct ;
+    sh:closed false ;
+    sh:property
+        ratio:propSourceDevice ,
+        ratio:propTimestamp ,
+        ratio:propDomain ,
+        ratio:propScenario ,
+        ratio:propInference ,
+        ratio:propGovernance .
+
+# Instance identity is the subject IRI (@id), not a separate triple.
+
+ratio:propSourceDevice
+    a sh:PropertyShape ;
+    sh:path ratio:sourceDevice ;
+    sh:minCount 1 ;
+    sh:nodeKind sh:IRI ;
+    sh:name "sourceDevice" .
+
+ratio:propTimestamp
+    a sh:PropertyShape ;
+    sh:path ratio:timestamp ;
+    sh:minCount 1 ;
+    sh:datatype xsd:dateTime ;
+    sh:name "timestamp" .
+
+ratio:propDomain
+    a sh:PropertyShape ;
+    sh:path ratio:domain ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:in ( "kitakyushu_factory" "setouchi_maritime" ) ;
+    sh:name "domain" .
+
+ratio:propScenario
+    a sh:PropertyShape ;
+    sh:path ratio:scenario ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:in ( "K1" "S1" "S2" ) ;
+    sh:name "scenario" .
+
+ratio:propInference
+    a sh:PropertyShape ;
+    sh:path ratio:inference ;
+    sh:minCount 1 ;
+    sh:node ratio:InferenceShape ;
+    sh:name "inference" .
+
+ratio:InferenceShape
+    a sh:NodeShape ;
+    sh:property
+        [ sh:path ratio:task ; sh:minCount 1 ; sh:datatype xsd:string ] ,
+        [ sh:path ratio:result ; sh:minCount 1 ; sh:datatype xsd:string ] ,
+        [
+            sh:path ratio:confidence ;
+            sh:minCount 1 ;
+            sh:datatype xsd:double ;
+            sh:minInclusive 0.0 ;
+            sh:maxInclusive 1.0
+        ] .
+
+ratio:propGovernance
+    a sh:PropertyShape ;
+    sh:path ratio:dataGovernance ;
+    sh:minCount 1 ;
+    sh:node ratio:GovernanceShape ;
+    sh:name "dataGovernance" .
+
+ratio:GovernanceShape
+    a sh:NodeShape ;
+    sh:property
+        [
+            sh:path ratio:policyRef ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI
+        ] ,
+        [
+            sh:path ratio:rawDataPointer ;
+            sh:maxCount 1 ;
+            sh:datatype xsd:string ;
+            sh:pattern "^local://" ;
+            sh:message "rawDataPointer must use local:// (no public raw URL)"
+        ] .

@@ -1,0 +1,31 @@
+{
+  "@context": [
+    "../schemas/shareable-product.context.jsonld",
+    {
+      "wot": "https://www.w3.org/2019/wot/td#"
+    }
+  ],
+  "@type": ["ShareableProduct"],
+  "id": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
+  "sourceDevice": "did:example:kitakyushu-factory-robot-01",
+  "timestamp": "2026-08-16T14:00:00Z",
+  "domain": "kitakyushu_factory",
+  "scenario": "K1",
+  "inference": {
+    "task": "anomaly_detection",
+    "result": "vibration_abnormal",
+    "confidence": 0.96,
+    "physicalContext": {
+      "motorRPM": 1450,
+      "temperatureCelsius": 42.5
+    }
+  },
+  "dataGovernance": {
+    "policyRef": "urn:odrl:policy:internal-only-rawdata",
+    "rawDataPointer": "local://storage/raw_wave_20260816_001.bin",
+    "shaclConforms": true
+  },
+  "provenance": {
+    "producedBy": "urn:ratio:node:kitakyushu-poc-01"
+  }
+}
