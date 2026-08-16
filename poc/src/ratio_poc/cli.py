@@ -292,14 +292,14 @@ def main() -> None:
     )
     parser.add_argument(
         "--ods",
-        choices=("stub", "http"),
+        choices=("stub", "http", "l2"),
         default="stub",
-        help="ODS handoff mode: stub (default) or http industry URL",
+        help="ODS handoff: stub | http (industry) | l2 (SDK gateway :8090 + L3 bearer)",
     )
     parser.add_argument(
         "--ods-url",
         default=None,
-        help="Industry base URL for --ods http (default http://127.0.0.1:8787 or RATIO_ODS_URL)",
+        help="Base URL override (http→industry, l2→gateway; see RATIO_ODS_URL / RATIO_ODS_L2_URL)",
     )
     parser.add_argument(
         "--offline",

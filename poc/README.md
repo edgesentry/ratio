@@ -4,7 +4,7 @@
 
 ```
 薄い WoT TD（examples/td/*.td.json）→ 生を data/raw に保管 → 共有可能プロダクト JSON-LD
-    → SHACL → ODS／industry ハンドオフ（stub | http）
+    → SHACL → ODS／industry ハンドオフ（stub | http | l2）
 S2: さらに data/queue にストア → リンク復帰で flush
 ```
 
@@ -17,7 +17,8 @@ S2: さらに data/queue にストア → リンク復帰で flush
 
 パッケージ管理は **uv**（`pyproject.toml` + `uv.lock`）。
 
-ODS 接続の詳細: [`../docs/ODS_HANDOFF.md`](../docs/ODS_HANDOFF.md)
+ODS 接続の詳細: [`../docs/ODS_HANDOFF.md`](../docs/ODS_HANDOFF.md)  
+L2 ルート／OpenFGA／L3 トークン補助: [`scripts/ods/`](scripts/ods/)
 
 ## セットアップ
 
@@ -40,6 +41,9 @@ uv run ratio-poc --scenario K1 --td ../examples/td/k1-robot.td.json
 # industry スタブへ HTTP
 uv run ratio-poc-serve          # 端末 A
 uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
+
+# 公式 L2 ゲートウェイへ（SDK-docker-compose 起動後；Bearer は env または自動取得）
+uv run ratio-poc --scenario K1 --ods l2
 ```
 
 ### S2 ストア＆フォワード（瀬戸内）
