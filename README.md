@@ -89,7 +89,7 @@ ODS ハンドオフ → [`docs/ODS_HANDOFF.md`](docs/ODS_HANDOFF.md)
 - [x] ODS／industry ハンドオフ（[`docs/ODS_HANDOFF.md`](docs/ODS_HANDOFF.md)；公式 Compose は外部）
 - [x] S2 ストア＆フォワード（`data/queue` + `--flush-queue`）
 - [ ] サイトごとのデバイス／センサ系統の固定（スタブ可ならベンダー未定でも可）
-- [ ] 薄い TD ファイル化
+- [x] 薄い TD ファイル化（[`examples/td/`](examples/td/)；`--td` で差し替え可）
 - [ ] コア I/F（Arrow）草案
-- [ ] 公式 `SDK-docker-compose` 実機接続（L3 トークン＋L2）
+- [x] 公式 `SDK-docker-compose` 接続手順（[`ODS_HANDOFF.md`](docs/ODS_HANDOFF.md)；`--ods l2` + [`poc/scripts/ods/`](poc/scripts/ods/)；Compose は外部起動）
 - [ ] reuse vs build 一覧（草案は POC.md）
