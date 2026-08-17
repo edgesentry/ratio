@@ -1,75 +1,77 @@
-# Ratio 最小パイプライン（PoC）
+# Ratio minimal pipeline (PoC)
 
-テーゼ実証の最小経路:
+> Japanese: [README.ja.md](README.ja.md)
+
+Minimal path to demonstrate the thesis:
 
 ```
-薄い WoT TD（examples/td/*.td.json）→ 生を data/raw に保管 → 共有可能プロダクト JSON-LD
-    → SHACL → ODS／industry ハンドオフ（stub | http | l2）
-S2: さらに data/queue にストア → リンク復帰で flush
+thin WoT TD (examples/td/*.td.json) → custody raw in data/raw → shareable-product JSON-LD
+    → SHACL → ODS / industry handoff (stub | http | l2)
+S2: also store in data/queue → flush when the link returns
 ```
 
-生は **publish しない**。外に出る候補はプロダクトだけ。TD の `forms.href` は `local://`（生の egress なし）。
+Raw is **not published**. Only products are candidates to leave. TD `forms.href` values are `local://` (no raw egress).
 
-| シナリオ | TD |
+| Scenario | TD |
 |----------|-----|
 | K1 | [`examples/td/k1-robot.td.json`](../examples/td/k1-robot.td.json) |
-| S1 / S2 | [`examples/td/s-engine-vib.td.json`](../examples/td/s-engine-vib.td.json)（同一センサ；S2 はキュー方針のみ異なる） |
+| S1 / S2 | [`examples/td/s-engine-vib.td.json`](../examples/td/s-engine-vib.td.json) (same sensor; S2 differs only in queue policy) |
 
-パッケージ管理は **uv**（`pyproject.toml` + `uv.lock`）。
+Package management is **uv** (`pyproject.toml` + `uv.lock`).
 
-ODS 接続の詳細: [`../docs/ODS_HANDOFF.md`](../docs/ODS_HANDOFF.md)  
-L2 ルート／OpenFGA／L3 トークン補助: [`scripts/ods/`](scripts/ods/)
+ODS connection details: [`../docs/ODS_HANDOFF.md`](../docs/ODS_HANDOFF.md)  
+L2 route / OpenFGA / L3 token helpers: [`scripts/ods/`](scripts/ods/)
 
-## セットアップ
+## Setup
 
 ```bash
 cd poc
 uv sync
 ```
 
-## 実行
+## Run
 
 ```bash
 cd poc
 
-# 北九州 K1（既定 TD + stub handoff）
+# Kitakyushu K1 (default TD + stub handoff)
 uv run ratio-poc --scenario K1
 
-# TD を差し替え（薄い SI）
+# Swap TD (thin SI)
 uv run ratio-poc --scenario K1 --td ../examples/td/k1-robot.td.json
 
-# industry スタブへ HTTP
-uv run ratio-poc-serve          # 端末 A
+# HTTP to industry stub
+uv run ratio-poc-serve          # Terminal A
 uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
 
-# 公式 L2 ゲートウェイへ（SDK-docker-compose 起動後；Bearer は env または自動取得）
+# Official L2 gateway (after SDK-docker-compose is up; Bearer via env or auto-fetch)
 uv run ratio-poc --scenario K1 --ods l2
 ```
 
-### S2 ストア＆フォワード（瀬戸内）
+### S2 store-and-forward (Setouchi)
 
 ```bash
-# 船上: リンク無しでもキューに積む（生は raw のまま）
+# Onboard: enqueue even without a link (raw stays in raw)
 uv run ratio-poc --scenario S2 --offline
-# または stub（S2 は自動でキューして終了）
+# Or stub (S2 auto-queues and exits)
 uv run ratio-poc --scenario S2
 
-# リンク復帰後: キューを industry へ flush
-uv run ratio-poc-serve   # 陸上／到達可能な industry
+# After link returns: flush queue to industry
+uv run ratio-poc-serve   # shore / reachable industry
 uv run ratio-poc --flush-queue --ods http --ods-url http://127.0.0.1:8787
 
-# オンライン時にその場で転送を試す（失敗時はキュー残存、終了コード 0）
+# When online, try transfer in place (on failure queue remains; exit code 0)
 uv run ratio-poc --scenario S2 --ods http --ods-url http://127.0.0.1:8787
 ```
 
-成果物:
+Artifacts:
 
-- `data/raw/` — 生（ローカルのみ）
-- `data/out/` — プロダクトとレシート
-- `data/queue/` — S2 未送信の共有可能プロダクト（生は入れない）
+- `data/raw/` — raw (local only)
+- `data/out/` — products and receipts
+- `data/queue/` — S2 unsent shareable products (no raw)
 
-## 含まないもの（意図的）
+## Intentionally excluded
 
-- 実ロボット／船上センサ
-- `SDK-docker-compose` 一式の同梱（外部起動。手順は ODS_HANDOFF.md）
-- Arrow／PyO3／Rust コア
+- Real robots / shipboard sensors
+- Bundling full `SDK-docker-compose` (start externally; see ODS_HANDOFF.md)
+- Arrow / PyO3 / Rust core

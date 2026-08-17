@@ -1,13 +1,15 @@
-# アーキテクチャ
+# Architecture
 
-テーゼ **生クォンタを出さずに ODS に参加する** の実装スケッチ。
+> Japanese: [ARCHITECTURE.ja.md](ARCHITECTURE.ja.md)
 
-**構築方針:** OSS と公式 ODS SDK を構成する。Ratio は現場での導出・検証・生／プロダクト分離・ハンドオフ境界を所有する。  
-参照: [`DISCUSSION.md`](DISCUSSION.md) · [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md)
+Implementation sketch for the thesis **participate in ODS without shipping raw quanta**.
+
+**Build policy:** Compose OSS and the official ODS SDK. Ratio owns on-site derivation, validation, raw/product split, and the handoff boundary.  
+See: [`DISCUSSION.md`](DISCUSSION.md) · [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md)
 
 ---
 
-## 1. 既定パス（全体像）
+## 1. Default path (overview)
 
 ```
 [ L1 Devices ]
@@ -34,17 +36,17 @@
         └──── raw does not take this path by default ────┘
 ```
 
-| 層 | テーゼ上の仕事 |
-|----|----------------|
-| **L1** | WoT TD で観測；独自デバイススキーマを発明しない |
-| **L2** | 意味付き結果を導出；SHACL で検証 |
-| **分離** | 生は残す；外に出うるのは共有可能プロダクト |
-| **L3** | アイデンティティ・ポリシー参照・来歴をハンドオフ用にパッケージ |
-| **L4** | **公式** ODS スタックで参加（O1–O6）— ODP フォークなし |
+| Layer | Thesis job |
+|-------|------------|
+| **L1** | Observe via WoT TD; do not invent proprietary device schemas |
+| **L2** | Derive meaning-bearing results; validate with SHACL |
+| **Split** | Keep raw; only shareable products may leave |
+| **L3** | Package identity, policy refs, and provenance for handoff |
+| **L4** | Participate via the **official** ODS stack (O1–O6)—no ODP fork |
 
 ---
 
-## 2. 論理データフロー
+## 2. Logical data flow
 
 ```
 WoT ingest → inference (ONNX/TensorRT, etc.)
@@ -57,35 +59,35 @@ WoT ingest → inference (ONNX/TensorRT, etc.)
 
 ---
 
-## 3. 技術スタック配置
+## 3. Technology placement
 
-| 関心 | 技術 | 所有 |
-|------|------|------|
-| 薄い構成ランタイム | Rust | **Ratio**（シェルのみ） |
-| グラフ推論・検証 | Oxigraph | **OSS** |
-| ローカル生／成果物ストア | DuckDB、LanceDB、ファイル | **OSS** |
-| 状態・資格・ポリシー記録 | SQLite | **OSS** |
-| 言語横断 I/F | Apache Arrow + PyO3 | Arrow は **OSS**；Memory Broker は **Ratio** |
-| 推論ランタイム | ONNX Runtime／TensorRT 等 | **OSS**／ベンダー |
-| セマンティクス表現 | JSON-LD／CBOR-LD | **標準** |
-| ODS 参加 | IPA ODS Middleware／SDK + ODP | **公式**—再実装しない |
+| Concern | Technology | Ownership |
+|---------|------------|-----------|
+| Thin composition runtime | Rust | **Ratio** (shell only) |
+| Graph inference & validation | Oxigraph | **OSS** |
+| Local raw / artifact store | DuckDB, LanceDB, files | **OSS** |
+| State, credentials, policy records | SQLite | **OSS** |
+| Cross-language I/F | Apache Arrow + PyO3 | Arrow is **OSS**; Memory Broker is **Ratio** |
+| Inference runtime | ONNX Runtime / TensorRT, etc. | **OSS** / vendor |
+| Semantics representation | JSON-LD / CBOR-LD | **Standard** |
+| ODS participation | IPA ODS Middleware / SDK + ODP | **Official**—do not reimplement |
 
 ---
 
-## 4. 共有可能プロダクトが運ぶもの
+## 4. What a shareable product carries
 
-**共有可能プロダクト**: Pull 可能なパッケージ。生バイトではない。定義の全文: [`DISCUSSION.md`](DISCUSSION.md)（「共有可能プロダクトとは」）
+**Shareable product:** a Pull-able package. Not raw bytes. Full definition: [`DISCUSSION.md`](DISCUSSION.md) (“What is a shareable product”)
 
-テーゼ整合（結果＋意味＋利用条件）:
+Thesis alignment (result + meaning + terms of use):
 
-1. **結果** — 判断または観測（生バイトではない）
-2. **意味** — オントロジー／JSON-LD 文脈（どのデバイス、どんな特性、何を根拠に）
-3. **利用条件** — ポリシー参照（例: ODRL）；生は既定で非egress
-4. **任意のドメイン内ポインタ** — ローカル運用用の `rawDataPointer`。公開生 URL ではない
+1. **Result** — a judgment or observation (not raw bytes)
+2. **Meaning** — ontology / JSON-LD context (which device, which properties, on what basis)
+3. **Terms of use** — policy refs (e.g. ODRL); raw is non-egress by default
+4. **Optional in-domain pointer** — `rawDataPointer` for local ops. Not a public raw URL
 
-### ペイロード例
+### Payload example
 
-PoC 確定封筒・SHACL・K1／S1／S2 例: [`PRODUCT_ENVELOPE.md`](PRODUCT_ENVELOPE.md)
+Locked PoC envelope, SHACL, and K1 / S1 / S2 examples: [`PRODUCT_ENVELOPE.md`](PRODUCT_ENVELOPE.md)
 
 ```json
 {
@@ -116,7 +118,7 @@ PoC 確定封筒・SHACL・K1／S1／S2 例: [`PRODUCT_ENVELOPE.md`](PRODUCT_ENV
 
 ---
 
-## 5. コア I/F（議論用スケッチ）
+## 5. Core I/F (discussion sketch)
 
 ```
 ┌─────────────┐     PyO3      ┌──────────────────┐
@@ -130,32 +132,32 @@ PoC 確定封筒・SHACL・K1／S1／S2 例: [`PRODUCT_ENVELOPE.md`](PRODUCT_ENV
                      ODS Middleware / SDK
 ```
 
-決めること:
+Decide:
 
-1. プロダクト組立用 Arrow RecordBatch 列（`device_id`、`ts`、`graph_delta`、`shacl_report`、…）
-2. バッファ所有権／ゼロコピー境界
-3. 連続現場導出のための同期 vs ストリーム
-
----
-
-## 6. 最初の手順（PoC 順）
-
-テーゼに従う: **保管 → 導出 → 参加**。
-
-1. **取込** — 1デバイス系統の WoT TD；生はローカルストアへ  
-2. **分離とプロダクト化** — JSON-LD 共有可能プロダクト＋SHACL；生は公開経路に載せない  
-3. **参加** — ODS SDK: **プロダクトのみ** 登録／発見／提供  
-
-PoC サイトは [`DISCUSSION.md`](DISCUSSION.md) の需要条件を満たすこと。  
-想定サイトと境界: [`POC.md`](POC.md)（北九州が先、次いで瀬戸内）。
+1. Arrow RecordBatch columns for product assembly (`device_id`, `ts`, `graph_delta`, `shacl_report`, …)
+2. Buffer ownership / zero-copy boundaries
+3. Sync vs stream for continuous on-site derivation
 
 ---
 
-## 7. 非目標
+## 6. First steps (PoC order)
 
-- 生を ODS の主オファリングとして出荷すること
-- ODP／ODS Middleware の再実装
-- 初日からの ODS-RAM 完全カバー（MVP は [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md) の O1–O6 経路）
-- 独自デバイスプロトコルの乱立（WoT TD に寄せる）
-- Oxigraph、DuckDB、LanceDB、SQLite、Arrow のフォーク
-- ハードリアルタイム制御平面（せいぜい助言／ゲート）
+Follow the thesis: **custody → derive → participate**.
+
+1. **Ingest** — one device line via WoT TD; raw into local store  
+2. **Split and productize** — JSON-LD shareable product + SHACL; do not put raw on the publish path  
+3. **Participate** — ODS SDK: register / discover / serve **products only**  
+
+PoC sites must satisfy demand conditions in [`DISCUSSION.md`](DISCUSSION.md).  
+Assumed sites and boundaries: [`POC.md`](POC.md) (Kitakyushu first, then Setouchi).
+
+---
+
+## 7. Non-goals
+
+- Shipping raw as the primary ODS offering
+- Reimplementing ODP / ODS Middleware
+- Claiming full ODS-RAM coverage on day one (MVP is the O1–O6 path in [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md))
+- Proliferating proprietary device protocols (prefer WoT TD)
+- Forking Oxigraph, DuckDB, LanceDB, SQLite, or Arrow
+- Hard real-time control plane (advisory / gate at most)

@@ -1,229 +1,231 @@
-# PoC サイト
+# PoC sites
 
-テーゼ **生クォンタを出さずに ODS に参加する** を検証するための想定フィールド。
+> Japanese: [POC.ja.md](POC.ja.md)
 
-| サイト | ドメイン | 典型アセット |
-|--------|----------|--------------|
-| **北九州** | 産業ロボット／工場 OT | ロボットアーム、PLC、ラインカメラ、振動／温度センサ |
-| **瀬戸内** | 海事センサ／船舶 | 船上センサ、AIS 近傍テレメトリ、カメラ、機関／振動、断続リンク |
+Assumed fields for validating the thesis **participate in ODS without shipping raw quanta**.
 
-これらは **テーゼ検証の文脈**であり、二製品を同時出荷する約束ではない。垂直スライスを一つ先に進め、もう一方を第二証明とする。
+| Site | Domain | Typical assets |
+|------|--------|----------------|
+| **Kitakyushu** | Industrial robots / factory OT | Robot arms, PLCs, line cameras, vibration / temperature sensors |
+| **Setouchi** | Maritime sensors / vessels | Shipboard sensors, AIS-adjacent telemetry, cameras, machinery / vibration, intermittent links |
 
-需要条件（サイトごとに3つすべて必須）:
+These are **thesis-validation contexts**, not a promise to ship two products at once. Advance one vertical slice first; use the other as the second proof.
 
-1. 既定で生を出さない  
-2. セル／船の外の誰かが **意味**を必要とする  
-3. ODS **Pull** 参加が必要（ローカルダッシュボードだけではない）
+Demand conditions (all three required per site):
 
----
-
-## 北九州 — 産業ロボット／工場
-
-### 誰
-
-- ドメインオーナー: 工場／セル運用者（および SI パートナー）  
-- 消費者: パートナー OEM、品質／トレーサビリティ・エージェント、ODS 上の Agentic AI  
-
-### 課題（サイト固有）
-
-ロボット／カメラ／振動の生は工場外に出せない（IP・プライバシー・帯域）一方、パートナーはデータスペース Pull で **判断＋文脈**（どのロボット、どの工程、なぜ）が必要—湖ミラーではない。
-
-### 生 vs 共有可能プロダクト（境界案）
-
-| ローカルに残す（生クォンタ） | 共有可能プロダクト（ODS-Pull 可） |
-|------------------------------|----------------------------------|
-| カメラフレーム／動画 | 異常または品質の **結果**＋confidence |
-| 振動／力／トルク波形 | デバイス ID（WoT／DID）、セル／ライン ID、タイムスタンプ |
-| 独自ティーチ／工程ログ | 故障／工程クラスのオントロジー語彙 |
-| 高頻度 PLC ダンプ | 物理文脈の要約（例: RPM、温度）—フルトレースではない |
-| | `policyRef`（生は内部のみ）；任意のローカルのみ `rawDataPointer` |
-| | 主張する場合の SHACL レポート参照 |
-
-### テーゼが示せる条件
-
-トレーサビリティ／品質／DPP 的 **プロダクト**が Pull で発見可能であり、ロボット映像・波形は既定で ODS 経路に乗らない。
-
-### 最初の垂直スライス（案）
-
-1. ロボット1台＋センサ1系統を WoT TD（またはスタブ TD）で  
-2. 合成または録画の振動／カメラ → ローカルストア  
-3. JSON-LD 共有可能プロダクトを1つ出す（判断＋意味＋policyRef）  
-4. ODS SDK で登録／提供  
+1. Do not ship raw by default  
+2. Someone outside the cell / vessel needs **meaning**  
+3. ODS **Pull** participation is required (not only a local dashboard)
 
 ---
 
-## 瀬戸内 — 海事センサ／船舶
+## Kitakyushu — industrial robots / factory
 
-### 誰
+### Who
 
-- ドメインオーナー: 運航者／船上システム所有者  
-- 消費者: 陸上フリート運用、パートナー、リンク可能なときの ODS 上 Agentic AI  
+- Domain owner: factory / cell operator (and SI partners)  
+- Consumers: partner OEMs, quality / traceability agents, Agentic AI on ODS  
 
-### 課題（サイト固有）
+### Site-specific problem
 
-リンクは断続で帯域が乏しい。船体／機関／カメラの生は船上に残すべき。陸上は、船が ODS に参加できるときに **意味付きの状態／イベント**が必要。
+Robot / camera / vibration raw cannot leave the plant (IP, privacy, bandwidth), while partners need **judgment + context** via data-space Pull (which robot, which process, why)—not a lake mirror.
 
-### 生 vs 共有可能プロダクト（境界案）
+### Raw vs shareable product (proposed boundary)
 
-| ローカルに残す（生クォンタ） | 共有可能プロダクト（ODS-Pull 可） |
-|------------------------------|----------------------------------|
-| 高頻度振動／音響サンプル | イベント／判断の **結果**＋confidence |
-| カメラ／CCTV 映像 | 船舶／ノード DID、センサ WoT id、タイムスタンプ |
-| 密な NMEA／バスログ（全文） | ポリシーが許す粗い運航文脈（別許可なしにフル航跡ダンプはしない） |
-| | アラート／状態クラスのオントロジー語彙 |
-| | `policyRef`；ローカルのみ `rawDataPointer` |
-| | 主張する場合の SHACL レポート参照 |
+| Keep local (raw quanta) | Shareable product (ODS-Pull-able) |
+|-------------------------|-----------------------------------|
+| Camera frames / video | Anomaly or quality **result** + confidence |
+| Vibration / force / torque waveforms | Device ID (WoT / DID), cell / line ID, timestamp |
+| Proprietary teach / process logs | Ontology vocabulary for fault / process class |
+| High-rate PLC dumps | Summarized physical context (e.g. RPM, temperature)—not full traces |
+| | `policyRef` (raw internal-only); optional local-only `rawDataPointer` |
+| | SHACL report ref when claimed |
 
-### テーゼが示せる条件
+### Thesis is shown when
 
-船上ノードが制約／断続リンク越しに **メタプロダクトのみ**提供し、生は船上ストレージに残る。
+Traceability / quality / DPP-like **products** are discoverable via Pull, and robot video / waveforms do not ride the ODS path by default.
 
-### 最初の垂直スライス（案）
+### First vertical slice (proposal)
 
-1. センサ種別1つ（例: 機関振動またはビルジ／環境）＋スタブ WoT TD  
-2. 生は船上ストア；プロダクトはリンク復旧時のみ ODS 向けにキュー  
-3. 可能な限り北九州と同じ共有可能プロダクト形状（可搬パイプライン）  
-4. 接続時に ODS SDK で参加  
-
----
-
-## 候補シナリオ（ベンダー未定）
-
-ベンダーや具体セルは **未定**。単体エッジ AI、IIoT ゲートウェイ、IT 側 ODS ノードとの差が最もよく見えるシナリオを選ぶ。
-
-### 優位性レンズ（候補の採点）
-
-| 優位性 | シナリオがこれを示すとき |
-|--------|--------------------------|
-| **A1 生非egress** | 生が明らかに機微または巨大（映像・波形）で、出荷が荒唐無稽 |
-| **A2 意味付きプロダクト** | 素のスコアでは行動できず、デバイス／工程／航海の文脈が必要 |
-| **A3 公式 ODS Pull** | 組織横断または陸上／パートナーの消費者が discover／serve を欲する—工場 HMI だけではない |
-| **A4 同一パイプライン、二物理** | 工場と船舶でプロダクト封筒を共有；変わるのは形状／設定のみ |
-| **A5 WoT による薄い SI** | マルチベンダーや混在センサで、独自スキーマより TD が勝つ |
-| **避ける** | 安全 PLC のハードリアルタイム置換；「ODS 消費者なしのデモダッシュボード」 |
-
-表の凡例: **S**＝優位性の強いデモ、**M**＝中、**W**＝弱い／非 Ratio ツールと混同しやすい。
+1. One robot + one sensor line via WoT TD (or stub TD)  
+2. Synthetic or recorded vibration / camera → local store  
+3. Emit one JSON-LD shareable product (judgment + meaning + policyRef)  
+4. Register / serve via ODS SDK  
 
 ---
 
-### 北九州候補
+## Setouchi — maritime sensors / vessels
 
-| ID | シナリオ（ベンダー非依存） | 残る生 | 共有可能プロダクト（概要） | A1 | A2 | A3 | A5 | 注記 |
-|----|----------------------------|--------|----------------------------|----|----|----|----|------|
-| **K1** | **溶接／組立セル異常** — アーム1台の振動または力＋任意のラインカメラ | 波形；カメラフレーム | `vibration_abnormal`／品質NG＋ロボット WoT id＋セル／工程＋physicalContext＋policyRef | S | S | S | M | 既定最良。「スコアだけでは無用」が明確；パートナーは *どのセル／工程* を気にする。 |
-| **K2** | **ライン末視覚品質ゲート** — カメラ判断のみ | 画像／動画 | 欠陥クラス＋confidence＋ステーション／DID＋欠陥語彙＋policyRef | S | S | S | M | A1 が強い（映像）。「ただの AOI クラウドアップロード」に見えないようオントロジーに注意。 |
-| **K3** | **セルからの DPP／CFP パンくず** — 工程イベントをデータスペース製品に | フル工程ログ、ティーチ | パスポート関連 **イベント**（部品 ID 参照、工程、エネルギー／品質要約）＋意味＋ポリシー—系譜 DB 全文ではない | M | S | S | W | 政策／トレーサビリティ語りで A3 が強い；オントロジー合意コストは高い。 |
-| **K4** | **マルチベンダー腕スワップ** — 二ブランドで同一プロダクト形状（スタブ可） | ベンダー別の生 | 同一の共有可能プロダクトスキーマ；TD バックエンドのみ異なる | M | M | M | S | **A5** 向き。A3 は消費者がスクリプトされないと弱い。 |
-| **K5** | **SHACL 行動アドバイザリ** — 共有またはオペレータ確認前にコマンド／文脈を検証 | コマンド痕跡、状態ダンプ | SHACL 適合／違反レポートをプロダクトに（＋デバイス文脈） | M | S | M | M | 検証の優位性。**助言**に留める（安全 PLC ではない）。E1 への過大スコープに注意。 |
-| **K6** | **予知保全チケット** — モータ／ギアボックスのモデルスコア | 長い振動履歴 | 保全クラス＋根拠要約＋デバイス ID—アーカイブ本体ではない | S | M | M | M | よくあるエッジ AI 話。**意味＋ODS Pull**を強制しないと箱上 Kaggle に潰れる。 |
+### Who
 
-**北九州・推奨ショートリスト**
+- Domain owner: operator / shipboard system owner  
+- Consumers: shore fleet ops, partners, Agentic AI on ODS when the link is up  
 
-| 優先 | 選び | 優位性が見える理由 |
-|------|------|-------------------|
-| **1位** | **K1** | A1+A2+A3 を同時に示せる；フルビジョンなしでスタブ可 |
-| **2位** | **K1+K4** | K1 のあと TD バックエンドを差し替え、ベンダー薄い SI を証明 |
-| **代替** | **K2** | 相手の言葉が振動より「カメラ／IP」のとき |
-| **後回し** | **K3** | プロダクト封筒が動いてから—オントロジーコストが高い |
-| **主軸にしない** | **K5** | K1 プロダクトができてからのアドオン検証 |
-| **単独 PoC は避ける** | **K6** | 汎用エッジ ML に見えやすい |
+### Site-specific problem
 
----
+Links are intermittent and bandwidth-poor. Hull / machinery / camera raw should stay onboard. Shore needs **meaning-bearing state / events** when the vessel can participate in ODS.
 
-### 瀬戸内候補
+### Raw vs shareable product (proposed boundary)
 
-| ID | シナリオ（ベンダー非依存） | 残る生 | 共有可能プロダクト（概要） | A1 | A2 | A3 | リンク負荷 | 注記 |
-|----|----------------------------|--------|----------------------------|----|----|----|------------|------|
-| **S1** | **機関／軸振動イベント** — 船上検知、リンク時に陸上 Pull | 高頻度サンプル | イベントクラス＋confidence＋船舶／センサ DID＋粗い運航文脈＋policyRef | S | S | S | S | 海事の既定最良。帯域の話が自明。 |
-| **S2** | **ストア＆フォワード警報キュー** — オフライン緩衝、リンクでフラッシュ | S1 と同じ生 | 同じプロダクト；**キュー深さ／鮮度**を来歴に | S | S | S | S | 断続リンクをデモの *売り*にする—言い訳にしない。 |
-| **S3** | **ブリッジ／CCTV インシデント要約** — 既定で映像は陸に出さない | 動画 | インシデント種別＋時間窓＋カメラ id＋ポリシー；ポインタはローカル | S | S | M | S | A1 とプライバシーが強い；陸上消費者がいることを確認。 |
-| **S4** | **環境／ビルジ／タンク閾値イベント** | 密なセンサログ | 閾値イベント＋意味＋船舶 id | M | M | M | M | ハードは簡単；実 ODS 消費者がいないと「なぜ MQTT ダッシュボードではだめ？」が弱い。 |
-| **S5** | **組織横断パートナー（ヤード／保険／用船）Pull** — S1 プロダクトを明示的な第二組織へ | S1 と同様 | プロダクト＋より厳しい利用条件 | S | S | S | M | A3 を最大化；技術よりパートナー意思に依存。 |
-| **S6** | **密な NMEA の陸上ミラー** | — | — | W | W | W | W | **反候補。**テレメトリ Push に見える；テーゼ失敗。 |
+| Keep local (raw quanta) | Shareable product (ODS-Pull-able) |
+|-------------------------|-----------------------------------|
+| High-rate vibration / acoustic samples | Event / judgment **result** + confidence |
+| Camera / CCTV video | Vessel / node DID, sensor WoT id, timestamp |
+| Dense NMEA / bus logs (full text) | Coarse ops context as policy allows (no full track dump without separate permission) |
+| | Ontology vocabulary for alert / state class |
+| | `policyRef`; local-only `rawDataPointer` |
+| | SHACL report ref when claimed |
 
-**瀬戸内・推奨ショートリスト**
+### Thesis is shown when
 
-| 優先 | 選び | 優位性が見える理由 |
-|------|------|-------------------|
-| **1位** | **S1 + S2** | 振動イベント＋ストア＆フォワードで A1–A3＋リンク負荷を一度に |
-| **代替** | **S3** | ステークホルダーがカメラ／プライバシー主導のとき |
-| **増幅** | **S5** | 第二組織が Pull できるとき—PoC をデータスペース物語にする |
-| **単独では弱い** | **S4** | 必須の ODS 消費者エージェントと組む場合のみ |
-| **却下** | **S6** | 生非egressと矛盾 |
+The shipboard node serves **meta products only** across constrained / intermittent links, and raw stays on shipboard storage.
+
+### First vertical slice (proposal)
+
+1. One sensor type (e.g. machinery vibration or bilge / environment) + stub WoT TD  
+2. Raw in shipboard store; products queued for ODS only when the link returns  
+3. Same shareable-product shape as Kitakyushu where possible (portable pipeline)  
+4. Participate via ODS SDK when connected  
 
 ---
 
-### 「一つの Ratio、二つのドメイン」が最も見える組み合わせ
+## Candidate scenarios (vendor TBD)
 
-| 組 | 物語 | 優位性の一文 |
-|----|------|--------------|
-| **K1 → S1/S2** | 工場異常プロダクトのあと、船上で同じ封筒＋キュー | 「同じ共有可能プロダクト経路；変わるのは物理とリンク方針であり、基盤ではない。」 |
-| **K2 → S3** | ビジョン中心、生映像は出さない | 「カメラ IP は残る；ODS に乗るのはインシデント／品質の意味だけ。」 |
-| **K3 → S5** | トレーサビリティ＋組織横断 Pull | 政策／ODS 語りは強い；調整コストは高い |
+Concrete vendors and cells are **TBD**. Prefer scenarios that best show the difference from standalone edge AI, IIoT gateways, and IT-side ODS nodes.
 
-**ショートリスト確定:** **K1** の次に **S1+S2**。固めるのはプロダクト JSON-LD 封筒、SHACL コア形状、ODS ハンドオフ—ロボット銘柄や船級ではない（スタブ可）。
+### Advantage lens (scoring candidates)
 
----
+| Advantage | Scenario shows this when |
+|-----------|--------------------------|
+| **A1 raw non-egress** | Raw is clearly sensitive or huge (video, waveforms); shipping is absurd |
+| **A2 meaning-bearing product** | Bare scores are not actionable; device / process / voyage context is required |
+| **A3 official ODS Pull** | Cross-org or shore / partner consumers want discover / serve—not only plant HMI |
+| **A4 same pipeline, two physics** | Factory and vessel share the product envelope; only shapes / config change |
+| **A5 thin SI via WoT** | Multi-vendor or mixed sensors where TD beats proprietary schemas |
+| **Avoid** | Hard real-time replacement of safety PLCs; “demo dashboard with no ODS consumer” |
 
-### パートナー会話での「良い候補」
-
-提案されたセル／船ごとに聞く:
-
-1. 出荷すると困る／高い生は何か？  
-2. 外の誰が意味を必要とし、ODS 経由で Pull するか（ラボ消費者でも可）？  
-3. アクセスが遅れても、90日は TD＋録画生のスタブで進められるか？  
-
-(2) が「ローカル SCADA 画面だけ」なら、Ratio の優位性は見えない—別候補にする。
+Legend: **S** = strong advantage demo, **M** = medium, **W** = weak / easy to confuse with non-Ratio tools.
 
 ---
 
-## 共通 vs サイト固有
+### Kitakyushu candidates
 
-| 共通（一度作る） | サイト固有（設定／形状） |
-|------------------|--------------------------|
-| 生とプロダクトの分離パイプライン | デバイス TD、オントロジー語彙、SHACL 形状 |
-| JSON-LD プロダクト封筒 | ポリシー参照と許される physicalContext 項目 |
-| Oxigraph 検証フック | 存在する推論／タスク ID |
-| ODS SDK ハンドオフ | アイデンティティ（船舶 vs 工場セル DID） |
-| ローカルストア（DuckDB／ファイル／…） | 保持期間とポインタ方式 |
+| ID | Scenario (vendor-agnostic) | Raw that stays | Shareable product (summary) | A1 | A2 | A3 | A5 | Notes |
+|----|----------------------------|----------------|-----------------------------|----|----|----|----|-------|
+| **K1** | **Weld / assembly cell anomaly** — vibration or force on one arm + optional line camera | Waveforms; camera frames | `vibration_abnormal` / quality NG + robot WoT id + cell / process + physicalContext + policyRef | S | S | S | M | Default best. Clear that “score alone is useless”; partners care *which cell / process*. |
+| **K2** | **End-of-line visual quality gate** — camera judgment only | Images / video | Defect class + confidence + station / DID + defect vocab + policyRef | S | S | S | M | Strong A1 (video). Watch ontology so it does not look like “plain AOI cloud upload.” |
+| **K3** | **DPP / CFP breadcrumbs from the cell** — process events as data-space products | Full process logs, teach | Passport-related **events** (part ID refs, process, energy / quality summary) + meaning + policy—not a full genealogy DB | M | S | S | W | Strong A3 for policy / traceability narratives; high ontology agreement cost. |
+| **K4** | **Multi-vendor arm swap** — same product shape across two brands (stubs OK) | Vendor-specific raw | Same shareable-product schema; only TD backend differs | M | M | M | S | Aimed at **A5**. A3 is weak unless consumers are scripted. |
+| **K5** | **SHACL action advisory** — validate commands / context before share or operator confirm | Command traces, state dumps | SHACL conform / violate report in the product (+ device context) | M | S | M | M | Validation advantage. Stay **advisory** (not a safety PLC). Avoid over-scoping into E1. |
+| **K6** | **Predictive maintenance ticket** — motor / gearbox model score | Long vibration history | Maintenance class + rationale summary + device ID—not the archive body | S | M | M | M | Common edge-AI story. Collapses into boxed Kaggle unless **meaning + ODS Pull** are forced. |
 
----
+**Kitakyushu recommended shortlist**
 
-## 順序
-
-| 順 | サイト | 先にする理由 |
-|----|--------|--------------|
-| **1** | **北九州** | ODS SDK 立ち上げに連続回線が使いやすい；マルチベンダー・ロボット／SI の物語が明確 |
-| **2** | **瀬戸内** | 同じパイプラインで断続 egress—テーゼの制約リンク側を証明 |
-
-アーキを二本にフォークしない。北九州を端到端で証明し、瀬戸内は同一バイナリ／設定に海事形状とストア＆フォワードを載せる。
-
----
-
-## reuse vs build（両サイト）
-
-| 能力 | 再利用 | 構築（Ratio） |
-|------|--------|---------------|
-| グラフ／SHACL | Oxigraph | 形状と検証タイミング |
-| ローカル生／プロダクトストア | DuckDB／LanceDB／ファイル／SQLite | 分離規則＋ポインタ方針 |
-| ODS 参加 O1–O6 | IPA ODS Middleware／SDK | ハンドオフ時のプロダクト・パッケージング |
-| デバイスアクセス | 既存 WoT／IIoT GW またはスタブ | TD 消費のみ（薄い） |
-| 推論ランタイム | ONNX Runtime／ベンダー | 任意；PoC は判断をスタブしてよい |
+| Priority | Pick | Why advantage shows |
+|----------|------|---------------------|
+| **1st** | **K1** | Shows A1+A2+A3 together; stub-friendly without full vision |
+| **2nd** | **K1+K4** | After K1, swap TD backends to prove thin multi-vendor SI |
+| **Alternate** | **K2** | When counterpart language is “camera / IP” more than vibration |
+| **Later** | **K3** | After the product envelope moves—high ontology cost |
+| **Not main axis** | **K5** | Addon validation after K1 products exist |
+| **Avoid as sole PoC** | **K6** | Easy to look like generic edge ML |
 
 ---
 
-## 確定事項
+### Setouchi candidates
 
-| 項目 | 決定 |
-|------|------|
-| ショートリスト | **K1 → S1+S2**（ロック済み） |
-| ベンダー／セル／船 | 未定（スタブ＋録画／合成生で進める） |
-| 共有封筒 | [`PRODUCT_ENVELOPE.md`](PRODUCT_ENVELOPE.md) および `schemas/`・`examples/` |
+| ID | Scenario (vendor-agnostic) | Raw that stays | Shareable product (summary) | A1 | A2 | A3 | Link load | Notes |
+|----|----------------------------|----------------|-----------------------------|----|----|----|-----------|-------|
+| **S1** | **Machinery / shaft vibration event** — detect onboard; shore Pull when linked | High-rate samples | Event class + confidence + vessel / sensor DID + coarse ops context + policyRef | S | S | S | S | Default maritime best. Bandwidth story is obvious. |
+| **S2** | **Store-and-forward alert queue** — offline buffer; flush on link | Same raw as S1 | Same product; **queue depth / freshness** in provenance | S | S | S | S | Make intermittent links the demo *feature*—not an excuse. |
+| **S3** | **Bridge / CCTV incident summary** — video does not leave by default | Video | Incident type + time window + camera id + policy; pointer local | S | S | M | S | Strong A1 and privacy; confirm a shore consumer exists. |
+| **S4** | **Environment / bilge / tank threshold events** | Dense sensor logs | Threshold event + meaning + vessel id | M | M | M | M | Easy hardware; weak “why not MQTT dashboard?” without a real ODS consumer. |
+| **S5** | **Cross-org partner (yard / insurance / charter) Pull** — S1 product to an explicit second org | Same as S1 | Product + stricter terms | S | S | S | M | Maximizes A3; depends more on partner willingness than tech. |
+| **S6** | **Dense NMEA shore mirror** | — | — | W | W | W | W | **Anti-candidate.** Looks like telemetry Push; thesis failure. |
+
+**Setouchi recommended shortlist**
+
+| Priority | Pick | Why advantage shows |
+|----------|------|---------------------|
+| **1st** | **S1 + S2** | Vibration event + store-and-forward covers A1–A3 + link load at once |
+| **Alternate** | **S3** | When stakeholders lead with camera / privacy |
+| **Amplifier** | **S5** | When a second org can Pull—turns the PoC into a data-space story |
+| **Weak alone** | **S4** | Only with a required ODS consumer agent |
+| **Reject** | **S6** | Contradicts raw non-egress |
 
 ---
 
-## 未決（次にロック）
+### Combinations where “one Ratio, two domains” shows best
 
-1. PoC 成功に外部消費者エージェントを含めるか（A3 には含めることを推奨）  
-2. 本番 ODS context／カタログ URI  
-3. 具体ベンダー／セル／船（封筒・パイプラインはブロックしない）
+| Pair | Narrative | Advantage in one line |
+|------|-----------|----------------------|
+| **K1 → S1/S2** | Factory anomaly product, then same envelope + queue onboard | “Same shareable-product path; what changes is physics and link policy, not the substrate.” |
+| **K2 → S3** | Vision-centric; raw video does not leave | “Camera IP stays; only incident / quality meaning rides ODS.” |
+| **K3 → S5** | Traceability + cross-org Pull | Strong policy / ODS narrative; high coordination cost |
+
+**Shortlist locked:** **K1**, then **S1+S2**. Lock the product JSON-LD envelope, core SHACL shapes, and ODS handoff—not robot brands or class societies (stubs OK).
+
+---
+
+### “Good candidate” questions in partner conversations
+
+For each proposed cell / vessel, ask:
+
+1. What raw is painful / expensive to ship?  
+2. Who outside needs meaning and will Pull via ODS (lab consumers OK)?  
+3. Can we proceed 90 days on stub TD + recorded raw even if access slips?  
+
+If (2) is “local SCADA screen only,” Ratio’s advantage will not show—pick another candidate.
+
+---
+
+## Shared vs site-specific
+
+| Shared (build once) | Site-specific (config / shapes) |
+|---------------------|---------------------------------|
+| Raw vs product split pipeline | Device TDs, ontology vocab, SHACL shapes |
+| JSON-LD product envelope | Policy refs and allowed physicalContext fields |
+| Oxigraph validation hooks | Existing inference / task IDs |
+| ODS SDK handoff | Identity (vessel vs factory-cell DID) |
+| Local store (DuckDB / files / …) | Retention and pointer policy |
+
+---
+
+## Order
+
+| Order | Site | Why first |
+|-------|------|-----------|
+| **1** | **Kitakyushu** | Continuous links ease ODS SDK bring-up; multi-vendor robot / SI narrative is clear |
+| **2** | **Setouchi** | Same pipeline under intermittent egress—proves the constrained-link side of the thesis |
+
+Do not fork the architecture into two. Prove Kitakyushu end-to-end; load maritime shapes and store-and-forward onto the same binary / config for Setouchi.
+
+---
+
+## reuse vs build (both sites)
+
+| Capability | Reuse | Build (Ratio) |
+|------------|-------|---------------|
+| Graph / SHACL | Oxigraph | Shapes and validation timing |
+| Local raw / product store | DuckDB / LanceDB / files / SQLite | Split rules + pointer policy |
+| ODS participation O1–O6 | IPA ODS Middleware / SDK | Product packaging at handoff |
+| Device access | Existing WoT / IIoT GW or stubs | Thin TD consume only |
+| Inference runtime | ONNX Runtime / vendor | Optional; PoC may stub judgments |
+
+---
+
+## Locked decisions
+
+| Item | Decision |
+|------|----------|
+| Shortlist | **K1 → S1+S2** (locked) |
+| Vendor / cell / vessel | TBD (proceed with stubs + recorded / synthetic raw) |
+| Shared envelope | [`PRODUCT_ENVELOPE.md`](PRODUCT_ENVELOPE.md) and `schemas/` · `examples/` |
+
+---
+
+## Open (lock next)
+
+1. Include an external consumer agent in PoC success? (recommended for A3)  
+2. Production ODS context / catalog URIs  
+3. Concrete vendor / cell / vessel (do not block envelope / pipeline)

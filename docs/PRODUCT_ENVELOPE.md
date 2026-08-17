@@ -1,88 +1,90 @@
-# 共有可能プロダクト封筒（PoC）
+# Shareable-product envelope (PoC)
 
-**確定ショートリスト:** K1（北九州）→ S1+S2（瀬戸内）。ベンダー未定。録画／合成生でよい。
+> Japanese: [PRODUCT_ENVELOPE.ja.md](PRODUCT_ENVELOPE.ja.md)
 
-K／S で **同一封筒**を使う。サイト差は `domain`・語彙・任意の `physicalContext`／`provenance` 項目だけ。
+**Locked shortlist:** K1 (Kitakyushu) → S1+S2 (Setouchi). Vendor TBD. Recorded / synthetic raw is fine.
 
-関連: [`POC.md`](POC.md) · [`ARCHITECTURE.md`](ARCHITECTURE.md) · [`DISCUSSION.md`](DISCUSSION.md)
+Use the **same envelope** for K and S. Site differences are only `domain`, vocabulary, and optional `physicalContext` / `provenance` fields.
 
-スキーマ実体:
+Related: [`POC.md`](POC.md) · [`ARCHITECTURE.md`](ARCHITECTURE.md) · [`DISCUSSION.md`](DISCUSSION.md)
 
-| ファイル | 内容 |
-|----------|------|
-| [`../schemas/shareable-product.context.jsonld`](../schemas/shareable-product.context.jsonld) | 共通 `@context` |
-| [`../schemas/shareable-product.shacl.ttl`](../schemas/shareable-product.shacl.ttl) | 最小 SHACL |
-| [`../examples/k1-cell-vibration.jsonld`](../examples/k1-cell-vibration.jsonld) | K1 例 |
-| [`../examples/s1-engine-vibration.jsonld`](../examples/s1-engine-vibration.jsonld) | S1 例（S2 は同一本文＋キュー来歴） |
+Schema artifacts:
 
----
-
-## 設計方針
-
-1. **結果＋意味＋利用条件**を必須。生バイトは載せない。  
-2. `rawDataPointer` は `local://` のみ（公開 URL 禁止を SHACL で拘束）。  
-3. ODS 公式 context URL はプレースホルダ可。実接続時に差し替え。  
-4. 推論本体はスタブ可（`confidence`／`result` を手で埋めてよい）。
+| File | Content |
+|------|---------|
+| [`../schemas/shareable-product.context.jsonld`](../schemas/shareable-product.context.jsonld) | Shared `@context` |
+| [`../schemas/shareable-product.shacl.ttl`](../schemas/shareable-product.shacl.ttl) | Minimal SHACL |
+| [`../examples/k1-cell-vibration.jsonld`](../examples/k1-cell-vibration.jsonld) | K1 example |
+| [`../examples/s1-engine-vibration.jsonld`](../examples/s1-engine-vibration.jsonld) | S1 example (S2 = same body + queue provenance) |
 
 ---
 
-## 必須フィールド
+## Design rules
 
-| フィールド | 型／形式 | 説明 |
-|------------|----------|------|
-| `@context` | array | 共通 context＋必要ならドメイン追記 |
-| `@type` | array | 必ず `ShareableProduct` を含む |
-| `id` | IRI／URN | プロダクトインスタンス ID |
-| `sourceDevice` | DID または URN | 観測源デバイス／ノード |
-| `timestamp` | xsd:dateTime | 事象時刻（UTC 推奨） |
-| `domain` | 列挙 | `kitakyushu_factory` \| `setouchi_maritime` |
-| `scenario` | 列挙 | `K1` \| `S1` \| `S2`（拡張時は POC と同期） |
-| `inference.task` | string | タスク ID（例: `anomaly_detection`） |
-| `inference.result` | string | 機械可読な結果コード |
-| `inference.confidence` | 0..1 | 信頼度 |
-| `dataGovernance.policyRef` | IRI／URN | 利用条件参照（生は内部のみ等） |
-
-## 推奨フィールド
-
-| フィールド | 説明 |
-|------------|------|
-| `inference.physicalContext` | 要約のみ（RPM、温度等）。フルトレース禁止 |
-| `dataGovernance.rawDataPointer` | ドメイン内ポインタ（`local://…`） |
-| `dataGovernance.shaclConforms` | 検証結果ブール（出す場合） |
-| `provenance.producedBy` | Ratio ノード／パイプライン ID |
-| `provenance.queueDepth` / `firstBufferedAt` | **S2** 用ストア＆フォワード来歴 |
+1. **Result + meaning + terms of use** are required. Do not embed raw bytes.  
+2. `rawDataPointer` is `local://` only (SHACL forbids public URLs).  
+3. Official ODS context URLs may be placeholders; replace at real connect time.  
+4. Inference may be stubbed (hand-fill `confidence` / `result`).
 
 ---
 
-## 結果コード（PoC 初期語彙）
+## Required fields
 
-サイト横断で短く固定。後でオントロジー IRI に昇格してよい。
+| Field | Type / form | Description |
+|-------|-------------|-------------|
+| `@context` | array | Shared context + optional domain additions |
+| `@type` | array | Must include `ShareableProduct` |
+| `id` | IRI / URN | Product instance ID |
+| `sourceDevice` | DID or URN | Observing device / node |
+| `timestamp` | xsd:dateTime | Event time (UTC recommended) |
+| `domain` | enum | `kitakyushu_factory` \| `setouchi_maritime` |
+| `scenario` | enum | `K1` \| `S1` \| `S2` (keep in sync with POC when extended) |
+| `inference.task` | string | Task ID (e.g. `anomaly_detection`) |
+| `inference.result` | string | Machine-readable result code |
+| `inference.confidence` | 0..1 | Confidence |
+| `dataGovernance.policyRef` | IRI / URN | Terms ref (e.g. raw internal-only) |
 
-| コード | 用途 |
-|--------|------|
-| `vibration_abnormal` | K1／S1 の振動異常 |
-| `vibration_normal` | 正常 |
-| `quality_fail` | K1 拡張（任意カメラ） |
-| `link_flush` | S2 キューフラッシュ事象の標記（必要なら） |
+## Recommended fields
+
+| Field | Description |
+|-------|-------------|
+| `inference.physicalContext` | Summary only (RPM, temperature, etc.). No full traces |
+| `dataGovernance.rawDataPointer` | In-domain pointer (`local://…`) |
+| `dataGovernance.shaclConforms` | Validation boolean when emitted |
+| `provenance.producedBy` | Ratio node / pipeline ID |
+| `provenance.queueDepth` / `firstBufferedAt` | Store-and-forward provenance for **S2** |
 
 ---
 
-## 検証フロー（PoC）
+## Result codes (initial PoC vocabulary)
 
-実装: [`../poc`](../poc)（`uv sync` → `uv run ratio-poc`。手順は [`../poc/README.md`](../poc/README.md)）
+Keep short and cross-site. May later promote to ontology IRIs.
+
+| Code | Use |
+|------|-----|
+| `vibration_abnormal` | Vibration anomaly for K1 / S1 |
+| `vibration_normal` | Normal |
+| `quality_fail` | K1 extension (optional camera) |
+| `link_flush` | Marker for S2 queue-flush events (if needed) |
+
+---
+
+## Validation flow (PoC)
+
+Implementation: [`../poc`](../poc) (`uv sync` → `uv run ratio-poc`. Steps: [`../poc/README.md`](../poc/README.md))
 
 ```
-薄い TD（`examples/td/*.td.json`）→ raw → data/raw/
-JSON-LD インスタンス → data/out/
-    → rdflib + pyshacl（schemas/shareable-product.shacl.ttl）
-    → conforms なら ODS ハンドオフ・スタブ（SDK 未接続）
-    → 生ファイルは publish パスに載せない
+thin TD (`examples/td/*.td.json`) → raw → data/raw/
+JSON-LD instance → data/out/
+    → rdflib + pyshacl (schemas/shareable-product.shacl.ttl)
+    → if conforms → ODS handoff stub (SDK not yet connected)
+    → do not put raw files on the publish path
 ```
 
 ---
 
-## 未決（封筒以外）
+## Open (outside the envelope)
 
-- PoC 成功に外部消費者エージェントを含めるか（推奨: 含める）  
-- 本番 ODS context／カタログ URI の確定  
-- 具体セル／船／ベンダー（スタブで遮断しない）
+- Include an external consumer agent in PoC success? (recommended: yes)  
+- Lock production ODS context / catalog URIs  
+- Concrete cell / vessel / vendor (do not block on stubs)

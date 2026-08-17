@@ -5,3 +5,4 @@ __pycache__/
 .venv/
 poc/.venv/
 .DS_Store
+poc/scripts/ods/.local/

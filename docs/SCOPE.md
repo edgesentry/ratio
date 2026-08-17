@@ -1,99 +1,101 @@
-# Ratio スコープ
+# Ratio scope
 
-三段で固定する: **① 公式 ODS** → **② Ratio** → **③ スコープ外（誰が作るか）**。
+> Japanese: [SCOPE.ja.md](SCOPE.ja.md)
 
-関連: [`DISCUSSION.md`](DISCUSSION.md) · [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md) · [`ODS_HANDOFF.md`](ODS_HANDOFF.md)
+Lock three tiers: **① official ODS** → **② Ratio** → **③ out of scope (who builds it)**.
+
+Related: [`DISCUSSION.md`](DISCUSSION.md) · [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md) · [`ODS_HANDOFF.md`](ODS_HANDOFF.md)
 
 ---
 
-## 一文
+## In one sentence
 
-> **公式 ODS** がデータスペース参加（認証・転送・発見・契約基盤）を担う。  
-> **Ratio** は現場で共有可能プロダクトを導出・検証し、生を分離して公式へ渡す。  
-> **それ以外**（厚い語彙合意、深い SI、消費者業務、安全責任）はドメイン／SI／利用者／規制が担う。
+> **Official ODS** owns data-space participation (auth, transfer, discovery, contracting substrate).  
+> **Ratio** derives and validates shareable products on site, separates raw, and hands off to the official stack.  
+> **Everything else** (thick vocabulary agreement, deep SI, consumer apps, safety liability) belongs to domain / SI / users / regulators.
 
 ```
-[ OT 現場 ] --(薄い TD 消費)--> [ Ratio: 導出・SHACL・分離・ハンドオフ ]
-                                      │ 共有可能プロダクトのみ
+[ OT site ] --(thin TD consume)--> [ Ratio: derive · SHACL · split · handoff ]
+                                      │ shareable product only
                                       ▼
-                               [ 公式 ODS: L3 / L2 / L4 / … ]
+                               [ Official ODS: L3 / L2 / L4 / … ]
                                       │ Pull
                                       ▼
-                               [ 消費者アプリ / Agentic AI ]  ← Ratio 外
+                               [ Consumer app / Agentic AI ]  ← outside Ratio
 ```
 
 ---
 
-## ① 公式 ODS（再利用・接続する。Ratio は再実装しない）
+## ① Official ODS (reuse and connect; Ratio does not reimplement)
 
-| 領域 | 内容 | 公式の置き場 |
-|------|------|----------------|
-| アイデンティティ | ノード／事業者認証、トークン | L3、`SDK-client-library-python`、`SDK-docker-compose` |
-| 転送・取引 | 許可時の Pull／API 転送 | L2 Web API Transfer |
-| 発見・メタデータ | カタログ、Discovery、メタデータ交換 | L4 Discovery／Metadata 系 |
-| 利用制御・契約の基盤 | 誰が何目的かの枠組み | ODS-RAM パースペクティブ、ODP 補完、L3-PAP 等 |
-| 信頼・品質手順 | アセスメント・プロトコル | ODP L1 系 |
-| 運用・監視・オンボーディング | logging、ガイド、Compose／Helm | Middleware 共通機能、公式ガイド |
+| Area | Content | Official home |
+|------|---------|---------------|
+| Identity | Node / operator auth, tokens | L3, `SDK-client-library-python`, `SDK-docker-compose` |
+| Transfer / transaction | Pull / API transfer when permitted | L2 Web API Transfer |
+| Discovery / metadata | Catalog, Discovery, metadata exchange | L4 Discovery / Metadata |
+| Usage control / contracting substrate | Who, for what purpose | ODS-RAM perspectives, ODP complements, L3-PAP, etc. |
+| Trust / quality procedures | Assessment protocols | ODP L1 family |
+| Ops / monitoring / onboarding | Logging, guides, Compose / Helm | Middleware common functions, official guides |
 
-準拠マッピング: [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md)（O1–O10）。  
-接続: [`ODS_HANDOFF.md`](ODS_HANDOFF.md)。
+Compliance mapping: [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md) (O1–O10).  
+Connection: [`ODS_HANDOFF.md`](ODS_HANDOFF.md).
 
-`ratio-poc-serve` は **公式の代替ではない**（L2 上流 industry API の仮置き）。
-
----
-
-## ② Ratio のスコープ（公式に無い「発生点の糊」）
-
-パイプライン: **取込（薄い）→ 導出／検証 → 生とプロダクトの分離 → 公式へのハンドオフ**。
-
-| 含む | 含まない（誤解しやすいもの） |
-|------|------------------------------|
-| 共有可能プロダクトの封筒（結果＋オントロジー文脈＋利用条件） | 生ペイロードを ODS の主オファリングにすること |
-| 最小 `@context`／共通 SHACL（製品が検証可能であること） | 業種コンソーシアム級のオントロジ標準化そのもの |
-| PoC／現場用の **薄い** shapes・結果コード（設定として同梱） | 「Ratio が語彙の唯一の権威」になること |
-| **薄い** WoT TD 消費・スタブ TD・録画／合成生でのパイプライン | 万能 OT マルチプロトコル・ゲートウェイ製品 |
-| 生のローカル保管指針と `local://` ポインタ方針 | ハードリアルタイム制御平面 |
-| Oxigraph 等 OSS による検証オーケストレーション | ODP／L2／L3／L4 の再実装 |
-| 公式スタック（または仮 industry URL）へのハンドオフ | 消費者向け業務 UI／本番 Agentic 製品 |
-
-### 語彙・TD・消費者（2 / 3 / 4）
-
-| # | 領域 | Ratio | 説明 |
-|---|------|-------|------|
-| **2** | 語彙／SHACL | **最小のみ** | 封筒＋共通 SHACL＋PoC shapes は Ratio。業界合意・巨大語彙ガバナンスは外 |
-| **3** | WoT TD／取込 | **薄い層のみ** | TD 消費・スタブ・1系統アダプタは Ratio。深いベンダー SI は外 |
-| **4** | 参照 Pull 消費者 | **コアに含めない** | デモするなら別パッケージ可。Ratio 本体の責務外 |
+`ratio-poc-serve` is **not** a substitute for the official stack (stand-in industry API upstream of L2).
 
 ---
 
-## ③ スコープ外 — 誰が作るべきか
+## ② Ratio scope (the “point-of-origin glue” the official stack does not provide)
 
-| 領域 | 誰が作るか | 補足 |
-|------|------------|------|
-| L2／L3／L4／契約・信頼・運用の **本番接続と運用** | ドメインオーナー＋（必要なら）DSSP／インテグレータが **公式 ODS** を配備 | Ratio はクライアント／上流製品を渡す側 |
-| **業種オントロジ・語彙合意** | 業種コンソーシアム、標準化団体、ドメインオーナー間 | 公式の SAMM／SDK for semantics 等を使って定義してよい。Ratio は成果を **消費**する |
-| **深いデバイス SI**（全フィールドバス、安全 PLC 連携等） | SI、制御ベンダー、既存 IIoT／WoT ゲートウェイ | Ratio は TD ストリームを受け取る |
-| **消費者業務アプリ／本番 Agentic AI** | パートナー、利用者企業、上位 AI 基盤 | Pull して業務する側。参照デモは別リポ／別バイナリ推奨 |
-| **法的認証・安全責任・ハード RT** | 規制・認証機関、制御ベンダー、ドメインオーナー | データスペース仕様の外（または別制度） |
-| **参照 Pull クライアント（任意）** | Ratio チームまたはコミュニティが **別成果物**として | Ratio コアに吸収しない |
+Pipeline: **thin ingest → derive / validate → split raw vs product → handoff to official**.
+
+| In scope | Out of scope (easy to misread) |
+|----------|--------------------------------|
+| Shareable-product envelope (result + ontology context + terms) | Making raw payloads the primary ODS offering |
+| Minimal `@context` / shared SHACL (products must be validatable) | Industry-consortium ontology standardization itself |
+| **Thin** PoC / site shapes and result codes (shipped as config) | Becoming “the sole authority on vocabulary” |
+| **Thin** WoT TD consume, stub TDs, pipeline on recorded / synthetic raw | Universal OT multi-protocol gateway product |
+| Local raw custody guidance and `local://` pointer policy | Hard real-time control plane |
+| Validation orchestration via Oxigraph and other OSS | Reimplementing ODP / L2 / L3 / L4 |
+| Handoff to official stack (or temporary industry URL) | Consumer business UI / production Agentic products |
+
+### Vocabulary · TD · consumers (2 / 3 / 4)
+
+| # | Area | Ratio | Notes |
+|---|------|-------|-------|
+| **2** | Vocabulary / SHACL | **Minimal only** | Envelope + shared SHACL + PoC shapes are Ratio. Industry agreement and large vocab governance are out |
+| **3** | WoT TD / ingest | **Thin layer only** | TD consume, stubs, one-line adapters are Ratio. Deep vendor SI is out |
+| **4** | Reference Pull consumer | **Not in the core** | Separate package OK for demos. Not a Ratio core duty |
 
 ---
 
-## 責任分担（早見）
+## ③ Out of scope — who should build it
 
-| レイヤ | 担当 |
-|--------|------|
-| デバイス／制御 | ベンダー・SI・ドメインオーナー |
-| 薄い TD → 製品導出・分離・検証・ハンドオフ | **Ratio** |
-| 認証・転送・発見・契約基盤・運用 | **公式 ODS** |
-| Pull 後の業務・エージェント | **利用者アプリ** |
-| 語彙の社会的合意 | **ドメイン／コンソーシアム** |
+| Area | Who builds | Notes |
+|------|------------|-------|
+| **Production connect & ops** for L2 / L3 / L4 / contract / trust / ops | Domain owner + (if needed) DSSP / integrator deploying **official ODS** | Ratio is the client / upstream product side |
+| **Industry ontology / vocabulary agreement** | Consortia, SDOs, domain owners | May use official SAMM / SDK for semantics. Ratio **consumes** the result |
+| **Deep device SI** (all fieldbuses, safety PLC integration, etc.) | SI, control vendors, existing IIoT / WoT gateways | Ratio receives TD streams |
+| **Consumer business apps / production Agentic AI** | Partners, user enterprises, upstream AI platforms | The Pull-and-operate side. Reference demos prefer separate repo / binary |
+| **Legal certification / safety liability / hard RT** | Regulators, control vendors, domain owners | Outside data-space specs (or separate regimes) |
+| **Reference Pull client (optional)** | Ratio team or community as a **separate artifact** | Do not fold into Ratio core |
 
 ---
 
-## 非目標（再掲）
+## Responsibility split (quick view)
 
-- 「ODS をエッジに拡張する」製品としての全面ミドルウェア化  
-- ODP／Middleware のフォーク  
-- スコアのみを ODS 参加と呼ぶこと  
-- 安全 PLC／ハード RT の置換  
+| Layer | Owner |
+|-------|-------|
+| Devices / control | Vendors · SI · domain owner |
+| Thin TD → product derive · split · validate · handoff | **Ratio** |
+| Auth · transfer · discovery · contracting substrate · ops | **Official ODS** |
+| Post-Pull business / agents | **User apps** |
+| Social agreement on vocabulary | **Domain / consortium** |
+
+---
+
+## Non-goals (restated)
+
+- Full middlewareization as “extend ODS to the edge”  
+- Forking ODP / Middleware  
+- Calling score-only blobs “ODS participation”  
+- Replacing safety PLCs / hard RT  
