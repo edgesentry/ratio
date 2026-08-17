@@ -5,12 +5,12 @@
 Minimal path to demonstrate the thesis:
 
 ```
-thin WoT TD (examples/td/*.td.json) → custody raw in data/raw → shareable-product JSON-LD
+thin WoT TD (examples/td/*.td.json) → custody raw data in `data/raw` → shareable-product JSON-LD
     → SHACL → ODS / industry handoff (stub | http | l2)
 S2: also store in data/queue → flush when the link returns
 ```
 
-Raw is **not published**. Only products are candidates to leave. TD `forms.href` values are `local://` (no raw egress).
+Raw data is **not published**. Only products are candidates to leave. TD `forms.href` values are `local://` (no raw-data egress).
 
 | Scenario | TD |
 |----------|-----|
@@ -34,7 +34,7 @@ uv sync
 ```bash
 cd poc
 
-# Kitakyushu K1 (default TD + stub handoff)
+# Factory K1 (default TD + stub handoff)
 uv run ratio-poc --scenario K1
 
 # Swap TD (thin SI)
@@ -48,10 +48,10 @@ uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
 uv run ratio-poc --scenario K1 --ods l2
 ```
 
-### S2 store-and-forward (Setouchi)
+### S2 store-and-forward (maritime)
 
 ```bash
-# Onboard: enqueue even without a link (raw stays in raw)
+# Onboard: enqueue even without a link (raw data stays in data/raw)
 uv run ratio-poc --scenario S2 --offline
 # Or stub (S2 auto-queues and exits)
 uv run ratio-poc --scenario S2
@@ -66,9 +66,9 @@ uv run ratio-poc --scenario S2 --ods http --ods-url http://127.0.0.1:8787
 
 Artifacts:
 
-- `data/raw/` — raw (local only)
+- `data/raw/` — raw data (local only)
 - `data/out/` — products and receipts
-- `data/queue/` — S2 unsent shareable products (no raw)
+- `data/queue/` — S2 unsent shareable products (no raw data)
 
 ## Intentionally excluded
 

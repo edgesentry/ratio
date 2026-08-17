@@ -2,9 +2,9 @@
 
 > English: [ARCHITECTURE.md](ARCHITECTURE.md)
 
-テーゼ **生クォンタを出さずに ODS に参加する** の実装スケッチ。
+テーゼ **生データを出さずに ODS に参加する** の実装スケッチ。
 
-**構築方針:** OSS と公式 ODS SDK を構成する。Ratio は現場での導出・検証・生／プロダクト分離・ハンドオフ境界を所有する。  
+**構築方針:** OSS と公式 ODS SDK を構成する。Ratio は現場での導出・検証・生データ／プロダクト分離・ハンドオフ境界を所有する。  
 参照: [`DISCUSSION.ja.md`](DISCUSSION.ja.md) · [`ODS_COMPLIANCE.ja.md`](ODS_COMPLIANCE.ja.md)
 
 ---
@@ -12,35 +12,35 @@
 ## 1. 既定パス（全体像）
 
 ```
-[ L1 Devices ]
-   PLC, cameras, sensors, robots …
+[ L1 デバイス ]
+   PLC、カメラ、センサ、ロボット …
         │  W3C WoT / Thing Description
         ▼
-[ L2 Derive & validate ]  ← Ratio
-   Inference + RDF/JSON-LD context + SHACL
-        │  split
+[ L2 導出・検証 ]  ← Ratio
+   推論 + RDF/JSON-LD 文脈 + SHACL
+        │  分離
         ├──────────────────────────────┐
         ▼                              ▼
-[ raw quanta — local custody ]   [ shareable product ]
-  files / DuckDB / LanceDB         result + meaning + policyRef
-                                   (+ in-domain raw pointer)
+[ 生データ — ローカル保管 ]     [ 共有可能プロダクト ]
+  ファイル / DuckDB / LanceDB     結果 + 意味 + policyRef
+                                   （＋ドメイン内の生データポインタ）
         │                              │
         │                              ▼
-        │                    [ L3 Handoff / governance ]
-        │                      DID·VC · ODRL refs · product package
+        │                    [ L3 ハンドオフ / 統治 ]
+        │                      DID·VC · ODRL 参照 · プロダクトパッケージ
         │                              │
         │                              ▼
-        │                    [ L4 ODS participation ]
-        │                      official Middleware / SDK (ODP)
-        │                      discover + Pull of shareable product only
-        └──── raw does not take this path by default ────┘
+        │                    [ L4 ODS 参加 ]
+        │                      公式 Middleware / SDK（ODP）
+        │                      共有可能プロダクトのみ発見 + Pull
+        └──── 生データは既定でこの経路を通らない ────┘
 ```
 
 | 層 | テーゼ上の仕事 |
 |----|----------------|
 | **L1** | WoT TD で観測；独自デバイススキーマを発明しない |
 | **L2** | 意味付き結果を導出；SHACL で検証 |
-| **分離** | 生は残す；外に出うるのは共有可能プロダクト |
+| **分離** | 生データは残す；外に出せるのは共有可能プロダクト |
 | **L3** | アイデンティティ・ポリシー参照・来歴をハンドオフ用にパッケージ |
 | **L4** | **公式** ODS スタックで参加（O1–O6）— ODP フォークなし |
 
@@ -57,12 +57,12 @@
 ## 2. 論理データフロー
 
 ```
-WoT ingest → inference (ONNX/TensorRT, etc.)
-         → [split]
-              ├─ raw → DuckDB / LanceDB / local files (custody)
-              └─ shareable product → JSON-LD(+SHACL) → SQLite(policy/state)
-                                   → ODS Middleware/SDK (discover + Pull)
-         → Arrow Memory Broker ←→ Python / Edge SLM (RAG: LanceDB)
+WoT 取込 → 推論（ONNX/TensorRT 等）
+         → [分離]
+              ├─ 生データ → DuckDB / LanceDB / ローカルファイル（保管）
+              └─ 共有可能プロダクト → JSON-LD(+SHACL) → SQLite（ポリシー/状態）
+                                   → ODS Middleware/SDK（発見 + Pull）
+         → Arrow Memory Broker ←→ Python / Edge SLM（RAG: LanceDB）
 ```
 
 ---
@@ -73,7 +73,7 @@ WoT ingest → inference (ONNX/TensorRT, etc.)
 |------|------|------|
 | 薄い構成ランタイム | Rust | **Ratio**（シェルのみ） |
 | グラフ推論・検証 | Oxigraph | **OSS** |
-| ローカル生／成果物ストア | DuckDB、LanceDB、ファイル | **OSS** |
+| ローカル生データ／成果物ストア | DuckDB、LanceDB、ファイル | **OSS** |
 | 状態・資格・ポリシー記録 | SQLite | **OSS** |
 | 言語横断 I/F | Apache Arrow + PyO3 | Arrow は **OSS**；Memory Broker は **Ratio** |
 | 推論ランタイム | ONNX Runtime／TensorRT 等 | **OSS**／ベンダー |
@@ -85,14 +85,14 @@ WoT ingest → inference (ONNX/TensorRT, etc.)
 
 ## 4. 共有可能プロダクトが運ぶもの
 
-**共有可能プロダクト**: Pull 可能なパッケージ。生バイトではない。定義の全文: [`DISCUSSION.ja.md`](DISCUSSION.ja.md)（「共有可能プロダクトとは」）
+**共有可能プロダクト**: Pull 可能なパッケージ。生データではない。定義の全文: [`DISCUSSION.ja.md`](DISCUSSION.ja.md)（「共有可能プロダクトとは」）
 
 テーゼ整合（結果＋意味＋利用条件）:
 
-1. **結果** — 判断または観測（生バイトではない）
+1. **結果** — 判断または観測（生データではない）
 2. **意味** — オントロジー／JSON-LD 文脈（どのデバイス、どんな特性、何を根拠に）
-3. **利用条件** — ポリシー参照（例: ODRL）；生は既定で非egress
-4. **任意のドメイン内ポインタ** — ローカル運用用の `rawDataPointer`。公開生 URL ではない
+3. **利用条件** — ポリシー参照（例: ODRL）；生データは既定で非egress
+4. **任意のドメイン内ポインタ** — ローカル運用用の `rawDataPointer`。公開の生データ URL ではない
 
 ### ペイロード例
 
@@ -107,7 +107,7 @@ PoC 確定封筒・SHACL・K1／S1／S2 例: [`PRODUCT_ENVELOPE.ja.md`](PRODUCT_
   ],
   "@type": ["Thing", "EdgeAIInferenceResult"],
   "id": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
-  "sourceDevice": "did:example:kitakyushu-factory-robot-01",
+  "sourceDevice": "did:example:factory-robot-01",
   "timestamp": "2026-08-16T14:00:00Z",
   "inference": {
     "task": "anomaly_detection",
@@ -130,12 +130,12 @@ PoC 確定封筒・SHACL・K1／S1／S2 例: [`PRODUCT_ENVELOPE.ja.md`](PRODUCT_
 ## 5. コア I/F（議論用スケッチ）
 
 ```
-┌─────────────┐     PyO3      ┌──────────────────┐
-│ Python / SLM│ ◄──────────► │ Ratio Rust Core  │
-└─────────────┘   Arrow IPC   │  Oxigraph        │
-       ▲                      │  SHACL / SPARQL  │
-       │                      │  product package │
-       └──── LanceDB / DuckDB / SQLite ──────────┘
+┌─────────────┐     PyO3      ┌───────────────────┐
+│ Python / SLM│ ◄──────────►  │ Ratio Rust コア    │
+└─────────────┘   Arrow IPC   │  Oxigraph         │
+       ▲                      │  SHACL / SPARQL   │
+       │                      │  プロダクトパッケージ │
+       └──── LanceDB / DuckDB / SQLite ───────────┘
                               │
                               ▼
                      ODS Middleware / SDK
@@ -153,18 +153,18 @@ PoC 確定封筒・SHACL・K1／S1／S2 例: [`PRODUCT_ENVELOPE.ja.md`](PRODUCT_
 
 テーゼに従う: **保管 → 導出 → 参加**。
 
-1. **取込** — 1デバイス系統の WoT TD；生はローカルストアへ  
-2. **分離とプロダクト化** — JSON-LD 共有可能プロダクト＋SHACL；生は公開経路に載せない  
+1. **取込** — 1デバイス系統の WoT TD；生データはローカルストアへ  
+2. **分離とプロダクト化** — JSON-LD 共有可能プロダクト＋SHACL；生データは公開経路に載せない  
 3. **参加** — ODS SDK: **プロダクトのみ** 登録／発見／提供  
 
-PoC サイトは [`DISCUSSION.ja.md`](DISCUSSION.ja.md) の需要条件を満たすこと。  
-想定サイトと境界: [`POC.ja.md`](POC.ja.md)（北九州が先、次いで瀬戸内）。
+PoC 分野は [`DISCUSSION.ja.md`](DISCUSSION.ja.md) の需要条件を満たすこと。  
+想定分野と境界: [`POC.ja.md`](POC.ja.md)（工場が先、次いで海事）。
 
 ---
 
 ## 7. 非目標
 
-- 生を ODS の主オファリングとして出荷すること
+- 生データを ODS の主オファリングとして出荷すること
 - ODP／ODS Middleware の再実装
 - 初日からの ODS-RAM 完全カバー（MVP は [`ODS_COMPLIANCE.ja.md`](ODS_COMPLIANCE.ja.md) の O1–O6 経路）
 - 独自デバイスプロトコルの乱立（WoT TD に寄せる）

@@ -7,9 +7,9 @@
   ],
   "@type": ["ShareableProduct"],
   "id": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
-  "sourceDevice": "did:example:kitakyushu-factory-robot-01",
+  "sourceDevice": "did:example:factory-robot-01",
   "timestamp": "2026-08-16T14:00:00Z",
-  "domain": "kitakyushu_factory",
+  "domain": "factory",
   "scenario": "K1",
   "inference": {
     "task": "anomaly_detection",
@@ -26,6 +26,6 @@
     "shaclConforms": true
   },
   "provenance": {
-    "producedBy": "urn:ratio:node:kitakyushu-poc-01"
+    "producedBy": "urn:ratio:node:factory-poc-01"
   }
 }

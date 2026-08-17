@@ -1,9 +1,9 @@
 {
   "@context": "https://www.w3.org/2022/wot/td/v1.1",
-  "id": "urn:td:setouchi-engine-vib-01",
+  "id": "urn:td:vessel-engine-vib-01",
   "title": "Stub vessel engine vibration sensor",
   "@type": "Thing",
-  "description": "Setouchi PoC (S1 online / S2 store-and-forward). Same thin TD; link policy differs by scenario.",
+  "description": "Maritime PoC (S1 online / S2 store-and-forward). Same thin TD; link policy differs by scenario.",
   "securityDefinitions": {
     "nosec_sc": { "scheme": "nosec" }
   },

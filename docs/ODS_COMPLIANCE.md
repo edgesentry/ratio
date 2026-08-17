@@ -2,7 +2,7 @@
 
 > Japanese: [ODS_COMPLIANCE.ja.md](ODS_COMPLIANCE.ja.md)
 
-Extracts the parts of the thesis **participate in ODS without shipping raw quanta** that depend on IPA Open Data Spaces (ODS), as distinct from on-site derivation or W3C-only concerns.  
+Extracts the parts of the thesis **participate in ODS without shipping raw data** that depend on IPA Open Data Spaces (ODS), as distinct from on-site derivation or W3C-only concerns.  
 The thesis wording is a **Ratio operational definition**, not a quotation from ODS-RAM. ODS-dependent elements follow.
 
 Related: [`DISCUSSION.md`](DISCUSSION.md) · [`SCOPE.md`](SCOPE.md) · [`ARCHITECTURE.md`](ARCHITECTURE.md) · [`ODS_HANDOFF.md`](ODS_HANDOFF.md)
@@ -12,7 +12,7 @@ Related: [`DISCUSSION.md`](DISCUSSION.md) · [`SCOPE.md`](SCOPE.md) · [`ARCHITE
 ## 1. Sentences under analysis
 
 > A physical domain **participates in ODS** when, as an on-site domain owner, it becomes an **authenticated node** and provides **discoverable, Pull-able products** (result + meaning + terms of use) via the **official ODS stack**.  
-> **Not shipping raw quanta** means that, on the **default participation path**, **raw payload bytes** such as sensor video or waveforms are **not copied or distributed outside the domain**. What leaves is only the **shareable product** derived on site.
+> **Not shipping raw data** means that, on the **default participation path**, **raw data (payload bytes)** such as sensor video or waveforms are **not copied or distributed outside the domain**. What leaves is only the **shareable product** derived on site.
 
 | Fragment | ODS-dependent? | Notes |
 |----------|----------------|-------|
@@ -22,7 +22,7 @@ Related: [`DISCUSSION.md`](DISCUSSION.md) · [`SCOPE.md`](SCOPE.md) · [`ARCHITE
 | **Pull-able** provision | **Yes** (ODS / data-mesh posture vs central Push) | Provision via ODS participation—not “upload everything” |
 | Product = result + **meaning** + **terms** | **Yes** (DPQM: Data Product ↔ Ontology Product; usage control) | Meaning ≈ Ontology Product concern; terms ≈ policy / contract |
 | Via **official ODS stack** | **Yes** | ODS-RAM + ODP + Middleware / SDK—do not reimplement |
-| Raw payloads stay in-domain by default | **Partial** | Aligns with ODS “distributed / domain custody”; **default raw non-egress** is Ratio’s edge policy |
+| Raw data stay in-domain by default | **Partial** | Aligns with ODS “distributed / domain custody”; **default raw-data non-egress** is Ratio’s edge policy |
 | Only derived shareable products egress | **Partial** | Shape must be ODS-ready; **what** is derived on site is Ratio |
 
 ---
@@ -50,14 +50,14 @@ Non-goals for “ODS compliance” in Ratio:
 | Real-data supply ports | OT domains that cannot feed a lake can join as Pull providers |
 | Context quality | Ontology-backed, validatable products (less GIGO than scores alone) |
 | DPQM realized on site | Data/context pairs separate at the point of origin |
-| Governance | Terms-bound exchange (not predicated on unauthorized raw mirrors) |
+| Governance | Terms-bound exchange (not predicated on unauthorized raw data mirrors) |
 | Reach of standards | Official stack extends to physical domains |
 
 ### What Ratio alone cannot cover
 
 **Already supported by official ODS (connect and reuse):** L3 identity, L2 transfer, L4 Discovery / metadata, usage-control / contracting substrate, L1 trust / quality procedures, ops / monitoring / onboarding.
 
-**Outside the official stack (others / Ratio’s role):** on-site product derivation and raw split (→ **Ratio**), consumer apps / Agentic AI, domain vocabulary agreement, device SI, legal / safety liability.
+**Outside the official stack (others / Ratio’s role):** on-site product derivation and raw-data split (→ **Ratio**), consumer apps / Agentic AI, domain vocabulary agreement, device SI, legal / safety liability.
 
 Full narrative: [`DISCUSSION.md`](DISCUSSION.md#4-benefits-on-the-ods-side) · Canonical scope: [`SCOPE.md`](SCOPE.md) · Connection: [`ODS_HANDOFF.md`](ODS_HANDOFF.md)
 
@@ -65,14 +65,14 @@ Full narrative: [`DISCUSSION.md`](DISCUSSION.md#4-benefits-on-the-ods-side) · C
 
 ## 3. ODS compliance requirements (participation path)
 
-Split into **required (MVP participation)** / **recommended (provider maturity)** / **Ratio-owned prerequisites** (needed so ODS participation does not force raw egress).
+Split into **required (MVP participation)** / **recommended (provider maturity)** / **Ratio-owned prerequisites** (needed so ODS participation does not force raw-data egress).
 
 ### 3.1 Required — MVP “I am an ODS participant (provider)”
 
 | ID | Requirement | ODS anchor | How to comply |
 |----|-------------|------------|---------------|
 | O1 | A **domain-owned participant / node** with interoperable **identity & trust** | ODP Identity and Trust (L3); ODS-RAM trust | Official Middleware / SDK bindings; store credentials locally (e.g. SQLite)—do not invent a parallel IdP protocol |
-| O2 | **Register / exchange metadata** so offerings can be described | ODP Metadata Exchange (L4) | Primary offering metadata is for shareable products—not raw files as the main offer |
+| O2 | **Register / exchange metadata** so offerings can be described | ODP Metadata Exchange (L4) | Primary offering metadata is for shareable products—not raw-data files as the main offer |
 | O3 | **Discovery / search** so consumers can find offerings | ODP Discovery and Search (L4) | Catalogs point at governed products |
 | O4 | ODS-aligned **transactional access** (serve when permitted) | ODP Transaction (L2) | Pull / serve shareable products via Middleware / SDK |
 | O5 | **DPQM**-aligned products (data concern + ontology / context concern as a pair) | ODS-RAM Architecture / DPQM | Site emits result **and** meaning (JSON-LD / RDF + shapes)—not score-only blobs |
@@ -91,8 +91,8 @@ Split into **required (MVP participation)** / **recommended (provider maturity)*
 
 | ID | Requirement | Rationale |
 |----|-------------|-----------|
-| R1 | **Default non-egress** of raw payload bytes | Domain custody; bandwidth / secrecy; ODS Pulls *products*, not lake mirrors |
-| R2 | On-site **shareable-product derivation** (result + context + policy ref + optional in-domain pointer) | An ODS-valid object must exist before register / serve without shipping raw |
+| R1 | **Default non-egress** of raw data (payload bytes) | Domain custody; bandwidth / secrecy; ODS Pulls *products*, not lake mirrors |
+| R2 | On-site **shareable-product derivation** (result + context + policy ref + optional in-domain pointer) | An ODS-valid object must exist before register / serve without shipping raw data |
 | R3 | **SHACL (or equivalent) validation** before publish / action when claimed | Trustworthy products; works with W3C tooling (Oxigraph)—supports O5 / O7 |
 | R4 | Clear handoff boundary into the ODS stack (no private ODP fork) | Protects O6 |
 
@@ -159,20 +159,20 @@ For **connectivity smoke tests only**, temporarily setting `AUTHZEN_AUTHORIZATIO
   2) GET  L2 /products/{id}
         Bearer JWT + L2 API-Key + X-TrackingId + X-ODS-UserId
         L2: validate JWT → AuthZEN/OpenFGA (operator_id × endpoint) → forward
-  3) Response: JSON-LD shareable product (no raw bytes)
+  3) Response: JSON-LD shareable product (no raw data)
 
 [ Provider (Ratio) ]
   POST shareable product → industry API (:8787)
   L2 route /products/** registered upstream
-  Does NOT issue JWTs or evaluate AuthZEN; raw stays local (R1)
+  Does NOT issue JWTs or evaluate AuthZEN; raw data stays local (R1)
 ```
 
 ### 4.5 Requirements by participant role
 
 | Role | Must satisfy | Ratio’s job |
 |------|--------------|-------------|
-| **Consumer** (Pull) | A1–A4, Z1–Z5 when AuthZEN on; never expect raw via L2 | Document and script against official stack; do not reimplement L2/L3 |
-| **Provider** (Ratio site) | Serve **shareable products** on industry API; L2 route `/products/**` registered | Derive, SHACL, raw/product split, handoff (**R2–R4**) |
+| **Consumer** (Pull) | A1–A4, Z1–Z5 when AuthZEN on; never expect raw data via L2 | Document and script against official stack; do not reimplement L2/L3 |
+| **Provider** (Ratio site) | Serve **shareable products** on industry API; L2 route `/products/**` registered | Derive, SHACL, raw-data / product split, handoff (**R2–R4**) |
 | **Operator / admin** | Run official SDK; register operators, clients, FGA tuples, routes | PoC helper scripts only |
 
 ### 4.6 What Ratio does not do
@@ -248,4 +248,4 @@ Raw not shipped by default  → R1          (Ratio policy; compatible with ODS c
 
 ## 7. Maintenance
 
-When ODS-RAM or ODP revisions rename layers / protocols, update **§3 requirement anchors** and **§6 URLs** first. Keep Ratio’s edge policy (R1–R4) separate so compliance drift does not silently rewrite “do not ship raw.”
+When ODS-RAM or ODP revisions rename layers / protocols, update **§3 requirement anchors** and **§6 URLs** first. Keep Ratio’s edge policy (R1–R4) separate so compliance drift does not silently rewrite “do not ship raw data.”

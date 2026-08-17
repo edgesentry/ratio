@@ -2,9 +2,9 @@
 
 > Japanese: [PRODUCT_ENVELOPE.ja.md](PRODUCT_ENVELOPE.ja.md)
 
-**Locked shortlist:** K1 (Kitakyushu) → S1+S2 (Setouchi). Vendor TBD. Recorded / synthetic raw is fine.
+**Locked shortlist:** K1 (factory) → S1+S2 (maritime). Vendor TBD. Recorded / synthetic raw data is fine.
 
-Use the **same envelope** for K and S. Site differences are only `domain`, vocabulary, and optional `physicalContext` / `provenance` fields.
+Use the **same envelope** for K and S. Vertical differences are only `domain`, vocabulary, and optional `physicalContext` / `provenance` fields.
 
 Related: [`POC.md`](POC.md) · [`ARCHITECTURE.md`](ARCHITECTURE.md) · [`DISCUSSION.md`](DISCUSSION.md)
 
@@ -21,7 +21,7 @@ Schema artifacts:
 
 ## Design rules
 
-1. **Result + meaning + terms of use** are required. Do not embed raw bytes.  
+1. **Result + meaning + terms of use** are required. Do not embed raw data.  
 2. `rawDataPointer` is `local://` only (SHACL forbids public URLs).  
 3. Official ODS context URLs may be placeholders; replace at real connect time.  
 4. Inference may be stubbed (hand-fill `confidence` / `result`).
@@ -37,12 +37,12 @@ Schema artifacts:
 | `id` | IRI / URN | Product instance ID |
 | `sourceDevice` | DID or URN | Observing device / node |
 | `timestamp` | xsd:dateTime | Event time (UTC recommended) |
-| `domain` | enum | `kitakyushu_factory` \| `setouchi_maritime` |
+| `domain` | enum | `factory` \| `maritime` |
 | `scenario` | enum | `K1` \| `S1` \| `S2` (keep in sync with POC when extended) |
 | `inference.task` | string | Task ID (e.g. `anomaly_detection`) |
 | `inference.result` | string | Machine-readable result code |
 | `inference.confidence` | 0..1 | Confidence |
-| `dataGovernance.policyRef` | IRI / URN | Terms ref (e.g. raw internal-only) |
+| `dataGovernance.policyRef` | IRI / URN | Terms ref (e.g. raw data internal-only) |
 
 ## Recommended fields
 
@@ -74,11 +74,11 @@ Keep short and cross-site. May later promote to ontology IRIs.
 Implementation: [`../poc`](../poc) (`uv sync` → `uv run ratio-poc`. Steps: [`../poc/README.md`](../poc/README.md))
 
 ```
-thin TD (`examples/td/*.td.json`) → raw → data/raw/
+thin TD (`examples/td/*.td.json`) → raw data → `data/raw/`
 JSON-LD instance → data/out/
     → rdflib + pyshacl (schemas/shareable-product.shacl.ttl)
     → if conforms → ODS handoff stub (SDK not yet connected)
-    → do not put raw files on the publish path
+    → do not put raw-data files on the publish path
 ```
 
 ---

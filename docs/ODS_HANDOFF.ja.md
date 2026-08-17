@@ -30,7 +30,7 @@ Python SDK が直接「データ製品を publish」するのではなく、主�
 
 ```
 [消費者] --Bearer+API-Key--> [L2 :8090] --転送--> [Ratio industry :8787 /products]
-                                                    ↑ 生 (data/raw) は載せない
+                                                    ↑ 生データ (data/raw) は載せない
 [提供者 Ratio] --POST プロダクトのみ--> industry（直接 http または L2 経由）
 ```
 
@@ -39,7 +39,7 @@ Python SDK が直接「データ製品を publish」するのではなく、主�
 | モード | コマンド | 意味 |
 |--------|----------|------|
 | `stub` | `uv run ratio-poc --scenario K1` | ネットなし。レシートのみ（既定） |
-| `http` | `uv run ratio-poc --ods http` | 共有可能プロダクトを industry URL へ POST（生は送らない） |
+| `http` | `uv run ratio-poc --ods http` | 共有可能プロダクトを industry URL へ POST（生データは送らない） |
 | `l2` | `uv run ratio-poc --ods l2` | 公式 L2 ゲートウェイ（既定 `http://127.0.0.1:8090`）へ POST；L3 Bearer 付き |
 
 `ratio-poc-serve` は **公式 ODS の代替ではない**（L2 上流 industry API の仮置き）。ODS 側メリットと Ratio 単体の不足: [`DISCUSSION.ja.md`](DISCUSSION.ja.md#4-ods-側のメリット)。
@@ -155,7 +155,7 @@ uv run ratio-poc --scenario K1 --ods l2
 ```bash
 bash poc/scripts/ods/verify-l2-pull.sh
 bash poc/scripts/ods/verify-l2-pull.sh k1-<stem>
-# /raw は 404 期待（生は industry も L2 も出さない）
+# /raw は 404 期待（生データは industry も L2 も出さない）
 ```
 
 ### 7. AuthZEN（`operator_id`）
