@@ -1,79 +1,93 @@
-# ODS ハンドオフ
+# ODS handoff
 
-Ratio は ODP／Middleware を再実装しない。共有可能プロダクトだけを、公式スタックが想定する **提供者インダストリ API** へ渡す。
+> Japanese: [ODS_HANDOFF.ja.md](ODS_HANDOFF.ja.md)
 
-## 公式コンポーネント（外部）
+Ratio does not reimplement ODP / Middleware. It hands only shareable products to the **provider industry API** expected by the official stack.
 
-| 資源 | URL |
-|------|-----|
-| SDK Docker Compose（L2/L3 等） | https://github.com/open-dataspaces/SDK-docker-compose |
-| Python クライアント（L3／Payment OpenAPI 生成） | https://github.com/open-dataspaces/SDK-client-library-python |
-| L2 Web API 転送 | https://github.com/open-dataspaces/L2-dp-webapi |
+## ODS authentication and authorization (summary)
+
+> Japanese: [認証・認可（概要）](ODS_HANDOFF.ja.md#odsの認証認可概要) · Full requirements: [`ODS_COMPLIANCE.md` §4](ODS_COMPLIANCE.md#4-authentication-and-authorization-client-requirements)
+
+Participating **clients** must satisfy the official stack—not Ratio:
+
+1. **Authenticate (L3):** register operator → `client_credentials` client → JWT with `operator_id`.
+2. **Authorize (L2):** when AuthZEN is on, **OpenFGA** (ReBAC policy engine / **PDP** in the official SDK; [ODS_COMPLIANCE §4.1](ODS_COMPLIANCE.md#4-authentication-and-authorization-client-requirements)) must grant the operator on `/products/**`; Pull uses **L2** with Bearer JWT + **L2** API-Key (not L3 key).
+3. **Provider (Ratio):** POST shareable products to industry API only; no JWT or AuthZEN logic on site.
+
+Operational steps below; AuthZEN setup in [§7](#7-authzen-operator_id).
+
+## Official components (external)
+
+| Resource | URL |
+|----------|-----|
+| SDK Docker Compose (L2/L3, etc.) | https://github.com/open-dataspaces/SDK-docker-compose |
+| Python client (L3 / Payment OpenAPI generation) | https://github.com/open-dataspaces/SDK-client-library-python |
+| L2 Web API transfer | https://github.com/open-dataspaces/L2-dp-webapi |
 | L3 Identity | https://github.com/open-dataspaces/L3-identity-component |
-| 開発者ガイド ch.4 | https://open-dataspaces.gitbook.io/ods-docs/developer-guide/04-deployment-and-configuration |
+| Developer guide ch.4 | https://open-dataspaces.gitbook.io/ods-docs/developer-guide/04-deployment-and-configuration |
 
-Python SDK が直接「データ製品を publish」するのではなく、主に **L3 認証**向け。データ交換は L2 がインダストリサービスへ転送する形（ガイドの構成図）。
+The Python SDK is mainly for **L3 authentication**, not a direct “publish data product” API. Data exchange follows the guide’s pattern: L2 forwards to industry services.
 
 ```
-[消費者] --Bearer+API-Key--> [L2 :8090] --転送--> [Ratio industry :8787 /products]
-                                                    ↑ 生 (data/raw) は載せない
-[提供者 Ratio] --POST プロダクトのみ--> industry（直接 http または L2 経由）
+[consumer] --Bearer+API-Key--> [L2 :8090] --forward--> [Ratio industry :8787 /products]
+                                                    ↑ raw (data/raw) is not served
+[provider Ratio] --POST products only--> industry (direct http or via L2)
 ```
 
-## Ratio PoC のモード
+## Ratio PoC modes
 
-| モード | コマンド | 意味 |
-|--------|----------|------|
-| `stub` | `uv run ratio-poc --scenario K1` | ネットなし。レシートのみ（既定） |
-| `http` | `uv run ratio-poc --ods http` | 共有可能プロダクトを industry URL へ POST（生は送らない） |
-| `l2` | `uv run ratio-poc --ods l2` | 公式 L2 ゲートウェイ（既定 `http://127.0.0.1:8090`）へ POST；L3 Bearer 付き |
+| Mode | Command | Meaning |
+|------|---------|---------|
+| `stub` | `uv run ratio-poc --scenario K1` | No network. Receipt only (default) |
+| `http` | `uv run ratio-poc --ods http` | POST shareable product to industry URL (does not send raw) |
+| `l2` | `uv run ratio-poc --ods l2` | POST to official L2 gateway (default `http://127.0.0.1:8090`) with L3 Bearer |
 
-`ratio-poc-serve` は **公式 ODS の代替ではない**（L2 上流 industry API の仮置き）。ODS 側メリットと Ratio 単体の不足: [`DISCUSSION.md`](DISCUSSION.md#4-ods-側のメリット)。
+`ratio-poc-serve` is **not** a substitute for official ODS (stand-in industry API upstream of L2). ODS-side benefits and what Ratio alone lacks: [`DISCUSSION.md`](DISCUSSION.md#4-benefits-on-the-ods-side).
 
-ローカル industry スタブ（L2 上流の仮置き）:
+Local industry stub (stand-in upstream of L2):
 
 ```bash
-# 端末 A
+# Terminal A
 cd poc && uv run ratio-poc-serve
 
-# 端末 B
+# Terminal B
 cd poc && uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
 curl -s http://127.0.0.1:8787/products | jq .
 ```
 
-`ratio-poc-serve` は `data/out` の JSON-LD のみ提供し、`data/raw` は提供しない。
+`ratio-poc-serve` serves only JSON-LD under `data/out` and does not serve `data/raw`.
 
-## 環境変数
+## Environment variables
 
-| 変数 | 用途 |
-|------|------|
-| `RATIO_ODS_URL` | industry ベース URL（`http` 既定 `http://127.0.0.1:8787`） |
-| `RATIO_ODS_L2_URL` | L2 ゲートウェイ（`l2` 既定 `http://127.0.0.1:8090`） |
-| `RATIO_ODS_L3_URL` | L3 アプリ（トークン取得；既定 `http://localhost:8080`） |
-| `RATIO_ODS_API_KEY` | L3 トークン取得用（例: `API-Key-Sample`） |
-| `RATIO_ODS_L2_API_KEY` | L2 `VALID_API_KEYS`（例: `2dfd3409-ce01-4451-96fa-7e10c9681422y`） |
-| `RATIO_ODS_BEARER` | 手置きの L3 JWT（あれば優先） |
-| `RATIO_ODS_CLIENT_ID` / `RATIO_ODS_CLIENT_SECRET` | 未設定の Bearer 時に `/auth/token/client` で自動取得 |
-| `RATIO_ODS_USER_ID` | 任意。`X-ODS-UserId` に載せる |
-| `RATIO_ODS_FGA_STORE_ID` / `RATIO_ODS_FGA_MODEL_ID` | OpenFGA（スクリプト用） |
-| `RATIO_ODS_OPERATOR_ID` | 事業者への products 権限付与用 |
-| `RATIO_ODS_INDUSTRY_URI` | L2 から見た industry（既定 `http://host.docker.internal:8787`） |
-| `RATIO_ODS_L2_MGMT_KEY` | ルート登録用（既定 `your-secret-management-api-key`） |
+| Variable | Purpose |
+|----------|---------|
+| `RATIO_ODS_URL` | Industry base URL (`http` default `http://127.0.0.1:8787`) |
+| `RATIO_ODS_L2_URL` | L2 gateway (`l2` default `http://127.0.0.1:8090`) |
+| `RATIO_ODS_L3_URL` | L3 app (token fetch; default `http://localhost:8080`) |
+| `RATIO_ODS_API_KEY` | For L3 token fetch (e.g. `API-Key-Sample`) |
+| `RATIO_ODS_L2_API_KEY` | L2 `VALID_API_KEYS` (e.g. `2dfd3409-ce01-4451-96fa-7e10c9681422y`) |
+| `RATIO_ODS_BEARER` | Hand-placed L3 JWT (takes precedence if set) |
+| `RATIO_ODS_CLIENT_ID` / `RATIO_ODS_CLIENT_SECRET` | Auto-fetch via `/auth/token/client` when Bearer unset |
+| `RATIO_ODS_USER_ID` | Optional. Sent as `X-ODS-UserId` |
+| `RATIO_ODS_FGA_STORE_ID` / `RATIO_ODS_FGA_MODEL_ID` | OpenFGA (for scripts) |
+| `RATIO_ODS_OPERATOR_ID` | Grant products permission to an operator |
+| `RATIO_ODS_INDUSTRY_URI` | Industry as seen from L2 (default `http://host.docker.internal:8787`) |
+| `RATIO_ODS_L2_MGMT_KEY` | For route registration (default `your-secret-management-api-key`) |
 
-## 公式 SDK-docker-compose 接続（Ratio 手順）
+## Connecting official SDK-docker-compose (Ratio steps)
 
-公式スタックは **本リポジトリに同梱しない**。別ディレクトリで clone／起動する。
+The official stack is **not bundled in this repository**. Clone and start it in a separate directory.
 
-### 0. 前提
+### 0. Prerequisites
 
-- Docker / Compose 利用可（SDK README のマシンスペック目安あり）
-- Ratio industry: `cd poc && uv run ratio-poc-serve`（ホスト `:8787`）
-- 作業用スクリプト: [`poc/scripts/ods/`](../poc/scripts/ods/)
+- Docker / Compose available (see SDK README for machine sizing)
+- Ratio industry: `cd poc && uv run ratio-poc-serve` (host `:8787`)
+- Helper scripts: [`poc/scripts/ods/`](../poc/scripts/ods/)
 
-### 1. SDK 起動（公式 README 要約）
+### 1. Start the SDK (official README summary)
 
 ```bash
-# 例: ~/work/open-dataspaces/SDK-docker-compose
+# Example: ~/work/open-dataspaces/SDK-docker-compose
 git clone https://github.com/open-dataspaces/SDK-docker-compose.git
 cd SDK-docker-compose
 git clone --branch=v1.0.0 --depth=1 https://github.com/open-dataspaces/L2-dp-webapi.git
@@ -87,78 +101,106 @@ cd setup && bash setup_l2.sh && cd ..
 docker compose up -d
 ```
 
-詳細・事業者登録・トークン寿命延長は公式 [SDK-docker-compose README](https://github.com/open-dataspaces/SDK-docker-compose) と [L3 チュートリアル](https://github.com/open-dataspaces/L3-identity-component/blob/v1.0.0/docs/tutorials/tutorials.md) に従う。
+For details, operator registration, and token lifetime extension, follow the official [SDK-docker-compose README](https://github.com/open-dataspaces/SDK-docker-compose) and [L3 tutorial](https://github.com/open-dataspaces/L3-identity-component/blob/v1.0.0/docs/tutorials/tutorials.md).
 
-### 2. OpenFGA: Ratio `/products` 認可
+### 2. OpenFGA: authorize Ratio `/products`
 
-`l2/docker-compose.yml` の `FGA_STORE_ID` / `FGA_MODEL_ID` を環境へ。
+Export `FGA_STORE_ID` / `FGA_MODEL_ID` from `l2/docker-compose.yml`.
 
 ```bash
 export RATIO_ODS_FGA_STORE_ID=…   # l2/docker-compose.yml
-export RATIO_ODS_FGA_MODEL_ID=…   # 同上
-export RATIO_ODS_OPERATOR_ID=…    # 事業者登録で得た operator_id
+export RATIO_ODS_FGA_MODEL_ID=…   # same
+export RATIO_ODS_OPERATOR_ID=…    # operator_id from operator registration
 
 cd /path/to/ratio
 bash poc/scripts/ods/register-openfga-products.sh
 ```
 
-### 3. L2 ルート: `/products/**` → Ratio industry
+### 3. L2 route: `/products/**` → Ratio industry
 
 ```bash
-# Mac/Windows Docker Desktop なら既定の host.docker.internal で可
+# On Mac/Windows Docker Desktop, default host.docker.internal works
 export RATIO_ODS_INDUSTRY_URI=http://host.docker.internal:8787
 bash poc/scripts/ods/register-ratio-routes.sh
 ```
 
-Linux では `host.docker.internal` が無い場合、compose に `extra_hosts` を足すか、ホスト IP を `RATIO_ODS_INDUSTRY_URI` に指定する。
+On Linux, if `host.docker.internal` is missing, add `extra_hosts` in compose or set `RATIO_ODS_INDUSTRY_URI` to the host IP.
 
-### 4. L3 トークン
+### 4. L3 token
 
 ```bash
 export RATIO_ODS_L3_URL=http://localhost:8080
 export RATIO_ODS_API_KEY=API-Key-Sample
-export RATIO_ODS_CLIENT_ID=…      # 事業者クライアント
+export RATIO_ODS_CLIENT_ID=…      # operator client
 export RATIO_ODS_CLIENT_SECRET=…
 
 export RATIO_ODS_BEARER="$(bash poc/scripts/ods/fetch-l3-token.sh)"
 ```
 
-または `CLIENT_ID`/`SECRET` だけ設定し、`ratio-poc --ods l2` に自動取得させる。
+Or set only `CLIENT_ID` / `SECRET` and let `ratio-poc --ods l2` fetch automatically.
 
-### 5. 提供者: プロダクト登録
+### 5. Provider: register a product
 
 ```bash
 cd poc
-# industry へ直接（スタブ確認）
+# Direct to industry (stub check)
 uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
 
-# または L2 経由（認可付き）
+# Or via L2 (with authorization)
 uv run ratio-poc --scenario K1 --ods l2
 ```
 
-### 6. 消費者: L2 Pull 確認
+### 6. Consumer: verify L2 Pull
 
 ```bash
 bash poc/scripts/ods/verify-l2-pull.sh
 bash poc/scripts/ods/verify-l2-pull.sh k1-<stem>
-# /raw は 404 期待（生は industry も L2 も出さない）
+# Expect 404 on /raw (neither industry nor L2 serves raw)
 ```
 
-### 成功の見方
+### 7. AuthZEN (`operator_id`)
 
-| 確認 | 期待 |
-|------|------|
-| `GET L2 /products/...` | JSON-LD の共有可能プロダクト |
-| レスポンスに波形バイナリ／`RATIO_RAW_STUB` | **無い** |
+See [`ODS_COMPLIANCE.md` §4](ODS_COMPLIANCE.md#4-authentication-and-authorization-client-requirements). AuthZEN authorization reads the JWT claim `operator_id`. Production-style path:
+
+```bash
+# 1) Register operator + client_credentials client (writes gitignored env)
+export RATIO_ODS_SDK_DIR=~/work/open-dataspaces/SDK-docker-compose
+export RATIO_ODS_CLIENT_SECRET=…   # system-auth-sample secret from l3/docker-compose.yml
+bash poc/scripts/ods/register-operator.sh
+
+# 2) Grant OpenFGA (endpoint tuples + operator membership)
+set -a; source poc/scripts/ods/.local/operator.env; set +a
+export RATIO_ODS_FGA_STORE_ID=…   # from l2/docker-compose.yml
+export RATIO_ODS_FGA_MODEL_ID=…
+bash poc/scripts/ods/register-openfga-products.sh
+
+# 3) Enable AuthZEN and re-register /products/** routes
+bash poc/scripts/ods/enable-authzen.sh true
+
+# 4) Pull with operator token (JWT includes operator_id)
+export RATIO_ODS_BEARER="$(bash poc/scripts/ods/fetch-l3-token.sh)"
+bash poc/scripts/ods/verify-l2-pull.sh k1-<stem>
+```
+
+Helpers: [`poc/scripts/ods/`](../poc/scripts/ods/). Operator secrets stay in `poc/scripts/ods/.local/` (gitignored).
+
+For connectivity smoke tests **before** operator registration, temporarily setting `AUTHZEN_AUTHORIZATION_ENABLED=false` is acceptable. In production, keep AuthZEN enabled and complete the OpenFGA grant.
+
+### Success criteria
+
+| Check | Expectation |
+|-------|-------------|
+| `GET L2 /products/...` | JSON-LD shareable product |
+| Waveform binary / `RATIO_RAW_STUB` in response | **Absent** |
 | `GET …/raw` | 404 |
-| `data/raw/` | ホストローカルのまま |
+| `data/raw/` | Remains host-local |
 
-### Colima / macOS メモ（実測）
+### Colima / macOS notes (measured)
 
-- Docker は Colima コンテキストで可。ポート競合に注意: OpenFGA playground `3000`→`3005`、MinIO `9000`→`9010` など（他スタックと共有時）。
-- 公式 `setup/setup_l3.sh` は GNU `grep -P` / gawk 前提。macOS では [`poc/scripts/ods/patch-setup-l3-macos.py`](../poc/scripts/ods/patch-setup-l3-macos.py) を当ててから実行。
-- L2 の API-Key は L3 の `API-Key-Sample` ではなく **`l2/docker-compose.yml` の `VALID_API_KEYS`**。
-- ルート Path は `/products/**`（`/products**` だと個別 ID が 404 になる）。
-- AuthZEN は JWT の `operator_id` クレームが必要。事業者登録前の疎通確認では一時的に `AUTHZEN_AUTHORIZATION_ENABLED=false` も可（本番では有効＋OpenFGA 付与）。
+- Docker works with a Colima context. Watch port conflicts: OpenFGA playground `3000`→`3005`, MinIO `9000`→`9010`, etc. (when sharing the host with other stacks).
+- Official `setup/setup_l3.sh` assumes GNU `grep -P` / gawk. On macOS, apply [`poc/scripts/ods/patch-setup-l3-macos.py`](../poc/scripts/ods/patch-setup-l3-macos.py) before running it.
+- L2 API-Key is **`VALID_API_KEYS` in `l2/docker-compose.yml`**, not L3’s `API-Key-Sample`.
+- Route path must be `/products/**` (`/products**` yields 404 for individual IDs).
+- AuthZEN requires the JWT `operator_id` claim; see §7. Before operator registration, temporary `AUTHZEN_AUTHORIZATION_ENABLED=false` is OK for smoke tests (production: enabled + OpenFGA grant).
 
-準拠要件の対応: [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md)（O1–O6、R1–R4）。
+Compliance mapping: [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md) (O1–O6, R1–R4).

@@ -1,175 +1,177 @@
-# 議論フレームワーク
+# Discussion framework
 
-焦点: **生クォンタを出さずに ODS に参加する**（*participate in ODS without shipping raw quanta*）。
+> Japanese: [DISCUSSION.ja.md](DISCUSSION.ja.md)
 
-テーゼの共有言語、Ratio が所有するもの／再利用するもの、需要の検証方法。想定読者は W3C・IPA ODS・現場での生データ保管に関心がある人。
+Focus: **participate in ODS without shipping raw quanta**.
 
-ODS 依存の目的と準拠要件: [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md)  
-既定パスのアーキテクチャ: [`ARCHITECTURE.md`](ARCHITECTURE.md)  
-想定 PoC サイト（北九州／瀬戸内）: [`POC.md`](POC.md)  
-共有可能プロダクト封筒: [`PRODUCT_ENVELOPE.md`](PRODUCT_ENVELOPE.md)  
-ODS ハンドオフ: [`ODS_HANDOFF.md`](ODS_HANDOFF.md)  
-スコープ正本: [`SCOPE.md`](SCOPE.md)
+Shared language for the thesis, what Ratio owns vs reuses, and how to validate demand. Intended readers care about W3C, IPA ODS, and keeping raw data on site.
 
----
-
-## テーゼ（一文）
-
-> 物理ドメインは、現場で導出したガバナンス付き・オントロジー裏付けの **共有可能プロダクト** の Pull 提供者として ODS に参加する。**既定の外向き経路はそれらのプロダクトであり、生の観測バイトではない。**
-
-これは **Ratio の運用定義**であり、ODS-RAM からの引用ではない。
+ODS-dependent purpose and compliance: [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md)  
+Default-path architecture: [`ARCHITECTURE.md`](ARCHITECTURE.md)  
+Assumed PoC sites (Kitakyushu / Setouchi): [`POC.md`](POC.md)  
+Shareable-product envelope: [`PRODUCT_ENVELOPE.md`](PRODUCT_ENVELOPE.md)  
+ODS handoff: [`ODS_HANDOFF.md`](ODS_HANDOFF.md)  
+Canonical scope: [`SCOPE.md`](SCOPE.md)
 
 ---
 
-## 利用者の目的 · ODS で何をするか · 何を得たいか
+## Thesis (one sentence)
 
-三点を分けて固定する。「意味だけ伝えて ODS は使わない」ではない。
+> Physical domains join ODS as Pull providers of governed, ontology-backed **shareable products** derived on site. **The default outward path is those products—not raw observation bytes.**
 
-### 1. 利用者の目的（ビジネス上やりたいこと）
-
-| 利用者 | 目的 |
-|--------|------|
-| **現場ドメインオーナー**（工場・船舶等） | 生データ／ノウハウを外に出さず、パートナーや上位システムと現場の状態を共有・連携したい |
-| **ODS 消費者／Agentic AI／パートナー** | 許可された範囲で、現場の判断材料を発見し Pull して業務・推論に使いたい |
-| **標準実装者**（W3C／ODS） | 独自方言ではなく、公開標準と公式スタックで上記をつなぎたい |
-
-### 2. 本プロダクト（Ratio）が ODS と何をしたいか
-
-| すること | しないこと |
-|----------|------------|
-| 現場で **共有可能プロダクト**（結果＋オントロジー文脈＋利用条件）を作り、**公式 ODS スタック**で登録／発見／Pull 提供する | 生ペイロードを ODS の主オファリングとして載せる |
-| DPQM の関心（データと文脈の対）を **現場発生点で具体化**する | ODP／Middleware を自前再実装する |
-| W3C（JSON-LD／SHACL／WoT／DID・ODRL 等）で製品の意味と検証を載せる | スコアのみの非標準 Blob を「ODS 参加」と呼ぶ |
-
-### 3. それで何を得たいか（成果）
-
-| 側 | 得たい成果 |
-|----|------------|
-| **現場** | 秘匿・帯域・断続リンクを壊さずに **ODS 参加者（提供者）になれる** |
-| **外の利用者** | 生なしでも、**どの機器・どんな文脈・何が許されるか**が分かる製品を Pull し、エージェント／業務が動ける |
-| **両者** | 湖ミラーでもブラックボックス・スコアでもない、**統治された相互運用**（透明性＋制御） |
-
-一文:
-
-> 利用者は「生を守った現場連携」と「外からの正当な利用」を望む。Ratio は ODS に **共有可能プロダクトだけ**を載せて参加させ、その結果として現場は参加資格を、外は使える判断材料を得る。
-
-### 4. ODS 側のメリット
-
-「ODS 側」＝データスペース運営・他参加者・Agentic AI が依拠する基盤の側。
-
-| メリット | 内容 |
-|----------|------|
-| **実データの供給口が増える** | 工場・船舶など、湖に出せなかった OT ドメインが Pull 可能な提供者として参加できる |
-| **ダーク／リアルデータの品質** | スコアだけでなく、オントロジー付き・検証可能な製品が流れる（GIGO を減らせる） |
-| **DPQM が現場で実体化する** | データと文脈の対が発生点で分かれ、中央に生を集めてから意味付けする歪みが減る |
-| **統治と信頼** | 利用条件付きで渡るため、用途外・生の無断持ち出しを前提にしない連携が設計できる |
-| **標準の射程が現場まで届く** | ODP／SDK が IT ノードだけで終わらず、物理ドメインまで公式スタックが効く |
-
-ODS にとっては、**参加ノードの業種・地理カバレッジ**と、**Context 付き実データの供給**が増えることが主益。
-
-### 5. Ratio だけだと足りない部分
-
-Ratio は「現場で製品を作り、公式スタックへ渡す糊」まで。**ODS 参加者としての一式の代替ではない。**  
-不足を **公式 ODS が既にサポートするもの**と、**公式の外（ドメイン／アプリ／合意）で埋めるもの**に分ける。
-
-#### 5.1 公式 ODS でサポート済み（Ratio は再利用・接続する）
-
-| 不足（Ratio が持たない） | 要件 | 公式の置き場 |
-|--------------------------|------|----------------|
-| **L3 アイデンティティ**（トークン、事業者登録等） | O1 | L3 Identity Component、`SDK-docker-compose`、`SDK-client-library-python` |
-| **L2 転送・取引** | O4 | L2 Web API Transfer（`L2-dp-webapi`） |
-| **カタログ／Discovery・メタデータ** | O2–O3 | L4 Discovery／Metadata 系（Discovery Service、Finder 等） |
-| **利用制御・契約まわりの基盤** | O8 | ODS-RAM パースペクティブ、ODP 補完（Heuristic Contracting 等）、L3-PAP 等 |
-| **信頼・品質アセスメント手順** | O7 | ODP L1 assessment プロトコル群 |
-| **運用・監視・ロギング** | O9–O10 | Middleware 共通機能、logging サービス、開発者／利用者ガイドのオンボーディング |
-
-PoC の `ratio-poc-serve` は上記の **代替ではない**（L2 上流 industry API の仮置き）。本番では公式 Compose／L2／L3／L4 に接続する。手順: [`ODS_HANDOFF.md`](ODS_HANDOFF.md)。
-
-#### 5.2 公式 ODS だけでは足りない／範囲外（他者が担う）
-
-| 不足 | なぜ公式だけでは埋まらないか | 誰が埋めるか |
-|------|------------------------------|--------------|
-| **現場での製品導出・生／プロダクト分離** | ODS は分散データ管理・Context 層であり、OT エッジの導出エンジンそのものではない | **Ratio**（本プロダクトの役割） |
-| **消費者アプリ／Agentic AI 本体** | Pull した製品を業務・推論に使うのは利用者アプリケーション | パートナーアプリ、上位 AI（例: 利用側エージェント） |
-| **ドメインオントロジ・語彙合意** | 標準は枠を出すが、業種固有語彙の合意はドメイン所有者間の仕事 | 業種コンソーシアム、SAMM／SDK for semantics を使った定義作業 |
-| **具体セル／船／ベンダー接続** | WoT TD 等の枠はあるが、実機 I/F・SI は現場ごと | SI、既存 IIoT／WoT ゲートウェイ、ドメインオーナー |
-| **法的認証・安全責任（ハード RT 制御等）** | データスペース仕様の外（または別制度） | 規制・認証機関、制御ベンダー、ドメインオーナー |
-
-**読み分け:** 「足りない」の多くは **公式をまだ繋いでいない**だけ（§5.1）。Ratio を増やして埋める対象は主に現場導出であり、L2／L3／L4 を Ratio が再実装する話ではない。
-
-**スコープの正本（公式 ODS／Ratio／スコープ外と担当）:** [`SCOPE.md`](SCOPE.md)
-
-準拠 ID（O1–O10）の詳細: [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md)。
+This is a **Ratio operational definition**, not a quotation from ODS-RAM.
 
 ---
 
-## ポジショニング
+## User goals · what we do with ODS · what we want
 
-| 枠 | 内容 |
-|----|------|
-| **誰に** | 現場のドメインオーナー（工場セル・船舶・ロボットライン等）と、そこから Pull したい ODS 消費者／Agentic AI |
-| **課題** | ODS 参加が **生の出荷**か **意味のないスコア公開**かの二択になり、秘匿・帯域・Pull を同時に満たせない |
-| **どう解く** | 現場で **共有可能プロダクト**を導出・検証し、生はドメイン保管、**公式 ODS スタック**で参加（Ratio＝その構成レイヤ） |
-| **類似** | 単体エッジ AI；IIoT／WoT ゲートウェイ；IT 側 ODS ノード／コネクタ |
-| **違い** | スコア配信でも、単なるプロトコル変換でも、クラウド先行 ODS でもない。**生非egress × 意味付き ODS 参加**に絞る |
-| **優位性** | ODP／Middleware／SDK を再実装せず公式利用；W3C（JSON-LD／SHACL／WoT 等）でプロダクトに標準的な意味を載せる |
-| **制約** | ODP／Middleware のフォーク禁止；OSS 既定；ハードリアルタイム制御平面なし；万能 OT マルチプロトコル GW 製品にしない |
-| **スコープ** | 正本は [`SCOPE.md`](SCOPE.md)。要約: 薄い取込→導出／検証→分離→公式ハンドオフ。L2/L3/L4 再実装・深い SI・消費者業務・語彙合意は外 |
+Lock three points separately. This is not “convey meaning only and skip ODS.”
 
-一文:
+### 1. User goals (business intent)
 
-> 生データを出せない物理ドメインが、**共有可能プロダクト**だけを Pull させて ODS に参加できるようにする。エッジ AI・GW・IT 側 ODS ノードに似るが、違いは **生非egress × 公式スタック参加**。制御や ODP は作り直さず、プロダクト・パイプラインにスコープを限る。
+| User | Goal |
+|------|------|
+| **On-site domain owner** (factory, vessel, etc.) | Share and coordinate site state with partners / upstream systems **without** exporting raw data / know-how |
+| **ODS consumer / Agentic AI / partner** | Discover and Pull permitted on-site decision material for operations and inference |
+| **Standards implementer** (W3C / ODS) | Connect the above with public standards and the official stack—not a private dialect |
+
+### 2. What this product (Ratio) wants to do with ODS
+
+| Do | Do not |
+|----|--------|
+| Build **shareable products** on site (result + ontology context + terms) and register / discover / serve them via the **official ODS stack** | Put raw payloads as the primary ODS offering |
+| **Materialize** DPQM concerns (data ↔ context pair) at the point of origin | Reimplement ODP / Middleware yourself |
+| Carry product meaning and validation with W3C (JSON-LD / SHACL / WoT / DID · ODRL, etc.) | Call non-standard score-only blobs “ODS participation” |
+
+### 3. What we want as outcomes
+
+| Side | Desired outcome |
+|------|-----------------|
+| **Site** | Become an **ODS participant (provider)** without breaking secrecy, bandwidth, or intermittent links |
+| **External users** | Pull products that answer **which device, what context, what is permitted**—even without raw—so agents / ops can run |
+| **Both** | **Governed interoperability** (transparency + control)—neither lake mirrors nor black-box scores |
+
+In one sentence:
+
+> Users want “on-site collaboration that protects raw” and “legitimate external use.” Ratio joins ODS by carrying **only shareable products**, so the site gains participation eligibility and outsiders gain usable decision material.
+
+### 4. Benefits on the ODS side
+
+“ODS side” = data-space operators, other participants, and the substrate Agentic AI relies on.
+
+| Benefit | Detail |
+|---------|--------|
+| **More real-data supply ports** | Factories, vessels, and other OT domains that could not feed a lake can join as Pull providers |
+| **Dark / real-data quality** | Ontology-backed, validatable products flow—not scores alone (less GIGO) |
+| **DPQM realized on site** | Data/context pairs separate at origin; less distortion from centralizing raw then attaching meaning |
+| **Governance and trust** | Exchange under terms of use; designs need not assume unauthorized raw exfiltration |
+| **Standards reach the field** | ODP / SDK apply beyond IT nodes into physical domains |
+
+For ODS, the main gains are **broader industry / geography coverage of participating nodes** and **supply of Context-bearing real data**.
+
+### 5. What Ratio alone cannot cover
+
+Ratio stops at “make products on site and glue them into the official stack.” It is **not** a full substitute for being an ODS participant.  
+Split gaps into **already supported by official ODS** vs **filled outside the official stack (domain / app / agreement)**.
+
+#### 5.1 Already supported by official ODS (Ratio reuses and connects)
+
+| Gap (Ratio does not own) | Req. | Official home |
+|--------------------------|------|---------------|
+| **L3 identity** (tokens, operator registration, etc.) | O1 | L3 Identity Component, `SDK-docker-compose`, `SDK-client-library-python` |
+| **L2 transfer / transaction** | O4 | L2 Web API Transfer (`L2-dp-webapi`) |
+| **Catalog / Discovery / metadata** | O2–O3 | L4 Discovery / Metadata (Discovery Service, Finder, etc.) |
+| **Usage-control / contracting substrate** | O8 | ODS-RAM perspectives, ODP complements (Heuristic Contracting, etc.), L3-PAP, etc. |
+| **Trust / quality assessment procedures** | O7 | ODP L1 assessment protocol family |
+| **Ops / monitoring / logging** | O9–O10 | Middleware common functions, logging services, developer / user guide onboarding |
+
+PoC `ratio-poc-serve` is **not** a substitute for the above (stand-in industry API upstream of L2). Production connects to official Compose / L2 / L3 / L4. Steps: [`ODS_HANDOFF.md`](ODS_HANDOFF.md).
+
+#### 5.2 Not covered by official ODS alone / out of range (others own)
+
+| Gap | Why official alone is not enough | Who fills it |
+|-----|----------------------------------|--------------|
+| **On-site product derivation and raw/product split** | ODS is distributed data management + Context layers—not an OT edge derivation engine | **Ratio** (this product’s role) |
+| **Consumer apps / Agentic AI itself** | Using Pull’ed products in ops / inference is the user application | Partner apps, upstream AI (e.g. consumer-side agents) |
+| **Domain ontology / vocabulary agreement** | Standards provide frames; industry-specific vocab agreement is domain owners’ work | Industry consortia; definition work with SAMM / SDK for semantics |
+| **Concrete cell / vessel / vendor connect** | WoT TD etc. provide frames; device I/F and SI are per site | SI, existing IIoT / WoT gateways, domain owner |
+| **Legal certification / safety liability (hard RT control, etc.)** | Outside data-space specs (or separate regimes) | Regulators, control vendors, domain owners |
+
+**How to read this:** Many “gaps” are simply **not yet connected to official** (§5.1). What Ratio expands to fill is mainly on-site derivation—not Ratio reimplementing L2 / L3 / L4.
+
+**Canonical scope (official ODS / Ratio / out-of-scope and owners):** [`SCOPE.md`](SCOPE.md)
+
+Compliance IDs (O1–O10) detail: [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md).
 
 ---
 
-## 定義
+## Positioning
 
-### 共有可能プロダクト（shareable product）とは
+| Frame | Content |
+|-------|---------|
+| **For whom** | On-site domain owners (factory cells, vessels, robot lines, etc.) and ODS consumers / Agentic AI that want to Pull from them |
+| **Problem** | ODS participation collapses into **shipping raw** or **publishing meaningless scores**, so secrecy, bandwidth, and Pull cannot be satisfied together |
+| **How we solve** | Derive and validate **shareable products** on site; keep raw in-domain; join via the **official ODS stack** (Ratio = that composition layer) |
+| **Similar** | Standalone edge AI; IIoT / WoT gateways; IT-side ODS nodes / connectors |
+| **Difference** | Not score delivery, not mere protocol translation, not cloud-first ODS. Narrowed to **raw non-egress × meaning-bearing ODS participation** |
+| **Advantage** | Use official ODP / Middleware / SDK without reimplementing; put standard meaning on products via W3C (JSON-LD / SHACL / WoT, etc.) |
+| **Constraints** | No ODP / Middleware forks; OSS by default; no hard real-time control plane; do not become a universal OT multi-protocol GW product |
+| **Scope** | Canonical: [`SCOPE.md`](SCOPE.md). Summary: thin ingest → derive / validate → split → official handoff. L2/L3/L4 reimplementation, deep SI, consumer apps, vocab agreement are out |
 
-**共有可能プロダクト**（別名: 意味付きプロダクト／meaning-bearing product）は、既定でドメインから ODS へ出る **唯一の対象**。
+In one sentence:
 
-生ファイルではない。消費側が解釈し行動できる構造化パッケージである:
+> Enable physical domains that cannot ship raw to join ODS by Pull’ing **only shareable products**. Resembles edge AI, GWs, and IT ODS nodes, but the difference is **raw non-egress × official-stack participation**. Do not rebuild control or ODP; keep scope to the product pipeline.
 
-| 必須 | 意味 | 例 |
-|------|------|-----|
-| **結果** | 観測または判断の内容 | `vibration_abnormal`、confidence `0.96` |
-| **意味** | 機械可読な文脈: *どの*ものか、*どんな*オントロジー／特性か、*何を根拠に* | WoT／DID デバイス ID；JSON-LD `@context`；physicalContext（RPM、℃）；語彙へのリンク |
-| **利用条件** | 誰が何目的で使えるか | `policyRef`／ODRL 系参照 |
-| **来歴／品質**（主張する場合） | Pull するに足る信頼の理由 | タイムスタンプ、SHACL レポート参照、モデル／タスク ID |
+---
 
-**意味付き**とは: パートナーや Agentic AI が、生波形／画像を開かずに「これは何についてのものか」に答えられること。識別子・語彙・文脈が結果と **一緒に**運ばれる（DPQM 整合: データ関心とオントロジー／文脈関心の対）。
+## Definitions
 
-| 共有可能プロダクトである | ではない |
-|--------------------------|----------|
-| JSON-LD（等）の判断＋`@context`＋デバイス ID＋policyRef | 語彙なしの `{ "anomaly": 0.98 }` |
-| 主張する SHACL 形状に対する検証済み | 未文書化のスコア CSV |
-| ODS オファリングとして発見・提供可能 | 既定で同じ Pull 経路に乗る `.bin`／動画 |
-| ドメイン **内**の `rawDataPointer` を持てる | 既定で生をダウンロードさせる公開 URL |
+### What is a shareable product
 
-本文書の正式語: **共有可能プロダクト**（英語併記時は **shareable product**）。不透明スコアとの対比でのみ「意味付き」を使う。
+A **shareable product** (also: meaning-bearing product) is the **only object** that leaves the domain for ODS by default.
 
-### 用語
+It is not a raw file. It is a structured package consumers can interpret and act on:
 
-| 用語 | ここでの意味 |
+| Required | Meaning | Example |
+|----------|---------|---------|
+| **Result** | Content of an observation or judgment | `vibration_abnormal`, confidence `0.96` |
+| **Meaning** | Machine-readable context: *which* thing, *what* ontology / properties, *on what basis* | WoT / DID device ID; JSON-LD `@context`; physicalContext (RPM, °C); links to vocabularies |
+| **Terms of use** | Who may use it for what | `policyRef` / ODRL-family refs |
+| **Provenance / quality** (when claimed) | Why it is trustworthy enough to Pull | Timestamp, SHACL report ref, model / task ID |
+
+**Meaning-bearing** means partners or Agentic AI can answer “what is this about?” without opening raw waveforms / images. Identifiers, vocabularies, and context travel **with** the result (DPQM-aligned: data concern paired with ontology / context concern).
+
+| Is a shareable product | Is not |
+|------------------------|--------|
+| JSON-LD (etc.) judgment + `@context` + device ID + policyRef | Vocab-free `{ "anomaly": 0.98 }` |
+| Validated against claimed SHACL shapes | Undocumented score CSV |
+| Discoverable / servable as an ODS offering | `.bin` / video on the same Pull path by default |
+| May carry an in-domain `rawDataPointer` | A public URL that downloads raw by default |
+
+Formal term in this document: **shareable product**. Use “meaning-bearing” only when contrasting opaque scores.
+
+### Glossary
+
+| Term | Meaning here |
 |------|----------------|
-| **物理ドメイン** | 観測を **生成**し、ローカル推論しうる OT／現場のドメインオーナー（工場セル・船舶・ロボットライン）。コーポレート・データレイク単体ではない。 |
-| **生クォンタ** | 物理観測や中間成果のペイロードバイト: 波形、画像、動画、高頻度サンプル、独自工程ログ、特徴量ブロブ等。ファイル／DuckDB／LanceDB 等にドメイン保管。 |
-| **共有可能プロダクト** | 上記。Pull 可能な **結果＋意味＋利用条件**（＋来歴）。**生バイトではない**。DPQM の Data Product＋Ontology Product *関心*を現場で具体化したもの。 |
-| **出荷（shipping）** | データスペース参加の既定経路として、生ペイロードバイトを **ドメイン境界の外**へコピー／配信すること。 |
-| **ODS への参加** | **公式 ODS スタック**（ODP／Middleware／SDK）によるメンバーシップとプロダクト提供。「工場をクラウドにアップロード」ではない。 |
+| **Physical domain** | An OT / on-site domain owner that **generates** observations and may run local inference (factory cell, vessel, robot line)—not a corporate data lake alone. |
+| **Raw quanta** | Payload bytes of physical observations or intermediate artifacts: waveforms, images, video, high-rate samples, proprietary process logs, feature blobs, etc. Held in-domain (files / DuckDB / LanceDB, etc.). |
+| **Shareable product** | Above. Pull-able **result + meaning + terms** (+ provenance). **Not raw bytes**. A field materialization of DPQM Data Product + Ontology Product *concerns*. |
+| **Shipping** | Copying / distributing raw payload bytes **outside the domain boundary** as the default data-space participation path. |
+| **Participating in ODS** | Membership and product provision via the **official ODS stack** (ODP / Middleware / SDK). Not “upload the factory to the cloud.” |
 
-### 「ODS に参加する」の具体
+### What “participate in ODS” means concretely
 
-公式 ODS スタック経由（Ratio は ODP を **再実装しない**）:
+Via the official ODS stack (Ratio does **not** reimplement ODP):
 
-1. **ノードになる** — ドメイン／ノードの認証済みアイデンティティ
-2. **プロダクトを公開／登録** — 何があるか・意味・利用条件が発見可能
-3. **Pull で提供** — 許可された内容を要求に応じて配信（中央湖への全 Push ではない）
-4. **利用を統治** — 誰が何を何目的で（ポリシー／ODRL 系、適用可能な範囲）
+1. **Become a node** — authenticated identity for domain / node
+2. **Publish / register products** — what exists, meaning, and terms are discoverable
+3. **Serve via Pull** — deliver permitted content on request (not full Push to a central lake)
+4. **Govern use** — who, what, for what purpose (policy / ODRL family, where applicable)
 
-規範マッピング（O1–O6 等）: [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md)
+Normative mapping (O1–O6, etc.): [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md)
 
-### 「生クォンタを出さない」の具体
+### What “without shipping raw quanta” means concretely
 
 ```
 [devices] → raw quanta → stay on local storage (domain custody)
@@ -182,170 +184,170 @@ PoC の `ratio-poc-serve` は上記の **代替ではない**（L2 上流 indust
          ODS (discover + Pull of the shareable product only)
 ```
 
-| 主張すること | 主張しないこと |
-|--------------|----------------|
-| 生ペイロードは既定でデータスペース参加の対象にならない | 生は現場で処理しない（する；それが要点） |
-| 消費者は行動／判断に足る意味付きプロダクトを得る | 常にビット同一のセンサダンプを得る |
-| `rawDataPointer` は **ドメイン内**にありうる | そのポインタは公開ダウンロード URL |
-| **別途明示ポリシー**の下で、統治された生エクスポートを後から許すことはありうる | 「生を出さない」＝将来の二者契約をすべて禁止 |
+| We claim | We do not claim |
+|----------|-----------------|
+| Raw payloads are not, by default, objects of data-space participation | Raw is not processed on site (it is; that is the point) |
+| Consumers get meaning-bearing products sufficient to act / decide | Consumers always get bit-identical sensor dumps |
+| `rawDataPointer` may exist **in-domain** | That pointer is a public download URL |
+| Under a **separately explicit policy**, governed raw export may later be allowed | “Do not ship raw” bans all future bilateral contracts |
 
-### 最小例
+### Minimal example
 
-- **生（ローカルのみ）:** `raw_wave_20260816_001.bin`
-- **共有可能プロダクト（ODS-Pull 可）:** デバイス *D* が時刻 *T* に `vibration_abnormal` @ 0.96、オントロジー *O*、SHACL *R*、ポリシー `internal-only-rawdata`；生は `local://…`
-- **参加:** パートナーは ODP でプロダクトを Pull；別許可がなければ `.bin` は届かない
+- **Raw (local only):** `raw_wave_20260816_001.bin`
+- **Shareable product (ODS-Pull-able):** device *D* at time *T* reports `vibration_abnormal` @ 0.96, ontology *O*, SHACL *R*, policy `internal-only-rawdata`; raw at `local://…`
+- **Participation:** partner Pulls the product via ODP; without separate permission, the `.bin` never arrives
 
-### 失敗モード（テーゼ外）
+### Failure modes (outside the thesis)
 
-- カメラ／振動ストリームを「ODS のため」中央湖へミラー
-- オントロジー／文脈なしの不透明スコア（`anomaly: 0.98`）だけ公開
-- ポリシー分離なしで、生ファイルをメタと同じ Pull 経路に載せる
-
----
-
-## 想定読者
-
-| 誰 | 関心 | Ratio が答えること |
-|----|------|-------------------|
-| **IPA ODS 利用者** | ODP、DPQM、Pull、Agentic AI 向け Context | 物理サイトが生を出さずに発見可能なプロダクトをどう提供するか |
-| **W3C 実践者** | WoT、JSON-LD／RDF、SHACL、DID／VC、ODRL | 独自スキーマではなく、共有可能プロダクトで標準を第一級に保つ |
-| **エッジ／OT オーナー** | 秘匿、帯域、断続リンク | データスペース・ハンドオフ前の生保管と現場導出 |
+- Mirroring camera / vibration streams to a central lake “for ODS”
+- Publishing opaque scores without ontology / context (`anomaly: 0.98`)
+- Putting raw files on the same Pull path as metadata without policy separation
 
 ---
 
-## 構築方針
+## Intended readers
 
-**既定: OSS と公開標準／公式 ODS SDK。**  
-**作るのは** 導出・検証・生と共有可能プロダクトの分離、そして ODS への引き渡しの糊だけ。
-
-| 優先して再利用 | Ratio として構築 |
-|----------------|------------------|
-| Oxigraph、DuckDB、LanceDB、SQLite、Arrow | オーケストレーション: 取込 → 導出／検証 → 分離 → ODS ハンドオフ |
-| W3C WoT TD、JSON-LD／RDF、SHACL、DID／VC、ODRL | 共有可能プロダクト形状＋Arrow Memory Broker 契約 |
-| IPA ODS Middleware／SDK、ODP | ハンドオフ境界で R1–R4 を満たすパッケージング |
-| ONNX Runtime／一般的推論ランタイム | ドメイン PoC 配線（デバイス系統、SHACL 形状） |
+| Who | Interest | What Ratio answers |
+|-----|----------|-------------------|
+| **IPA ODS users** | ODP, DPQM, Pull, Context for Agentic AI | How a physical site provides discoverable products without shipping raw |
+| **W3C practitioners** | WoT, JSON-LD / RDF, SHACL, DID / VC, ODRL | Keep standards first-class in shareable products—not proprietary schemas |
+| **Edge / OT owners** | Secrecy, bandwidth, intermittent links | Raw custody and on-site derivation before data-space handoff |
 
 ---
 
-## テーゼが当てはまるとき（需要条件）
+## Build policy
 
-次の **3つすべて**が成り立つときだけ Ratio が正当化される:
+**Default: OSS and public standards / official ODS SDK.**  
+**Build only** derivation, validation, raw vs shareable-product separation, and handoff glue into ODS.
 
-1. 既定で生を **出してはならない**（秘匿／帯域／ポリシー）、**かつ**
-2. セル／船の外の誰かが **意味**を必要とする（ローカルダッシュボードだけでは足りない）、**かつ**
-3. **ODS Pull 参加**が欲しい（単発のファイル受け渡しではない）
-
-いずれか欠ける場合: クラウド ODS ノード、素のエッジ AI、非 ODS 連携で足りる。Ratio は任意。
-
-### テーゼを動機づける課題
-
-| # | 課題 | テーゼとの関係 |
-|---|------|----------------|
-| E3 | 帯域 vs 生の量 | 生の出荷はしばしば非現実 |
-| E4 | 生とノウハウの秘匿 | 生をデータスペースの対象にしてはならない |
-| E8 | セマンティック・ギャップ | 共有可能プロダクトが意味を運ぶ必要がある |
-| E2 | 制約／断続リンク | メタのみの egress が現実的 |
-| E9 | ノードの信頼 | Pull 可能な対象へのアイデンティティ＋ポリシー |
-
-Ratio のスコープ外（このテーゼでは解かない）: ハードリアルタイム制御（E1）、万能 OT マルチプロトコル GW 製品、アプライアンス SKU、法的認証、ODP 再実装やストアのフォーク。
-
-### スコープ内（Ratio が解くこと）
-
-| 解くこと | 方法（再利用優先） |
-|----------|-------------------|
-| 生をローカルに留め、**共有可能プロダクト**を Pull 可能に | ローカルストア＋JSON-LD パッケージ；公開／提供は ODS SDK |
-| 観測／推論に **文脈**を付与 | Oxigraph＋JSON-LD／RDF；ドメイン形状は設定 |
-| 共有（または行動）前に **検証** | Oxigraph SHACL；ポリシー／資格は SQLite |
-| 制約下の egress | ポインタ＋ポリシー；新規トランスポートは作らない |
-| 境界での薄い WoT TD | TD を消費；フィールドバスドライバは全部作り直さない |
+| Prefer to reuse | Build as Ratio |
+|-----------------|----------------|
+| Oxigraph, DuckDB, LanceDB, SQLite, Arrow | Orchestration: ingest → derive / validate → split → ODS handoff |
+| W3C WoT TD, JSON-LD / RDF, SHACL, DID / VC, ODRL | Shareable-product shape + Arrow Memory Broker contract |
+| IPA ODS Middleware / SDK, ODP | Packaging at the handoff boundary to satisfy R1–R4 |
+| ONNX Runtime / common inference runtimes | Domain PoC wiring (device lines, SHACL shapes) |
 
 ---
 
-## EdgeSentry 内の役割
+## When the thesis applies (demand conditions)
 
-- **EdgeSentry** — 現場ガバナンス＆セキュリティの親ブランド  
-- **Ratio** — テーゼを具体化するセマンティクス／推論コア（共有可能プロダクトの導出・検証；ODS へハンドオフ）
+Ratio is justified only when **all three** hold:
 
----
+1. Raw **must not** leave by default (secrecy / bandwidth / policy), **and**
+2. Someone outside the cell / vessel needs **meaning** (a local dashboard alone is not enough), **and**
+3. You want **ODS Pull participation** (not one-off file exchange)
 
-## なぜこの OSS スタックか
+If any is missing: a cloud ODS node, plain edge AI, or non-ODS integration may suffice. Ratio is optional.
 
-| コンポーネント（OSS） | テーゼ上の役割 | 再発明しない理由 |
-|----------------------|----------------|------------------|
-| **Rust** | 薄い構成ランタイム | 自社はシェルのみ |
-| **Oxigraph** | 意味＋SHACL 検証 | W3C ネイティブエンジン |
-| **DuckDB／LanceDB／ファイル** | 生／成果物のローカル保管 | ストレージは解決済み |
-| **SQLite** | ノード状態、DID／VC、ポリシー記録 | 枯れた ACID |
-| **Apache Arrow** | Python／SLM への橋 | 標準メモリ形式；Broker 契約は Ratio |
-| **IPA ODS SDK** | 参加（O1–O6） | 公式経路 |
+### Problems that motivate the thesis
 
-**単一原則:** 生と重い計算はドメイン内；**ODS に乗るのは共有可能プロダクト。**
+| # | Problem | Relation to thesis |
+|---|---------|-------------------|
+| E3 | Bandwidth vs raw volume | Shipping raw is often unrealistic |
+| E4 | Secrecy of raw and know-how | Raw must not be a data-space object |
+| E8 | Semantic gap | Shareable products must carry meaning |
+| E2 | Constrained / intermittent links | Meta-only egress is realistic |
+| E9 | Node trust | Identity + policy on Pull-able objects |
 
----
+Out of Ratio scope (this thesis does not solve): hard real-time control (E1), universal OT multi-protocol GW products, appliance SKUs, legal certification, ODP reimplementation or store forks.
 
-## テーゼに失敗する代替
+### In scope (what Ratio solves)
 
-| パターン | 失敗理由 |
-|----------|----------|
-| クラウド集約 AI／湖ミラー | 既定で生（相当）を出荷 |
-| 単体エッジ AI のスコアのみ | ODS 消費者向けの発見可能な意味がない |
-| 私的 API に「ODS」ラベル | 公式スタック参加（O6）ではない |
-| 全部自前 | ODP／W3C から乖離；Middleware の重複 |
-
----
-
-## 初回アジェンダ（60–90分）
-
-### A. テーゼの確定（15分）
-
-- 対象サイトの生 vs 共有可能プロダクト定義に合意
-- 需要条件（3つすべて）を確認
-
-### B. スコープと所有（15分）
-
-- Ratio vs EdgeSentry vs ODS SDK／OSS
-- リポジトリ境界: プロダクト・パイプラインのみか、WoT コレクタも含むか
-
-### C. PoC サイト（25分）
-
-想定フィールド: **北九州**（ロボット／工場）、**瀬戸内**（海事センサ／船舶）。境界の詳細: [`POC.md`](POC.md)
-
-| 順 | サイト | テーゼが示せる条件 |
-|----|--------|-------------------|
-| 1 | 北九州 | トレーサビリティ／品質プロダクトが Pull 可能；ロボット生は残る |
-| 2 | 瀬戸内 | 同じパイプライン；断続リンク下でメタのみ egress |
-
-ロック: 各サイトの最初の垂直スライス用デバイス／センサ系統を1つ。
-
-### D. 次アクション（10分）
-
-- reuse vs build を付けたタスク3つ（例: プロダクト・パイプライン、SHACL 形状、ODS SDK 接続）
+| Solve | How (reuse first) |
+|-------|-------------------|
+| Keep raw local; make **shareable products** Pull-able | Local store + JSON-LD package; publish / serve via ODS SDK |
+| Attach **context** to observations / inference | Oxigraph + JSON-LD / RDF; domain shapes as config |
+| **Validate** before share (or action) | Oxigraph SHACL; policy / credentials in SQLite |
+| Constrained egress | Pointers + policy; do not invent a new transport |
+| Thin WoT TD at the boundary | Consume TDs; do not rebuild every fieldbus driver |
 
 ---
 
-## 避ける言い方 → 強い言い方
+## Role inside EdgeSentry
 
-| 弱い | 強い |
-|------|------|
-| 「ODS をエッジに拡張」 | 「生クォンタを出さずに ODS に参加する」 |
-| 「自前データスペース」 | 「公式 ODS Middleware／SDK；Ratio が共有可能プロダクトを用意」 |
-| 「自前グラフ DB」 | 「SHACL／SPARQL は Oxigraph；Ratio はオーケストレーション」 |
-| 「ODS にアップロード」 | 「共有可能プロダクトを登録し Pull で提供」 |
-| 「メタデータだけ」（曖昧） | 「共有可能プロダクト＝結果＋意味＋利用条件；生はローカル」 |
+- **EdgeSentry** — parent brand for on-site governance & security  
+- **Ratio** — semantics / inference core that materializes the thesis (derive / validate shareable products; hand off to ODS)
 
 ---
 
-## 成功の定義
+## Why this OSS stack
 
-**短期（PoC）:**
+| Component (OSS) | Thesis role | Why not reinvent |
+|-----------------|-------------|------------------|
+| **Rust** | Thin composition runtime | Custom code is shell only |
+| **Oxigraph** | Meaning + SHACL validation | W3C-native engine |
+| **DuckDB / LanceDB / files** | Local custody of raw / artifacts | Storage is a solved problem |
+| **SQLite** | Node state, DID / VC, policy records | Mature ACID |
+| **Apache Arrow** | Bridge to Python / SLM | Standard memory format; Broker contract is Ratio |
+| **IPA ODS SDK** | Participation (O1–O6) | Official path |
 
-- 1デバイス系統を入れ、意味付き JSON-LD の共有可能プロダクトを出す
-- 生はローカル；プロダクトは ODS SDK で発見／提供可能
-- 一覧: 各能力 → OSS／SDK または Ratio 所有
+**Single principle:** raw and heavy compute stay in-domain; **what rides ODS is the shareable product.**
 
-**中期:**
+---
 
-- 主張する場合、公開／行動前に SHACL
-- ハンドオフでポリシー参照を執行可能
-- Python／SLM 向け Arrow I/F の安定
-- ODP やストアの並行再発明なし
+## Alternatives that fail the thesis
+
+| Pattern | Why it fails |
+|---------|--------------|
+| Cloud-centralized AI / lake mirror | Ships raw (or equivalent) by default |
+| Standalone edge AI scores only | No discoverable meaning for ODS consumers |
+| Private API labeled “ODS” | Not official-stack participation (O6) |
+| Build everything in-house | Drift from ODP / W3C; duplicate Middleware |
+
+---
+
+## Kickoff agenda (60–90 min)
+
+### A. Lock the thesis (15 min)
+
+- Agree raw vs shareable-product definitions for the target site
+- Confirm demand conditions (all three)
+
+### B. Scope and ownership (15 min)
+
+- Ratio vs EdgeSentry vs ODS SDK / OSS
+- Repo boundary: product pipeline only, or WoT collectors too?
+
+### C. PoC sites (25 min)
+
+Assumed fields: **Kitakyushu** (robot / factory), **Setouchi** (maritime sensors / vessels). Boundary detail: [`POC.md`](POC.md)
+
+| Order | Site | Thesis is shown when |
+|-------|------|----------------------|
+| 1 | Kitakyushu | Traceability / quality products are Pull-able; robot raw stays |
+| 2 | Setouchi | Same pipeline; meta-only egress under intermittent links |
+
+Lock: one device / sensor line for the first vertical slice at each site.
+
+### D. Next actions (10 min)
+
+- Three tasks tagged reuse vs build (e.g. product pipeline, SHACL shapes, ODS SDK connect)
+
+---
+
+## Weak phrasing → strong phrasing
+
+| Weak | Strong |
+|------|--------|
+| “Extend ODS to the edge” | “Participate in ODS without shipping raw quanta” |
+| “Our own data space” | “Official ODS Middleware / SDK; Ratio prepares shareable products” |
+| “Our own graph DB” | “SHACL / SPARQL via Oxigraph; Ratio orchestrates” |
+| “Upload to ODS” | “Register shareable products and serve via Pull” |
+| “Metadata only” (ambiguous) | “Shareable product = result + meaning + terms; raw stays local” |
+
+---
+
+## Definition of success
+
+**Near term (PoC):**
+
+- Ingest one device line; emit a meaning-bearing JSON-LD shareable product
+- Raw stays local; product is discoverable / servable via ODS SDK
+- Inventory: each capability → OSS / SDK or Ratio-owned
+
+**Medium term:**
+
+- SHACL before publish / action when claimed
+- Enforceable policy refs at handoff
+- Stable Arrow I/F for Python / SLM
+- No parallel reinvention of ODP or stores

@@ -1,42 +1,44 @@
 # EdgeSentry Ratio
 
-**物理ドメインが、生クォンタを出さずに ODS に参加できるようにする現場側の構成レイヤ。**
+> Japanese: [README.ja.md](README.ja.md)
 
-EdgeSentry（親ブランド：現場のガバナンス＆セキュリティ）配下のサブプロジェクト。  
-Ratio は現場で **共有可能プロダクト**（結果＋意味＋利用条件）を用意し、**生ペイロード**はドメイン内に留め、**公式 ODS スタック**へ引き渡す。既定は OSS／公式 SDK。自社実装はオーケストレーションの糊だけ。
+**An on-site composition layer that lets physical domains join ODS without shipping raw quanta.**
 
-共有可能プロダクトの定義・ポジショニング → [`docs/DISCUSSION.md`](docs/DISCUSSION.md)
+A subproject under EdgeSentry (parent brand: on-site governance & security).  
+Ratio prepares **shareable products** (result + meaning + terms of use) at the edge, keeps **raw payloads** in-domain, and hands off to the **official ODS stack**. Default is OSS / official SDKs. Custom code is only the orchestration glue.
 
-| 項目 | 内容 |
-|------|------|
-| 名称 | **Ratio**（ラテン語 *ratio*＝理性・推論・根拠） |
-| テーゼ | 生クォンタを出さずに ODS に参加する（*participate in ODS without shipping raw quanta*） |
-| 役割 | 現場で共有可能プロダクトを導出・検証するセマンティクス／推論コア |
-| 標準 | W3C（WoT / JSON-LD / RDF / SHACL / DID·VC / ODRL）× IPA ODS（ODP / DPQM） |
-| 方針 | 生はドメイン保管 · プロダクトを Pull · **OSS 既定** |
+Shareable-product definition and positioning → [`docs/DISCUSSION.md`](docs/DISCUSSION.md)
 
----
-
-## 想定読者
-
-- OT 生データをミラーせずに、現場を Pull 可能な提供者にしたい **IPA ODS** 利用者
-- 実デバイスに WoT / JSON-LD / SHACL / DID·VC / ODRL を載せる **W3C** 実践者
-- 秘匿・帯域・断続接続のため **生をローカルに留めつつ** データスペースへ参加したいチーム
-
-**利用者の目的 / ODS で何をするか / 何を得たいか / ODS 側メリット / Ratio だけでは足りないこと** → [`docs/DISCUSSION.md`](docs/DISCUSSION.md#利用者の目的--ods-で何をするか--何を得たいか)
+| Item | Detail |
+|------|--------|
+| Name | **Ratio** (Latin *ratio* = reason, inference, rationale) |
+| Thesis | Participate in ODS without shipping raw quanta |
+| Role | Semantics / inference core that derives and validates shareable products on site |
+| Standards | W3C (WoT / JSON-LD / RDF / SHACL / DID·VC / ODRL) × IPA ODS (ODP / DPQM) |
+| Policy | Raw stays in-domain · Pull products · **OSS by default** |
 
 ---
 
-## エレベーターピッチ（30秒）
+## Intended readers
 
-ODS はドメインオーナーが、湖へ全部 Push するのではなく、ガバナンスされた Data＋Ontology Product を Pull で提供する。  
-物理現場ではそれが難しい：参加しようとするとセンサダンプを送るか、意味のないスコアだけ出すかの二択になりがち。
+- **IPA ODS** users who want sites as Pull-capable providers without mirroring OT raw data
+- **W3C** practitioners putting WoT / JSON-LD / SHACL / DID·VC / ODRL on real devices
+- Teams that must **keep raw local** (secrecy, bandwidth, intermittent links) while joining a data space
 
-**Ratio** は現場で共有可能プロダクト（文脈＋結果＋ポリシー）を導出し、生バイトはローカルに残し、公式 ODS Middleware／SDK で参加する。
+**User goals / what we do with ODS / what we want / ODS-side benefits / what Ratio alone cannot cover** → [`docs/DISCUSSION.md`](docs/DISCUSSION.md#user-goals--what-we-do-with-ods--what-we-want)
 
 ---
 
-## 既定パス
+## Elevator pitch (30 seconds)
+
+ODS lets domain owners provide governed Data + Ontology Products via Pull—not dump everything into a lake.  
+On physical sites that is hard: joining often collapses into either shipping sensor dumps or publishing meaningless scores.
+
+**Ratio** derives shareable products (context + result + policy) on site, leaves raw bytes local, and participates via official ODS Middleware / SDK.
+
+---
+
+## Default path
 
 ```
 [devices] → raw quanta → local custody
@@ -46,50 +48,53 @@ ODS はドメインオーナーが、湖へ全部 Push するのではなく、�
          shareable product only → ODS (discover + Pull)
 ```
 
-テーゼ・スコープ・需要条件 → [`docs/DISCUSSION.md`](docs/DISCUSSION.md)  
-**スコープ正本（公式 ODS／Ratio／外と担当）** → [`docs/SCOPE.md`](docs/SCOPE.md)  
-PoC サイト（北九州／瀬戸内）→ [`docs/POC.md`](docs/POC.md)
-アーキテクチャ → [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)  
-ODS の目的と準拠要件（O1–O6, R1–R4）→ [`docs/ODS_COMPLIANCE.md`](docs/ODS_COMPLIANCE.md)  
-共有可能プロダクト封筒（K1／S1／S2）→ [`docs/PRODUCT_ENVELOPE.md`](docs/PRODUCT_ENVELOPE.md)  
-最小パイプライン → [`poc/README.md`](poc/README.md)  
-ODS ハンドオフ → [`docs/ODS_HANDOFF.md`](docs/ODS_HANDOFF.md)
+Thesis, scope, demand conditions → [`docs/DISCUSSION.md`](docs/DISCUSSION.md)  
+**Canonical scope (official ODS / Ratio / out-of-scope owners)** → [`docs/SCOPE.md`](docs/SCOPE.md)  
+PoC sites (Kitakyushu / Setouchi) → [`docs/POC.md`](docs/POC.md)  
+Architecture → [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)  
+ODS purpose and compliance (O1–O6, R1–R4) → [`docs/ODS_COMPLIANCE.md`](docs/ODS_COMPLIANCE.md)  
+ODS authn / authz (client requirements) → [`docs/ODS_COMPLIANCE.md` §4](docs/ODS_COMPLIANCE.md#4-authentication-and-authorization-client-requirements) · [`docs/ODS_HANDOFF.md`](docs/ODS_HANDOFF.md#ods-authentication-and-authorization-summary)
+Shareable-product envelope (K1 / S1 / S2) → [`docs/PRODUCT_ENVELOPE.md`](docs/PRODUCT_ENVELOPE.md)  
+Minimal pipeline → [`poc/README.md`](poc/README.md)  
+ODS handoff → [`docs/ODS_HANDOFF.md`](docs/ODS_HANDOFF.md)
 
 ---
 
-## なぜこのスタックか
+## Why this stack
 
-| 問い | 一行の答え |
-|------|------------|
-| なぜ現場で導出？ | 生を出さずに ODS 公開するなら、その前に共有可能プロダクトが必要 |
-| なぜ Oxigraph？ | 意味と検証のための RDF／SPARQL／SHACL |
-| なぜ DuckDB／LanceDB／ファイル？ | 生と派生物のローカル保管 |
-| なぜ SQLite？ | ノード状態・資格情報・ポリシー記録 |
-| なぜ Arrow？ | Python／SLM へのゼロコピー橋。Memory Broker は Ratio 所有 |
-| なぜ ODS SDK？ | 公式の参加経路。ODP は再実装しない |
-| 何を作る？ | 取込 → 導出／検証 → 生とプロダクトの分離 → ODS ハンドオフ |
-
----
-
-## 議論アジェンダ（初回）
-
-1. **テーゼの確認** — 生を出さない参加；共有可能プロダクトの中／外
-2. **スコープと所有** — Ratio vs EdgeSentry vs OSS／ODS SDK
-3. **PoC** — 北九州（ロボット／工場）→ 瀬戸内（海事）；[`docs/POC.md`](docs/POC.md)
+| Question | One-line answer |
+|----------|-----------------|
+| Why derive on site? | Publishing to ODS without raw egress requires a shareable product first |
+| Why Oxigraph? | RDF / SPARQL / SHACL for meaning and validation |
+| Why DuckDB / LanceDB / files? | Local custody of raw and derivatives |
+| Why SQLite? | Node state, credentials, policy records |
+| Why Arrow? | Zero-copy bridge to Python / SLM. Memory Broker is Ratio-owned |
+| Why ODS SDK? | Official participation path. Do not reimplement ODP |
+| What do we build? | Ingest → derive / validate → split raw vs product → ODS handoff |
 
 ---
 
-## ステータス
+## Discussion agenda (kickoff)
 
-- [x] テーゼと議論フレームワークを文書化
-- [x] PoC サイト想定（北九州 → 瀬戸内）；候補シナリオは [`docs/POC.md`](docs/POC.md)
-- [x] シナリオ・ショートリスト確定: **K1 → S1+S2**
-- [x] 共有可能プロダクト封筒＋最小 SHACL（[`docs/PRODUCT_ENVELOPE.md`](docs/PRODUCT_ENVELOPE.md)）
-- [x] 最小パイプライン試作（[`poc/`](poc/) — スタブ TD → 生保管 → プロダクト → SHACL → ODS stub/http）
-- [x] ODS／industry ハンドオフ（[`docs/ODS_HANDOFF.md`](docs/ODS_HANDOFF.md)；公式 Compose は外部）
-- [x] S2 ストア＆フォワード（`data/queue` + `--flush-queue`）
-- [ ] サイトごとのデバイス／センサ系統の固定（スタブ可ならベンダー未定でも可）
-- [x] 薄い TD ファイル化（[`examples/td/`](examples/td/)；`--td` で差し替え可）
-- [ ] コア I/F（Arrow）草案
-- [x] 公式 `SDK-docker-compose` 接続手順（[`ODS_HANDOFF.md`](docs/ODS_HANDOFF.md)；`--ods l2` + [`poc/scripts/ods/`](poc/scripts/ods/)；Compose は外部起動）
-- [ ] reuse vs build 一覧（草案は POC.md）
+1. **Confirm the thesis** — participation without shipping raw; what is in/out of a shareable product
+2. **Scope and ownership** — Ratio vs EdgeSentry vs OSS / ODS SDK
+3. **PoC** — Kitakyushu (robot / factory) → Setouchi (maritime); [`docs/POC.md`](docs/POC.md)
+
+---
+
+## Status
+
+- [x] Document thesis and discussion framework
+- [x] PoC site assumptions (Kitakyushu → Setouchi); candidate scenarios in [`docs/POC.md`](docs/POC.md)
+- [x] Scenario shortlist locked: **K1 → S1+S2**
+- [x] Shareable-product envelope + minimal SHACL ([`docs/PRODUCT_ENVELOPE.md`](docs/PRODUCT_ENVELOPE.md))
+- [x] Minimal pipeline prototype ([`poc/`](poc/) — stub TD → raw custody → product → SHACL → ODS stub/http)
+- [x] ODS / industry handoff ([`docs/ODS_HANDOFF.md`](docs/ODS_HANDOFF.md); official Compose is external)
+- [x] S2 store-and-forward (`data/queue` + `--flush-queue`)
+- [ ] Lock per-site device / sensor lines (vendor TBD OK if stubs work)
+- [x] Thin TD files ([`examples/td/`](examples/td/); swappable via `--td`)
+- [ ] Core I/F (Arrow) draft
+- [x] Official `SDK-docker-compose` connection steps ([`ODS_HANDOFF.md`](docs/ODS_HANDOFF.md); `--ods l2` + [`poc/scripts/ods/`](poc/scripts/ods/); Compose started externally)
+- [x] AuthZEN with `operator_id` ([`ODS_HANDOFF.md` §7](docs/ODS_HANDOFF.md#7-authzen-operator_id); `register-operator.sh` / `enable-authzen.sh`)
+- [x] ODS authn/authz and client requirements ([`ODS_COMPLIANCE.md` §4](docs/ODS_COMPLIANCE.md#4-authentication-and-authorization-client-requirements))
+- [ ] reuse vs build inventory (draft in POC.md)
