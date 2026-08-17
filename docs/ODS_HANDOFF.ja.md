@@ -4,6 +4,18 @@
 
 Ratio は ODP／Middleware を再実装しない。共有可能プロダクトだけを、公式スタックが想定する **提供者インダストリ API** へ渡す。
 
+## ODS の認証・認可（概要）
+
+> English: [Authentication and authorization (summary)](ODS_HANDOFF.md#ods-authentication-and-authorization-summary) · 要件の正本: [`ODS_COMPLIANCE.ja.md` §4](ODS_COMPLIANCE.ja.md#4-odsの認証認可参加クライアントの要件)
+
+参加**クライアント**が公式スタックの要件を満たす（Ratio ではない）:
+
+1. **認証（L3）:** operator 登録 → `client_credentials` クライアント → `operator_id` 付き JWT。
+2. **認可（L2）:** AuthZEN 有効時、**OpenFGA**（公式 SDK 内の ReBAC 認可エンジン／**PDP**；[ODS_COMPLIANCE.ja.md §4.1](ODS_COMPLIANCE.ja.md#4-odsの認証認可参加クライアントの要件)）で operator に `/products/**` を付与；Pull は **L2** へ Bearer JWT + **L2** API-Key（L3 キーではない）。
+3. **提供者（Ratio）:** 共有可能プロダクトを industry API へ POST のみ；現場で JWT／AuthZEN は扱わない。
+
+以下が運用手順。AuthZEN 設定は [§7](#7-authzenoperator_id)。
+
 ## 公式コンポーネント（外部）
 
 | 資源 | URL |
@@ -148,7 +160,7 @@ bash poc/scripts/ods/verify-l2-pull.sh k1-<stem>
 
 ### 7. AuthZEN（`operator_id`）
 
-AuthZEN 認可は JWT クレーム `operator_id` を読む。本番寄りの手順:
+[`ODS_COMPLIANCE.ja.md` §4](ODS_COMPLIANCE.ja.md#4-odsの認証認可参加クライアントの要件) を参照。AuthZEN 認可は JWT クレーム `operator_id` を読む。本番寄りの手順:
 
 ```bash
 # 1) 事業者＋client_credentials クライアント登録（gitignore の env に書き出し）

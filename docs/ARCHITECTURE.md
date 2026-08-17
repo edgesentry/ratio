@@ -44,6 +44,14 @@ See: [`DISCUSSION.md`](DISCUSSION.md) · [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md
 | **L3** | Package identity, policy refs, and provenance for handoff |
 | **L4** | Participate via the **official** ODS stack (O1–O6)—no ODP fork |
 
+### 1.1 ODS authentication and authorization
+
+> Japanese: [§1.1](ARCHITECTURE.ja.md#11-odsの認証認可) · Detail: [`ODS_COMPLIANCE.md` §4](ODS_COMPLIANCE.md#4-authentication-and-authorization-client-requirements)
+
+- **L3 (authenticate):** operator + `client_credentials` → JWT with `operator_id` (**O1**).
+- **L2 (authorize):** gateway validates JWT, AuthZEN → OpenFGA for endpoint access (**O4**, **O8**).
+- **Ratio:** shareable products at industry API only; no JWT/AuthZEN on site (**R1–R4**).
+
 ---
 
 ## 2. Logical data flow
@@ -71,6 +79,7 @@ WoT ingest → inference (ONNX/TensorRT, etc.)
 | Inference runtime | ONNX Runtime / TensorRT, etc. | **OSS** / vendor |
 | Semantics representation | JSON-LD / CBOR-LD | **Standard** |
 | ODS participation | IPA ODS Middleware / SDK + ODP | **Official**—do not reimplement |
+| L2 authorization (AuthZEN → OpenFGA) | OpenID AuthZEN API + OpenFGA | **Official ODS SDK**—Ratio enables via scripts only |
 
 ---
 

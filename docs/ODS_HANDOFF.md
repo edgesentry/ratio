@@ -4,6 +4,18 @@
 
 Ratio does not reimplement ODP / Middleware. It hands only shareable products to the **provider industry API** expected by the official stack.
 
+## ODS authentication and authorization (summary)
+
+> Japanese: [認証・認可（概要）](ODS_HANDOFF.ja.md#odsの認証認可概要) · Full requirements: [`ODS_COMPLIANCE.md` §4](ODS_COMPLIANCE.md#4-authentication-and-authorization-client-requirements)
+
+Participating **clients** must satisfy the official stack—not Ratio:
+
+1. **Authenticate (L3):** register operator → `client_credentials` client → JWT with `operator_id`.
+2. **Authorize (L2):** when AuthZEN is on, **OpenFGA** (ReBAC policy engine / **PDP** in the official SDK; [ODS_COMPLIANCE §4.1](ODS_COMPLIANCE.md#4-authentication-and-authorization-client-requirements)) must grant the operator on `/products/**`; Pull uses **L2** with Bearer JWT + **L2** API-Key (not L3 key).
+3. **Provider (Ratio):** POST shareable products to industry API only; no JWT or AuthZEN logic on site.
+
+Operational steps below; AuthZEN setup in [§7](#7-authzen-operator_id).
+
 ## Official components (external)
 
 | Resource | URL |
@@ -148,7 +160,7 @@ bash poc/scripts/ods/verify-l2-pull.sh k1-<stem>
 
 ### 7. AuthZEN (`operator_id`)
 
-AuthZEN authorization reads the JWT claim `operator_id`. Production-style path:
+See [`ODS_COMPLIANCE.md` §4](ODS_COMPLIANCE.md#4-authentication-and-authorization-client-requirements). AuthZEN authorization reads the JWT claim `operator_id`. Production-style path:
 
 ```bash
 # 1) Register operator + client_credentials client (writes gitignored env)

@@ -44,6 +44,14 @@
 | **L3** | アイデンティティ・ポリシー参照・来歴をハンドオフ用にパッケージ |
 | **L4** | **公式** ODS スタックで参加（O1–O6）— ODP フォークなし |
 
+### 1.1 ODS の認証・認可
+
+> English: [§1.1](ARCHITECTURE.md#11-ods-authentication-and-authorization) · 詳細: [`ODS_COMPLIANCE.ja.md` §4](ODS_COMPLIANCE.ja.md#4-odsの認証認可参加クライアントの要件)
+
+- **L3（認証）:** operator + `client_credentials` → `operator_id` 付き JWT（**O1**）。
+- **L2（認可）:** ゲートウェイが JWT 検証、AuthZEN → OpenFGA でエンドポイントアクセス（**O4**、**O8**）。
+- **Ratio:** industry API への共有可能プロダクトのみ；現場で JWT／AuthZEN は扱わない（**R1–R4**）。
+
 ---
 
 ## 2. 論理データフロー
@@ -71,6 +79,7 @@ WoT ingest → inference (ONNX/TensorRT, etc.)
 | 推論ランタイム | ONNX Runtime／TensorRT 等 | **OSS**／ベンダー |
 | セマンティクス表現 | JSON-LD／CBOR-LD | **標準** |
 | ODS 参加 | IPA ODS Middleware／SDK + ODP | **公式**—再実装しない |
+| L2 認可（AuthZEN → OpenFGA） | OpenID AuthZEN API + OpenFGA | **公式 ODS SDK**—Ratio はスクリプトで有効化のみ |
 
 ---
 

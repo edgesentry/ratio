@@ -53,6 +53,7 @@ ODS はドメインオーナーが、湖へ全部 Push するのではなく、�
 PoC サイト（北九州／瀬戸内）→ [`docs/POC.ja.md`](docs/POC.ja.md)
 アーキテクチャ → [`docs/ARCHITECTURE.ja.md`](docs/ARCHITECTURE.ja.md)  
 ODS の目的と準拠要件（O1–O6, R1–R4）→ [`docs/ODS_COMPLIANCE.ja.md`](docs/ODS_COMPLIANCE.ja.md)  
+ODS 認証・認可（参加クライアント要件）→ [`docs/ODS_COMPLIANCE.ja.md` §4](docs/ODS_COMPLIANCE.ja.md#4-odsの認証認可参加クライアントの要件) · [`docs/ODS_HANDOFF.ja.md`](docs/ODS_HANDOFF.ja.md#odsの認証認可概要)
 共有可能プロダクト封筒（K1／S1／S2）→ [`docs/PRODUCT_ENVELOPE.ja.md`](docs/PRODUCT_ENVELOPE.ja.md)  
 最小パイプライン → [`poc/README.ja.md`](poc/README.ja.md)  
 ODS ハンドオフ → [`docs/ODS_HANDOFF.ja.md`](docs/ODS_HANDOFF.ja.md)
@@ -95,4 +96,5 @@ ODS ハンドオフ → [`docs/ODS_HANDOFF.ja.md`](docs/ODS_HANDOFF.ja.md)
 - [ ] コア I/F（Arrow）草案
 - [x] 公式 `SDK-docker-compose` 接続手順（[`ODS_HANDOFF.ja.md`](docs/ODS_HANDOFF.ja.md)；`--ods l2` + [`poc/scripts/ods/`](poc/scripts/ods/)；Compose は外部起動）
 - [x] AuthZEN + `operator_id`（[`ODS_HANDOFF.ja.md` §7](docs/ODS_HANDOFF.ja.md#7-authzenoperator_id)；`register-operator.sh` / `enable-authzen.sh`）
+- [x] ODS 認証・認可と参加クライアント要件（[`ODS_COMPLIANCE.ja.md` §4](docs/ODS_COMPLIANCE.ja.md#4-odsの認証認可参加クライアントの要件)）
 - [ ] reuse vs build 一覧（草案は POC.ja.md）

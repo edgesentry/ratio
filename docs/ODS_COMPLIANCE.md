@@ -5,7 +5,7 @@
 Extracts the parts of the thesis **participate in ODS without shipping raw quanta** that depend on IPA Open Data Spaces (ODS), as distinct from on-site derivation or W3C-only concerns.  
 The thesis wording is a **Ratio operational definition**, not a quotation from ODS-RAM. ODS-dependent elements follow.
 
-Related: [`DISCUSSION.md`](DISCUSSION.md) · [`SCOPE.md`](SCOPE.md) · [`ARCHITECTURE.md`](ARCHITECTURE.md)
+Related: [`DISCUSSION.md`](DISCUSSION.md) · [`SCOPE.md`](SCOPE.md) · [`ARCHITECTURE.md`](ARCHITECTURE.md) · [`ODS_HANDOFF.md`](ODS_HANDOFF.md)
 
 ---
 
@@ -96,9 +96,96 @@ Split into **required (MVP participation)** / **recommended (provider maturity)*
 | R3 | **SHACL (or equivalent) validation** before publish / action when claimed | Trustworthy products; works with W3C tooling (Oxigraph)—supports O5 / O7 |
 | R4 | Clear handoff boundary into the ODS stack (no private ODP fork) | Protects O6 |
 
+Individual client requirements for **O1** (identity), **O4** (transaction), and **O8** (usage control) on the official SDK path: [§4](#4-authentication-and-authorization-client-requirements).
+
 ---
 
-## 4. Traceability: slogan → ODS vs Ratio
+## 4. Authentication and authorization (client requirements)
+
+> Japanese: [§4 ODS の認証・認可](ODS_COMPLIANCE.ja.md#4-odsの認証認可参加クライアントの要件) · Procedures: [`ODS_HANDOFF.md`](ODS_HANDOFF.md) · AuthZEN setup: [§7](ODS_HANDOFF.md#7-authzen-operator_id)
+
+§3 lists **what** must hold (O1, O4, O8). This section details **how participating clients** satisfy authentication and authorization on the official stack. Ratio does not implement L2/L3; clients and operators follow the official SDK.
+
+### 4.1 Two steps: authenticate, then authorize
+
+| Step | ODP layer | Maps to | PoC component |
+|------|-----------|---------|---------------|
+| **Authentication** | **L3** Identity and Trust | **O1** | L3 + Keycloak → **JWT** (includes `operator_id` for registered operators) |
+| **Authorization** | **L2** Transaction (+ usage control) | **O4**, **O8** | L2 gateway (**PEP**) → **AuthZEN** → OpenFGA (**PDP**) |
+
+**OpenFGA** is an open-source authorization engine ([openfga.dev](https://openfga.dev/); CNCF) that stores **relationship-based access control (ReBAC)** policies as tuples—for example, “operator *O* may call endpoint `/products/**`”. In the official ODS SDK Docker stack, OpenFGA is the **PDP** (Policy Decision Point): the L2 gateway asks OpenFGA (via AuthZEN) whether a given operator may access a route, and allows or denies the Pull accordingly. Ratio does not embed OpenFGA; PoC operators register tuples with [`register-openfga-products.sh`](../poc/scripts/ods/register-openfga-products.sh).
+
+**OpenID** and **AuthZEN** are standards **used inside** the official stack—not separate ODS-RAM layer names:
+
+- **L3** uses OpenID-style flows (OAuth 2.0 `client_credentials`, JWT).
+- **L2** uses the **OpenID AuthZEN Authorization API** to query OpenFGA when `AUTHZEN_AUTHORIZATION_ENABLED=true`.
+
+### 4.2 O1 — Authentication (L3): client checklist
+
+A consumer (or admin) client that calls L2 must first prove identity via L3:
+
+| ID | Requirement | Notes |
+|----|-------------|-------|
+| A1 | **Operator registered** on L3 | Organization / participant record (`operator_id` issued) |
+| A2 | **OAuth client** with `client_credentials` bound to that operator | Created via L3 `/auth/clients` |
+| A3 | **JWT obtained** from L3 token endpoint | `client_id` + `client_secret` + L3 `API-Key` |
+| A4 | JWT carries **`operator_id`** | Required when AuthZEN is enabled on L2 |
+
+PoC helpers: [`register-operator.sh`](../poc/scripts/ods/register-operator.sh), [`fetch-l3-token.sh`](../poc/scripts/ods/fetch-l3-token.sh).
+
+### 4.3 O4 / O8 — Authorization (L2 + AuthZEN): client checklist
+
+When AuthZEN is enabled on the L2 gateway, a Pull client must additionally satisfy:
+
+| ID | Requirement | Notes |
+|----|-------------|-------|
+| Z1 | **OpenFGA grant** for the operator on the L2 endpoint | e.g. `/products/**` tuples (**O8**) |
+| Z2 | Call **L2** (not the provider industry API directly for governed Pull) | Official transaction path (**O4**) |
+| Z3 | **`Authorization: Bearer <JWT>`** | Token from §4.2 |
+| Z4 | **`API-Key: <L2 key>`** | From `VALID_API_KEYS` in L2 compose—**not** the L3 `API-Key-Sample` |
+| Z5 | **Tracking headers** as required by L2 | e.g. `X-TrackingId`, `X-ODS-UserId` |
+
+L2 validates the JWT, reads `operator_id`, asks OpenFGA via AuthZEN, and forwards allowed requests to the provider industry API.
+
+PoC helpers: [`register-openfga-products.sh`](../poc/scripts/ods/register-openfga-products.sh), [`enable-authzen.sh`](../poc/scripts/ods/enable-authzen.sh), [`verify-l2-pull.sh`](../poc/scripts/ods/verify-l2-pull.sh).
+
+For **connectivity smoke tests only**, temporarily setting `AUTHZEN_AUTHORIZATION_ENABLED=false` is acceptable. In production, keep AuthZEN enabled and complete OpenFGA grants.
+
+### 4.4 End-to-end flow (PoC)
+
+```
+[ Consumer client ]
+  1) POST L3 token     client_credentials + L3 API-Key  →  JWT (operator_id)
+  2) GET  L2 /products/{id}
+        Bearer JWT + L2 API-Key + X-TrackingId + X-ODS-UserId
+        L2: validate JWT → AuthZEN/OpenFGA (operator_id × endpoint) → forward
+  3) Response: JSON-LD shareable product (no raw bytes)
+
+[ Provider (Ratio) ]
+  POST shareable product → industry API (:8787)
+  L2 route /products/** registered upstream
+  Does NOT issue JWTs or evaluate AuthZEN; raw stays local (R1)
+```
+
+### 4.5 Requirements by participant role
+
+| Role | Must satisfy | Ratio’s job |
+|------|--------------|-------------|
+| **Consumer** (Pull) | A1–A4, Z1–Z5 when AuthZEN on; never expect raw via L2 | Document and script against official stack; do not reimplement L2/L3 |
+| **Provider** (Ratio site) | Serve **shareable products** on industry API; L2 route `/products/**` registered | Derive, SHACL, raw/product split, handoff (**R2–R4**) |
+| **Operator / admin** | Run official SDK; register operators, clients, FGA tuples, routes | PoC helper scripts only |
+
+### 4.6 What Ratio does not do
+
+- Issue or validate JWTs (L3 / Keycloak)
+- Evaluate AuthZEN or store ReBAC policies (L2 / OpenFGA)
+- Replace ODP Identity and Trust or Transaction layers
+
+**Ratio** supplies ODS-ready **shareable products** at the industry boundary; **ODS** owns authn/authz on the participation path.
+
+---
+
+## 5. Traceability: slogan → ODS vs Ratio
 
 ```
 Authenticated node          → O1          (ODS)
@@ -111,7 +198,7 @@ Raw not shipped by default  → R1          (Ratio policy; compatible with ODS c
 
 ---
 
-## 5. External references
+## 6. External references
 
 ### IPA / Open Data Spaces (primary)
 
@@ -139,6 +226,12 @@ Raw not shipped by default  → R1          (Ratio policy; compatible with ODS c
 | Deliverables press release (2026-04-01) | https://www.ipa.go.jp/en/pressrelease/press20260401.html |
 | GitHub org (Middleware / SDK) | https://github.com/open-dataspaces |
 
+### OpenID (L2 authorization API)
+
+| Resource | URL |
+|----------|-----|
+| OpenID AuthZEN Authorization API 1.0 | https://openid.net/specs/openid-authzen-authorization-api-1_0.html |
+
 ### W3C (product meaning / identity / policy side)
 
 | Resource | URL |
@@ -153,6 +246,6 @@ Raw not shipped by default  → R1          (Ratio policy; compatible with ODS c
 
 ---
 
-## 6. Maintenance
+## 7. Maintenance
 
-When ODS-RAM or ODP revisions rename layers / protocols, update **§3 requirement anchors** and **§5 URLs** first. Keep Ratio’s edge policy (R1–R4) separate so compliance drift does not silently rewrite “do not ship raw.”
+When ODS-RAM or ODP revisions rename layers / protocols, update **§3 requirement anchors** and **§6 URLs** first. Keep Ratio’s edge policy (R1–R4) separate so compliance drift does not silently rewrite “do not ship raw.”
