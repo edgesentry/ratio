@@ -12,10 +12,10 @@ S2: also store in data/queue → flush when the link returns
 
 Raw data is **not published**. Only products are candidates to leave. TD `forms.href` values are `local://` (no raw-data egress).
 
-| Scenario | TD |
-|----------|-----|
-| K1 | [`examples/td/k1-robot.td.json`](../examples/td/k1-robot.td.json) |
-| S1 / S2 | [`examples/td/s-engine-vib.td.json`](../examples/td/s-engine-vib.td.json) (same sensor; S2 differs only in queue policy) |
+| Scenario | Device line (locked) | TD |
+|----------|----------------------|-----|
+| K1 | Factory cell robot · `vibrationWaveform` | [`examples/td/k1-robot.td.json`](../examples/td/k1-robot.td.json) |
+| S1 / S2 | Vessel engine · `shaftVibration` (S2 = same line + queue) | [`examples/td/s-engine-vib.td.json`](../examples/td/s-engine-vib.td.json) |
 
 Package management is **uv** (`pyproject.toml` + `uv.lock`).
 
@@ -27,6 +27,14 @@ L2 route / OpenFGA / L3 token helpers: [`scripts/ods/`](scripts/ods/)
 ```bash
 cd poc
 uv sync
+```
+
+## Tests
+
+```bash
+cd poc
+uv sync --group dev
+uv run pytest
 ```
 
 ## Run

@@ -317,7 +317,7 @@ Assumed fields: **Factory** (industrial robots / factory OT), **Maritime** (mari
 | 1 | Factory | Traceability / quality products are Pull-able; robot raw data stays |
 | 2 | Maritime | Same pipeline; meta-only egress under intermittent links |
 
-Lock: one device / sensor line for the first vertical slice in each domain.
+Lock: one device / sensor line per vertical — **done** in [`POC.md`](POC.md) (factory K1 robot + vibration; maritime S1/S2 shaft vibration).
 
 ### D. Next actions (10 min)
 

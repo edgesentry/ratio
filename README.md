@@ -91,7 +91,7 @@ ODS handoff → [`docs/ODS_HANDOFF.md`](docs/ODS_HANDOFF.md)
 - [x] Minimal pipeline prototype ([`poc/`](poc/) — stub TD → raw-data custody → product → SHACL → ODS stub/http)
 - [x] ODS / industry handoff ([`docs/ODS_HANDOFF.md`](docs/ODS_HANDOFF.md); official Compose is external)
 - [x] S2 store-and-forward (`data/queue` + `--flush-queue`)
-- [ ] Lock per-vertical device / sensor lines (vendor TBD OK if stubs work)
+- [x] Lock per-vertical device / sensor lines ([`POC.md`](docs/POC.md); K1 robot vibration, S1/S2 shaft vibration; vendor TBD)
 - [x] Thin TD files ([`examples/td/`](examples/td/); swappable via `--td`)
 - [ ] Core I/F (Arrow) draft
 - [x] Official `SDK-docker-compose` connection steps ([`ODS_HANDOFF.md`](docs/ODS_HANDOFF.md); `--ods l2` + [`poc/scripts/ods/`](poc/scripts/ods/); Compose started externally)

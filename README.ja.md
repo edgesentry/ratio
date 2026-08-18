@@ -91,7 +91,7 @@ ODS ハンドオフ → [`docs/ODS_HANDOFF.ja.md`](docs/ODS_HANDOFF.ja.md)
 - [x] 最小パイプライン試作（[`poc/`](poc/) — スタブ TD → 生データの保管 → プロダクト → SHACL → ODS stub/http）
 - [x] ODS／industry ハンドオフ（[`docs/ODS_HANDOFF.ja.md`](docs/ODS_HANDOFF.ja.md)；公式 Compose は外部）
 - [x] S2 ストア＆フォワード（`data/queue` + `--flush-queue`）
-- [ ] 分野ごとのデバイス／センサ系統の固定（スタブ可ならベンダー未定でも可）
+- [x] 分野ごとのデバイス／センサ系統の固定（[`POC.ja.md`](docs/POC.ja.md)；K1 ロボット振動、S1/S2 シャフト振動；ベンダー未定）
 - [x] 薄い TD ファイル化（[`examples/td/`](examples/td/)；`--td` で差し替え可）
 - [ ] コア I/F（Arrow）草案
 - [x] 公式 `SDK-docker-compose` 接続手順（[`ODS_HANDOFF.ja.md`](docs/ODS_HANDOFF.ja.md)；`--ods l2` + [`poc/scripts/ods/`](poc/scripts/ods/)；Compose は外部起動）

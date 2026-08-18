@@ -11,7 +11,7 @@
   "properties": {
     "shaftVibration": {
       "type": "object",
-      "description": "Raw shaft vibration quanta; stay onboard under local:// custody.",
+      "description": "Raw shaft vibration data; stay onboard under local:// custody.",
       "forms": [
         {
           "href": "local://storage/S1/shaftVibration",

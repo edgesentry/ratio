@@ -2,7 +2,8 @@
 
 > Japanese: [PRODUCT_ENVELOPE.ja.md](PRODUCT_ENVELOPE.ja.md)
 
-**Locked shortlist:** K1 (factory) → S1+S2 (maritime). Vendor TBD. Recorded / synthetic raw data is fine.
+**Locked shortlist:** K1 (factory) → S1+S2 (maritime).  
+**Locked device lines:** K1 = cell robot + vibration waveform; S1/S2 = vessel engine shaft vibration (same TD). Vendor TBD. Recorded / synthetic raw data is fine.
 
 Use the **same envelope** for K and S. Vertical differences are only `domain`, vocabulary, and optional `physicalContext` / `provenance` fields.
 

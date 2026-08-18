@@ -153,7 +153,7 @@ Decide:
 
 Follow the thesis: **custody → derive → participate**.
 
-1. **Ingest** — one device line via WoT TD; raw data into local store  
+1. **Ingest** — locked device line via WoT TD (factory: robot vibration; maritime: shaft vibration); raw data into local store  
 2. **Split and productize** — JSON-LD shareable product + SHACL; do not put raw data on the publish path  
 3. **Participate** — ODS SDK: register / discover / serve **products only**  
 
