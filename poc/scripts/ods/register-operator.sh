@@ -57,7 +57,7 @@ import json
 print(json.dumps({
   "login_user_id": "$LOGIN_USER_ID",
   "operator_name": "Ratio PoC Operator",
-  "operator_address": "Kitakyushu PoC",
+  "operator_address": "Factory PoC",
   "open_operator_id": "$OPEN_OPERATOR_ID",
   "global_operator_id": "RATIO${SUFFIX}TT000000000",
   "effective_start_date": "2000-01-01",

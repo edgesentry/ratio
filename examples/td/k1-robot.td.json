@@ -1,9 +1,9 @@
 {
   "@context": "https://www.w3.org/2022/wot/td/v1.1",
-  "id": "urn:td:kitakyushu-robot-01",
+  "id": "urn:td:factory-robot-01",
   "title": "Stub weld/assemble cell robot",
   "@type": "Thing",
-  "description": "Kitakyushu PoC (K1). Thin TD only — raw waveforms stay under local:// custody.",
+  "description": "Factory PoC (K1). Thin TD only — raw waveforms stay under local:// custody.",
   "securityDefinitions": {
     "nosec_sc": { "scheme": "nosec" }
   },

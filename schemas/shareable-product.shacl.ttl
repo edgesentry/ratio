@@ -38,7 +38,7 @@ ratio:propDomain
     sh:path ratio:domain ;
     sh:minCount 1 ;
     sh:datatype xsd:string ;
-    sh:in ( "kitakyushu_factory" "setouchi_maritime" ) ;
+    sh:in ( "factory" "maritime" ) ;
     sh:name "domain" .
 
 ratio:propScenario

@@ -2,9 +2,9 @@
   "@context": "../schemas/shareable-product.context.jsonld",
   "@type": ["ShareableProduct"],
   "id": "urn:uuid:b22c3d4e-5f67-89ab-cdef-0123456789ab",
-  "sourceDevice": "did:example:setouchi-vessel-engine-vib-01",
+  "sourceDevice": "did:example:vessel-engine-vib-01",
   "timestamp": "2026-08-16T08:40:00Z",
-  "domain": "setouchi_maritime",
+  "domain": "maritime",
   "scenario": "S2",
   "inference": {
     "task": "anomaly_detection",
@@ -21,7 +21,7 @@
     "shaclConforms": true
   },
   "provenance": {
-    "producedBy": "urn:ratio:node:setouchi-poc-01",
+    "producedBy": "urn:ratio:node:maritime-poc-01",
     "queueDepth": 3,
     "firstBufferedAt": "2026-08-16T06:12:00Z"
   }

@@ -2,20 +2,20 @@
 
 > Japanese: [README.ja.md](README.ja.md)
 
-**An on-site composition layer that lets physical domains join ODS without shipping raw quanta.**
+**An on-site composition layer that lets physical domains join ODS without shipping raw data.**
 
 A subproject under EdgeSentry (parent brand: on-site governance & security).  
-Ratio prepares **shareable products** (result + meaning + terms of use) at the edge, keeps **raw payloads** in-domain, and hands off to the **official ODS stack**. Default is OSS / official SDKs. Custom code is only the orchestration glue.
+Ratio prepares **shareable products** (result + meaning + terms of use) at the edge, keeps **raw data** in-domain, and hands off to the **official ODS stack**. Default is OSS / official SDKs. Custom code is only the orchestration glue.
 
 Shareable-product definition and positioning → [`docs/DISCUSSION.md`](docs/DISCUSSION.md)
 
 | Item | Detail |
 |------|--------|
 | Name | **Ratio** (Latin *ratio* = reason, inference, rationale) |
-| Thesis | Participate in ODS without shipping raw quanta |
+| Thesis | Participate in ODS without shipping raw data |
 | Role | Semantics / inference core that derives and validates shareable products on site |
 | Standards | W3C (WoT / JSON-LD / RDF / SHACL / DID·VC / ODRL) × IPA ODS (ODP / DPQM) |
-| Policy | Raw stays in-domain · Pull products · **OSS by default** |
+| Policy | Raw data stays in-domain · Pull products · **OSS by default** |
 
 ---
 
@@ -23,7 +23,7 @@ Shareable-product definition and positioning → [`docs/DISCUSSION.md`](docs/DIS
 
 - **IPA ODS** users who want sites as Pull-capable providers without mirroring OT raw data
 - **W3C** practitioners putting WoT / JSON-LD / SHACL / DID·VC / ODRL on real devices
-- Teams that must **keep raw local** (secrecy, bandwidth, intermittent links) while joining a data space
+- Teams that must **keep raw data local** (secrecy, bandwidth, intermittent links) while joining a data space
 
 **User goals / what we do with ODS / what we want / ODS-side benefits / what Ratio alone cannot cover** → [`docs/DISCUSSION.md`](docs/DISCUSSION.md#user-goals--what-we-do-with-ods--what-we-want)
 
@@ -34,14 +34,14 @@ Shareable-product definition and positioning → [`docs/DISCUSSION.md`](docs/DIS
 ODS lets domain owners provide governed Data + Ontology Products via Pull—not dump everything into a lake.  
 On physical sites that is hard: joining often collapses into either shipping sensor dumps or publishing meaningless scores.
 
-**Ratio** derives shareable products (context + result + policy) on site, leaves raw bytes local, and participates via official ODS Middleware / SDK.
+**Ratio** derives shareable products (context + result + policy) on site, leaves raw data local, and participates via official ODS Middleware / SDK.
 
 ---
 
 ## Default path
 
 ```
-[devices] → raw quanta → local custody
+[devices] → raw data → local custody
                 ↓
          derive / validate (W3C)
                 ↓
@@ -50,7 +50,7 @@ On physical sites that is hard: joining often collapses into either shipping sen
 
 Thesis, scope, demand conditions → [`docs/DISCUSSION.md`](docs/DISCUSSION.md)  
 **Canonical scope (official ODS / Ratio / out-of-scope owners)** → [`docs/SCOPE.md`](docs/SCOPE.md)  
-PoC sites (Kitakyushu / Setouchi) → [`docs/POC.md`](docs/POC.md)  
+PoC verticals (factory / maritime) → [`docs/POC.md`](docs/POC.md)  
 Architecture → [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)  
 ODS purpose and compliance (O1–O6, R1–R4) → [`docs/ODS_COMPLIANCE.md`](docs/ODS_COMPLIANCE.md)  
 ODS authn / authz (client requirements) → [`docs/ODS_COMPLIANCE.md` §4](docs/ODS_COMPLIANCE.md#4-authentication-and-authorization-client-requirements) · [`docs/ODS_HANDOFF.md`](docs/ODS_HANDOFF.md#ods-authentication-and-authorization-summary)
@@ -64,37 +64,37 @@ ODS handoff → [`docs/ODS_HANDOFF.md`](docs/ODS_HANDOFF.md)
 
 | Question | One-line answer |
 |----------|-----------------|
-| Why derive on site? | Publishing to ODS without raw egress requires a shareable product first |
+| Why derive on site? | Publishing to ODS without raw-data egress requires a shareable product first |
 | Why Oxigraph? | RDF / SPARQL / SHACL for meaning and validation |
-| Why DuckDB / LanceDB / files? | Local custody of raw and derivatives |
+| Why DuckDB / LanceDB / files? | Local custody of raw data and derivatives |
 | Why SQLite? | Node state, credentials, policy records |
 | Why Arrow? | Zero-copy bridge to Python / SLM. Memory Broker is Ratio-owned |
 | Why ODS SDK? | Official participation path. Do not reimplement ODP |
-| What do we build? | Ingest → derive / validate → split raw vs product → ODS handoff |
+| What do we build? | Ingest → derive / validate → split raw data vs product → ODS handoff |
 
 ---
 
 ## Discussion agenda (kickoff)
 
-1. **Confirm the thesis** — participation without shipping raw; what is in/out of a shareable product
+1. **Confirm the thesis** — participation without shipping raw data; what is in/out of a shareable product
 2. **Scope and ownership** — Ratio vs EdgeSentry vs OSS / ODS SDK
-3. **PoC** — Kitakyushu (robot / factory) → Setouchi (maritime); [`docs/POC.md`](docs/POC.md)
+3. **PoC** — industrial robots / factory → maritime sensors / vessels; [`docs/POC.md`](docs/POC.md)
 
 ---
 
 ## Status
 
 - [x] Document thesis and discussion framework
-- [x] PoC site assumptions (Kitakyushu → Setouchi); candidate scenarios in [`docs/POC.md`](docs/POC.md)
+- [x] PoC verticals (factory → maritime); candidate scenarios in [`docs/POC.md`](docs/POC.md)
 - [x] Scenario shortlist locked: **K1 → S1+S2**
 - [x] Shareable-product envelope + minimal SHACL ([`docs/PRODUCT_ENVELOPE.md`](docs/PRODUCT_ENVELOPE.md))
-- [x] Minimal pipeline prototype ([`poc/`](poc/) — stub TD → raw custody → product → SHACL → ODS stub/http)
+- [x] Minimal pipeline prototype ([`poc/`](poc/) — stub TD → raw-data custody → product → SHACL → ODS stub/http)
 - [x] ODS / industry handoff ([`docs/ODS_HANDOFF.md`](docs/ODS_HANDOFF.md); official Compose is external)
 - [x] S2 store-and-forward (`data/queue` + `--flush-queue`)
-- [ ] Lock per-site device / sensor lines (vendor TBD OK if stubs work)
+- [ ] Lock per-vertical device / sensor lines (vendor TBD OK if stubs work)
 - [x] Thin TD files ([`examples/td/`](examples/td/); swappable via `--td`)
 - [ ] Core I/F (Arrow) draft
 - [x] Official `SDK-docker-compose` connection steps ([`ODS_HANDOFF.md`](docs/ODS_HANDOFF.md); `--ods l2` + [`poc/scripts/ods/`](poc/scripts/ods/); Compose started externally)
 - [x] AuthZEN with `operator_id` ([`ODS_HANDOFF.md` §7](docs/ODS_HANDOFF.md#7-authzen-operator_id); `register-operator.sh` / `enable-authzen.sh`)
 - [x] ODS authn/authz and client requirements ([`ODS_COMPLIANCE.md` §4](docs/ODS_COMPLIANCE.md#4-authentication-and-authorization-client-requirements))
-- [ ] reuse vs build inventory (draft in POC.md)
+- [x] reuse vs build inventory ([`POC.md`](docs/POC.md#reuse-vs-build-both-verticals); RB1–RB11)

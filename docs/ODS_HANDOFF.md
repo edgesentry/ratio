@@ -30,7 +30,7 @@ The Python SDK is mainly for **L3 authentication**, not a direct “publish data
 
 ```
 [consumer] --Bearer+API-Key--> [L2 :8090] --forward--> [Ratio industry :8787 /products]
-                                                    ↑ raw (data/raw) is not served
+                                                    ↑ raw data (data/raw) is not served
 [provider Ratio] --POST products only--> industry (direct http or via L2)
 ```
 
@@ -39,7 +39,7 @@ The Python SDK is mainly for **L3 authentication**, not a direct “publish data
 | Mode | Command | Meaning |
 |------|---------|---------|
 | `stub` | `uv run ratio-poc --scenario K1` | No network. Receipt only (default) |
-| `http` | `uv run ratio-poc --ods http` | POST shareable product to industry URL (does not send raw) |
+| `http` | `uv run ratio-poc --ods http` | POST shareable product to industry URL (does not send raw data) |
 | `l2` | `uv run ratio-poc --ods l2` | POST to official L2 gateway (default `http://127.0.0.1:8090`) with L3 Bearer |
 
 `ratio-poc-serve` is **not** a substitute for official ODS (stand-in industry API upstream of L2). ODS-side benefits and what Ratio alone lacks: [`DISCUSSION.md`](DISCUSSION.md#4-benefits-on-the-ods-side).
@@ -155,7 +155,7 @@ uv run ratio-poc --scenario K1 --ods l2
 ```bash
 bash poc/scripts/ods/verify-l2-pull.sh
 bash poc/scripts/ods/verify-l2-pull.sh k1-<stem>
-# Expect 404 on /raw (neither industry nor L2 serves raw)
+# Expect 404 on /raw (neither industry nor L2 serves raw data)
 ```
 
 ### 7. AuthZEN (`operator_id`)

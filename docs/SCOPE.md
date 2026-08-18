@@ -11,7 +11,7 @@ Related: [`DISCUSSION.md`](DISCUSSION.md) · [`ODS_COMPLIANCE.md`](ODS_COMPLIANC
 ## In one sentence
 
 > **Official ODS** owns data-space participation (auth, transfer, discovery, contracting substrate).  
-> **Ratio** derives and validates shareable products on site, separates raw, and hands off to the official stack.  
+> **Ratio** derives and validates shareable products on site, separates raw data, and hands off to the official stack.  
 > **Everything else** (thick vocabulary agreement, deep SI, consumer apps, safety liability) belongs to domain / SI / users / regulators.
 
 ```
@@ -38,7 +38,8 @@ Related: [`DISCUSSION.md`](DISCUSSION.md) · [`ODS_COMPLIANCE.md`](ODS_COMPLIANC
 | Ops / monitoring / onboarding | Logging, guides, Compose / Helm | Middleware common functions, official guides |
 
 Compliance mapping: [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md) (O1–O10).  
-Connection: [`ODS_HANDOFF.md`](ODS_HANDOFF.md).
+Connection: [`ODS_HANDOFF.md`](ODS_HANDOFF.md).  
+PoC reuse vs build inventory: [`POC.md`](POC.md#reuse-vs-build-both-verticals) (RB1–RB11).
 
 `ratio-poc-serve` is **not** a substitute for the official stack (stand-in industry API upstream of L2).
 
@@ -46,15 +47,15 @@ Connection: [`ODS_HANDOFF.md`](ODS_HANDOFF.md).
 
 ## ② Ratio scope (the “point-of-origin glue” the official stack does not provide)
 
-Pipeline: **thin ingest → derive / validate → split raw vs product → handoff to official**.
+Pipeline: **thin ingest → derive / validate → split raw data vs product → handoff to official**.
 
 | In scope | Out of scope (easy to misread) |
 |----------|--------------------------------|
-| Shareable-product envelope (result + ontology context + terms) | Making raw payloads the primary ODS offering |
+| Shareable-product envelope (result + ontology context + terms) | Making raw data the primary ODS offering |
 | Minimal `@context` / shared SHACL (products must be validatable) | Industry-consortium ontology standardization itself |
 | **Thin** PoC / site shapes and result codes (shipped as config) | Becoming “the sole authority on vocabulary” |
-| **Thin** WoT TD consume, stub TDs, pipeline on recorded / synthetic raw | Universal OT multi-protocol gateway product |
-| Local raw custody guidance and `local://` pointer policy | Hard real-time control plane |
+| **Thin** WoT TD consume, stub TDs, pipeline on recorded / synthetic raw data | Universal OT multi-protocol gateway product |
+| Local raw-data custody guidance and `local://` pointer policy | Hard real-time control plane |
 | Validation orchestration via Oxigraph and other OSS | Reimplementing ODP / L2 / L3 / L4 |
 | Handoff to official stack (or temporary industry URL) | Consumer business UI / production Agentic products |
 

@@ -2,9 +2,9 @@
 
 > Japanese: [ARCHITECTURE.ja.md](ARCHITECTURE.ja.md)
 
-Implementation sketch for the thesis **participate in ODS without shipping raw quanta**.
+Implementation sketch for the thesis **participate in ODS without shipping raw data**.
 
-**Build policy:** Compose OSS and the official ODS SDK. Ratio owns on-site derivation, validation, raw/product split, and the handoff boundary.  
+**Build policy:** Compose OSS and the official ODS SDK. Ratio owns on-site derivation, validation, raw-data / product split, and the handoff boundary.  
 See: [`DISCUSSION.md`](DISCUSSION.md) · [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md)
 
 ---
@@ -21,9 +21,9 @@ See: [`DISCUSSION.md`](DISCUSSION.md) · [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md
         │  split
         ├──────────────────────────────┐
         ▼                              ▼
-[ raw quanta — local custody ]   [ shareable product ]
+[ raw data — local custody ]   [ shareable product ]
   files / DuckDB / LanceDB         result + meaning + policyRef
-                                   (+ in-domain raw pointer)
+                                   (+ in-domain raw-data pointer)
         │                              │
         │                              ▼
         │                    [ L3 Handoff / governance ]
@@ -33,14 +33,14 @@ See: [`DISCUSSION.md`](DISCUSSION.md) · [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md
         │                    [ L4 ODS participation ]
         │                      official Middleware / SDK (ODP)
         │                      discover + Pull of shareable product only
-        └──── raw does not take this path by default ────┘
+        └──── raw data does not take this path by default ────┘
 ```
 
 | Layer | Thesis job |
 |-------|------------|
 | **L1** | Observe via WoT TD; do not invent proprietary device schemas |
 | **L2** | Derive meaning-bearing results; validate with SHACL |
-| **Split** | Keep raw; only shareable products may leave |
+| **Split** | Keep raw data; only shareable products may leave |
 | **L3** | Package identity, policy refs, and provenance for handoff |
 | **L4** | Participate via the **official** ODS stack (O1–O6)—no ODP fork |
 
@@ -59,7 +59,7 @@ See: [`DISCUSSION.md`](DISCUSSION.md) · [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md
 ```
 WoT ingest → inference (ONNX/TensorRT, etc.)
          → [split]
-              ├─ raw → DuckDB / LanceDB / local files (custody)
+              ├─ raw data → DuckDB / LanceDB / local files (custody)
               └─ shareable product → JSON-LD(+SHACL) → SQLite(policy/state)
                                    → ODS Middleware/SDK (discover + Pull)
          → Arrow Memory Broker ←→ Python / Edge SLM (RAG: LanceDB)
@@ -73,7 +73,7 @@ WoT ingest → inference (ONNX/TensorRT, etc.)
 |---------|------------|-----------|
 | Thin composition runtime | Rust | **Ratio** (shell only) |
 | Graph inference & validation | Oxigraph | **OSS** |
-| Local raw / artifact store | DuckDB, LanceDB, files | **OSS** |
+| Local raw-data / artifact store | DuckDB, LanceDB, files | **OSS** |
 | State, credentials, policy records | SQLite | **OSS** |
 | Cross-language I/F | Apache Arrow + PyO3 | Arrow is **OSS**; Memory Broker is **Ratio** |
 | Inference runtime | ONNX Runtime / TensorRT, etc. | **OSS** / vendor |
@@ -85,14 +85,14 @@ WoT ingest → inference (ONNX/TensorRT, etc.)
 
 ## 4. What a shareable product carries
 
-**Shareable product:** a Pull-able package. Not raw bytes. Full definition: [`DISCUSSION.md`](DISCUSSION.md) (“What is a shareable product”)
+**Shareable product:** a Pull-able package. Not raw data. Full definition: [`DISCUSSION.md`](DISCUSSION.md) (“What is a shareable product”)
 
 Thesis alignment (result + meaning + terms of use):
 
-1. **Result** — a judgment or observation (not raw bytes)
+1. **Result** — a judgment or observation (not raw data)
 2. **Meaning** — ontology / JSON-LD context (which device, which properties, on what basis)
-3. **Terms of use** — policy refs (e.g. ODRL); raw is non-egress by default
-4. **Optional in-domain pointer** — `rawDataPointer` for local ops. Not a public raw URL
+3. **Terms of use** — policy refs (e.g. ODRL); raw data is non-egress by default
+4. **Optional in-domain pointer** — `rawDataPointer` for local ops. Not a public raw-data URL
 
 ### Payload example
 
@@ -107,7 +107,7 @@ Locked PoC envelope, SHACL, and K1 / S1 / S2 examples: [`PRODUCT_ENVELOPE.md`](P
   ],
   "@type": ["Thing", "EdgeAIInferenceResult"],
   "id": "urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
-  "sourceDevice": "did:example:kitakyushu-factory-robot-01",
+  "sourceDevice": "did:example:factory-robot-01",
   "timestamp": "2026-08-16T14:00:00Z",
   "inference": {
     "task": "anomaly_detection",
@@ -153,18 +153,18 @@ Decide:
 
 Follow the thesis: **custody → derive → participate**.
 
-1. **Ingest** — one device line via WoT TD; raw into local store  
-2. **Split and productize** — JSON-LD shareable product + SHACL; do not put raw on the publish path  
+1. **Ingest** — one device line via WoT TD; raw data into local store  
+2. **Split and productize** — JSON-LD shareable product + SHACL; do not put raw data on the publish path  
 3. **Participate** — ODS SDK: register / discover / serve **products only**  
 
-PoC sites must satisfy demand conditions in [`DISCUSSION.md`](DISCUSSION.md).  
-Assumed sites and boundaries: [`POC.md`](POC.md) (Kitakyushu first, then Setouchi).
+PoC verticals must satisfy demand conditions in [`DISCUSSION.md`](DISCUSSION.md).  
+Assumed verticals and boundaries: [`POC.md`](POC.md) (factory first, then maritime).
 
 ---
 
 ## 7. Non-goals
 
-- Shipping raw as the primary ODS offering
+- Shipping raw data as the primary ODS offering
 - Reimplementing ODP / ODS Middleware
 - Claiming full ODS-RAM coverage on day one (MVP is the O1–O6 path in [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md))
 - Proliferating proprietary device protocols (prefer WoT TD)

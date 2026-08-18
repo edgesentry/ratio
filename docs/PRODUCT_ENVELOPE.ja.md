@@ -2,9 +2,9 @@
 
 > English: [PRODUCT_ENVELOPE.md](PRODUCT_ENVELOPE.md)
 
-**確定ショートリスト:** K1（北九州）→ S1+S2（瀬戸内）。ベンダー未定。録画／合成生でよい。
+**確定ショートリスト:** K1（工場）→ S1+S2（海事）。ベンダー未定。録画／合成の生データでよい。
 
-K／S で **同一封筒**を使う。サイト差は `domain`・語彙・任意の `physicalContext`／`provenance` 項目だけ。
+K／S で **同一封筒**を使う。分野差は `domain`・語彙・任意の `physicalContext`／`provenance` 項目だけ。
 
 関連: [`POC.ja.md`](POC.ja.md) · [`ARCHITECTURE.ja.md`](ARCHITECTURE.ja.md) · [`DISCUSSION.ja.md`](DISCUSSION.ja.md)
 
@@ -21,7 +21,7 @@ K／S で **同一封筒**を使う。サイト差は `domain`・語彙・任意
 
 ## 設計方針
 
-1. **結果＋意味＋利用条件**を必須。生バイトは載せない。  
+1. **結果＋意味＋利用条件**を必須。生データは載せない。  
 2. `rawDataPointer` は `local://` のみ（公開 URL 禁止を SHACL で拘束）。  
 3. ODS 公式 context URL はプレースホルダ可。実接続時に差し替え。  
 4. 推論本体はスタブ可（`confidence`／`result` を手で埋めてよい）。
@@ -37,12 +37,12 @@ K／S で **同一封筒**を使う。サイト差は `domain`・語彙・任意
 | `id` | IRI／URN | プロダクトインスタンス ID |
 | `sourceDevice` | DID または URN | 観測源デバイス／ノード |
 | `timestamp` | xsd:dateTime | 事象時刻（UTC 推奨） |
-| `domain` | 列挙 | `kitakyushu_factory` \| `setouchi_maritime` |
+| `domain` | 列挙 | `factory` \| `maritime` |
 | `scenario` | 列挙 | `K1` \| `S1` \| `S2`（拡張時は POC と同期） |
 | `inference.task` | string | タスク ID（例: `anomaly_detection`） |
 | `inference.result` | string | 機械可読な結果コード |
 | `inference.confidence` | 0..1 | 信頼度 |
-| `dataGovernance.policyRef` | IRI／URN | 利用条件参照（生は内部のみ等） |
+| `dataGovernance.policyRef` | IRI／URN | 利用条件参照（生データは内部のみ等） |
 
 ## 推奨フィールド
 
@@ -58,7 +58,7 @@ K／S で **同一封筒**を使う。サイト差は `domain`・語彙・任意
 
 ## 結果コード（PoC 初期語彙）
 
-サイト横断で短く固定。後でオントロジー IRI に昇格してよい。
+分野横断で短く固定。後でオントロジー IRI に昇格してよい。
 
 | コード | 用途 |
 |--------|------|
@@ -74,11 +74,11 @@ K／S で **同一封筒**を使う。サイト差は `domain`・語彙・任意
 実装: [`../poc`](../poc)（`uv sync` → `uv run ratio-poc`。手順は [`../poc/README.ja.md`](../poc/README.ja.md)）
 
 ```
-薄い TD（`examples/td/*.td.json`）→ raw → data/raw/
+薄い TD（`examples/td/*.td.json`）→ 生データ → `data/raw/`
 JSON-LD インスタンス → data/out/
     → rdflib + pyshacl（schemas/shareable-product.shacl.ttl）
     → conforms なら ODS ハンドオフ・スタブ（SDK 未接続）
-    → 生ファイルは publish パスに載せない
+    → 生データファイルは publish パスに載せない
 ```
 
 ---
