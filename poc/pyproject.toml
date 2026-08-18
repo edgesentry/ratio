@@ -20,5 +20,16 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src/ratio_poc"]
 
+[dependency-groups]
+dev = ["pytest>=8.0"]
+
 [tool.uv]
 package = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+# rdflib 7.6 JSON-LD parser still constructs ConjunctiveGraph when the sink is a Graph.
+filterwarnings = [
+    "ignore:ConjunctiveGraph is deprecated, use Dataset instead:DeprecationWarning:rdflib.plugins.parsers.jsonld",
+]

@@ -12,10 +12,10 @@ S2: さらに data/queue にストア → リンク復帰で flush
 
 生データは **publish しない**。外に出る候補はプロダクトだけ。TD の `forms.href` は `local://`（生データの egress なし）。
 
-| シナリオ | TD |
-|----------|-----|
-| K1 | [`examples/td/k1-robot.td.json`](../examples/td/k1-robot.td.json) |
-| S1 / S2 | [`examples/td/s-engine-vib.td.json`](../examples/td/s-engine-vib.td.json)（同一センサ；S2 はキュー方針のみ異なる） |
+| シナリオ | デバイス系統（ロック済み） | TD |
+|----------|----------------------------|-----|
+| K1 | 工場セルロボット · `vibrationWaveform` | [`examples/td/k1-robot.td.json`](../examples/td/k1-robot.td.json) |
+| S1 / S2 | 船舶機関 · `shaftVibration`（S2 は同一系統＋キュー） | [`examples/td/s-engine-vib.td.json`](../examples/td/s-engine-vib.td.json) |
 
 パッケージ管理は **uv**（`pyproject.toml` + `uv.lock`）。
 
@@ -27,6 +27,14 @@ L2 ルート／OpenFGA／L3 トークン補助: [`scripts/ods/`](scripts/ods/)
 ```bash
 cd poc
 uv sync
+```
+
+## テスト
+
+```bash
+cd poc
+uv sync --group dev
+uv run pytest
 ```
 
 ## 実行

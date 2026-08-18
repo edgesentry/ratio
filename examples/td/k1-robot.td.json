@@ -11,7 +11,7 @@
   "properties": {
     "vibrationWaveform": {
       "type": "object",
-      "description": "Raw vibration quanta; Ratio stores locally and never publishes via ODS.",
+      "description": "Raw vibration data; Ratio stores locally and never publishes via ODS.",
       "forms": [
         {
           "href": "local://storage/K1/vibrationWaveform",

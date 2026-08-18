@@ -45,12 +45,17 @@ Robot / camera / vibration raw data cannot leave the plant (IP, privacy, bandwid
 
 Traceability / quality / DPP-like **products** are discoverable via Pull, and robot video / waveforms do not ride the ODS path by default.
 
-### First vertical slice (proposal)
+### First vertical slice (**locked**)
 
-1. One robot + one sensor line via WoT TD (or stub TD)  
-2. Synthetic or recorded vibration / camera → local store  
-3. Emit one JSON-LD shareable product (judgment + meaning + policyRef)  
-4. Register / serve via ODS SDK  
+| Item | Lock |
+|------|------|
+| Device | One weld / assemble **cell robot** (stub TD; vendor TBD) |
+| Sensor / raw data | **Vibration waveform** only (`vibrationWaveform` → `local://`; synthetic or recorded `.bin`) |
+| TD | [`examples/td/k1-robot.td.json`](../examples/td/k1-robot.td.json) · DID `did:example:factory-robot-01` |
+| Product context | `physicalContext.motorRPM`, `temperatureCelsius` (summaries, not traces) |
+| Out of this slice | Line camera, force/torque, PLC dumps, K2–K5 |
+
+Path: ingest TD → store waveform locally → one JSON-LD shareable product → ODS SDK Pull. Camera stays a later optional extension (`quality_fail`), not required to show the thesis.
 
 ---
 
@@ -80,12 +85,18 @@ Links are intermittent and bandwidth-poor. Hull / machinery / camera raw data sh
 
 The shipboard node serves **meta products only** across constrained / intermittent links, and raw data stays on shipboard storage.
 
-### First vertical slice (proposal)
+### First vertical slice (**locked**)
 
-1. One sensor type (e.g. machinery vibration or bilge / environment) + stub WoT TD  
-2. Raw in shipboard store; products queued for ODS only when the link returns  
-3. Same shareable-product shape as the factory vertical where possible (portable pipeline)  
-4. Participate via ODS SDK when connected  
+| Item | Lock |
+|------|------|
+| Device | One **vessel engine vibration** sensor (stub TD; vendor TBD) |
+| Sensor / raw data | **Shaft vibration** only (`shaftVibration` → `local://`; synthetic or recorded `.bin`) |
+| TD | [`examples/td/s-engine-vib.td.json`](../examples/td/s-engine-vib.td.json) · DID `did:example:vessel-engine-vib-01` |
+| Product context | `physicalContext.shaftRPM`, `temperatureCelsius` |
+| S1 vs S2 | **Same device line.** S1 transfers when online; S2 queues the product (not the waveform) until the link returns |
+| Out of this slice | CCTV, full NMEA / bus dumps, bilge / environment sensors |
+
+Path: same envelope as factory; raw data stays onboard; only the shareable product may wait in `data/queue`.
 
 ---
 
@@ -218,7 +229,7 @@ Ownership tiers: [`SCOPE.md`](SCOPE.md). This table is the **PoC inventory**—e
 
 | ID | Capability | Decision | Reuse | Ratio builds | PoC now | Later |
 |----|------------|----------|-------|--------------|---------|-------|
-| RB1 | Device ingest | **Reuse** GW/stubs + **Build** thin consume | WoT TD; existing IIoT / WoT GW | Thin TD load (`--td`); no multi-protocol GW | Stub TDs in `examples/td/` | One locked device line per vertical |
+| RB1 | Device ingest | **Reuse** GW/stubs + **Build** thin consume | WoT TD; existing IIoT / WoT GW | Thin TD load (`--td`); no multi-protocol GW | Stub TDs in `examples/td/` | Device lines locked (K1 / S1–S2) |
 | RB2 | Inference / judgment | **Reuse** runtime; **Build** optional glue | ONNX Runtime / vendor models | Orchestrate when claimed; PoC may stub | Stub result in envelope | Optional ONNX on site |
 | RB3 | Graph / SHACL | **Reuse** engine; **Build** shapes | RDF / SHACL (pyshacl now; Oxigraph intended) | Envelope shapes, validation **before** publish | pyshacl + `schemas/` | Oxigraph in Rust core |
 | RB4 | Raw-data / product custody | **Reuse** stores; **Build** split | Files now; DuckDB / LanceDB / SQLite intended | Split rules; `local://` pointer; never publish raw data | `data/raw`, `data/out`, `data/queue` | DuckDB / LanceDB / SQLite |
@@ -239,7 +250,8 @@ Ownership tiers: [`SCOPE.md`](SCOPE.md). This table is the **PoC inventory**—e
 | Item | Decision |
 |------|----------|
 | Shortlist | **K1 → S1+S2** (locked) |
-| Vendor / cell / vessel | TBD (proceed with stubs + recorded / synthetic raw data) |
+| Device / sensor lines | **Locked** — factory: cell robot + vibration waveform (K1); maritime: engine shaft vibration (S1/S2, same TD). Vendor TBD; stubs + recorded / synthetic raw data |
+| Vendor / cell / vessel brand | TBD (does not block envelope / pipeline) |
 | Shared envelope | [`PRODUCT_ENVELOPE.md`](PRODUCT_ENVELOPE.md) and `schemas/` · `examples/` |
 | reuse vs build | Locked in the inventory above (RB1–RB11) |
 
@@ -249,4 +261,4 @@ Ownership tiers: [`SCOPE.md`](SCOPE.md). This table is the **PoC inventory**—e
 
 1. Include an external consumer agent in PoC success? (recommended for A3)  
 2. Production ODS context / catalog URIs  
-3. Concrete vendor / cell / vessel (do not block envelope / pipeline)
+3. Concrete vendor / cell / vessel brand (device **line** is locked above; brand does not block)
