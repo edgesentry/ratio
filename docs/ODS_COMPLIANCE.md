@@ -147,7 +147,7 @@ When AuthZEN is enabled on the L2 gateway, a Pull client must additionally satis
 
 L2 validates the JWT, reads `operator_id`, asks OpenFGA via AuthZEN, and forwards allowed requests to the provider industry API.
 
-PoC helpers: [`register-openfga-products.sh`](../poc/scripts/ods/register-openfga-products.sh), [`enable-authzen.sh`](../poc/scripts/ods/enable-authzen.sh), [`verify-l2-pull.sh`](../poc/scripts/ods/verify-l2-pull.sh).
+PoC helpers: [`register-openfga-products.sh`](../poc/scripts/ods/register-openfga-products.sh), [`enable-authzen.sh`](../poc/scripts/ods/enable-authzen.sh), [`verify-l2-pull.sh`](../poc/scripts/ods/verify-l2-pull.sh), consumer `uv run ratio-poc-pull`.
 
 For **connectivity smoke tests only**, temporarily setting `AUTHZEN_AUTHORIZATION_ENABLED=false` is acceptable. In production, keep AuthZEN enabled and complete OpenFGA grants.
 

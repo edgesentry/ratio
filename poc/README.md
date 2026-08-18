@@ -72,6 +72,23 @@ uv run ratio-poc --flush-queue --ods http --ods-url http://127.0.0.1:8787
 uv run ratio-poc --scenario S2 --ods http --ods-url http://127.0.0.1:8787
 ```
 
+### A3 consumer Pull (RB11 Out)
+
+Not the provider pipeline. A shore / partner stand-in that Pulls **products only**.
+
+```bash
+cd poc
+uv run ratio-poc-serve          # Terminal A
+uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
+uv run ratio-poc-pull --via http
+uv run ratio-poc-pull --via http k1-<stem>
+
+# Official L2 (after SDK-docker-compose + Bearer)
+uv run ratio-poc-pull --via l2 k1-<stem>
+```
+
+The consumer prints a meaning summary and exits non-zero if the body contains raw data or a non-`local://` pointer. `GET /raw/` must not be 200.
+
 Artifacts:
 
 - `data/raw/` — raw data (local only)
@@ -83,3 +100,4 @@ Artifacts:
 - Real robots / shipboard sensors
 - Bundling full `SDK-docker-compose` (start externally; see ODS_HANDOFF.md)
 - Arrow / PyO3 / Rust core
+- Production consumer UI (A3 demo is `ratio-poc-pull` only)

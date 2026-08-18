@@ -239,7 +239,7 @@ Ownership tiers: [`SCOPE.md`](SCOPE.md). This table is the **PoC inventory**—e
 | RB8 | Composition runtime | **Build** | — | Thin orchestrator | Python `ratio-poc` | Rust shell |
 | RB9 | Industry ontology agreement | **Out** | SAMM / domain vocab when published | Consume only; minimal PoC codes | Thin K1/S1/S2 codes | Consortium vocab |
 | RB10 | Deep device SI | **Out** | Vendor / SI / existing GW | Thin adapter only | Stubs | Field SI |
-| RB11 | Pull consumer / Agentic AI | **Out** (optional separate demo) | Official L2 Pull client pattern | Not Ratio core | `verify-l2-pull.sh` only | External agent if PoC success includes A3 |
+| RB11 | Pull consumer / Agentic AI | **Out** (optional separate demo) | Official L2 Pull client pattern | Not Ratio core | `ratio-poc-pull` + `verify-l2-pull.sh` | Production consumer UI / agent |
 
 **Do not build:** ODP / L2 / L3 / L4, AuthZEN PDP, Keycloak, OpenFGA, a private data-space protocol, a universal OT gateway, production consumer UIs.
 
@@ -254,11 +254,11 @@ Ownership tiers: [`SCOPE.md`](SCOPE.md). This table is the **PoC inventory**—e
 | Vendor / cell / vessel brand | TBD (does not block envelope / pipeline) |
 | Shared envelope | [`PRODUCT_ENVELOPE.md`](PRODUCT_ENVELOPE.md) and `schemas/` · `examples/` |
 | reuse vs build | Locked in the inventory above (RB1–RB11) |
+| A3 Pull consumer | **Yes** for PoC success — reference agent `ratio-poc-pull` (RB11 **Out**, not Ratio core) |
 
 ---
 
 ## Open (lock next)
 
-1. Include an external consumer agent in PoC success? (recommended for A3)  
-2. Production ODS context / catalog URIs  
-3. Concrete vendor / cell / vessel brand (device **line** is locked above; brand does not block)
+1. Production ODS context / catalog URIs  
+2. Concrete vendor / cell / vessel brand (device **line** is locked above; brand does not block)

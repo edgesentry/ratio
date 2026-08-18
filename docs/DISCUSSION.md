@@ -343,6 +343,7 @@ Lock: one device / sensor line per vertical — **done** in [`POC.md`](POC.md) (
 
 - Ingest one device line; emit a meaning-bearing JSON-LD shareable product
 - Raw data stays local; product is discoverable / servable via ODS SDK
+- A shore / partner Pull agent (`ratio-poc-pull`) reads meaning only — no raw data
 - Inventory: each capability → OSS / SDK or Ratio-owned ([`POC.md` reuse vs build](POC.md#reuse-vs-build-both-verticals))
 
 **Medium term:**

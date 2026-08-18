@@ -72,6 +72,23 @@ uv run ratio-poc --flush-queue --ods http --ods-url http://127.0.0.1:8787
 uv run ratio-poc --scenario S2 --ods http --ods-url http://127.0.0.1:8787
 ```
 
+### A3 消費者 Pull（RB11 Out）
+
+提供者パイプラインではない。陸上／パートナーのスタンドインで、**プロダクトだけ**を Pull する。
+
+```bash
+cd poc
+uv run ratio-poc-serve          # 端末 A
+uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
+uv run ratio-poc-pull --via http
+uv run ratio-poc-pull --via http k1-<stem>
+
+# 公式 L2（SDK-docker-compose ＋ Bearer の後）
+uv run ratio-poc-pull --via l2 k1-<stem>
+```
+
+消費者は意味の要約を出し、本文に生データや非 `local://` ポインタがあれば非ゼロ終了。`GET /raw/` は 200 であってはならない。
+
 成果物:
 
 - `data/raw/` — 生データ（ローカルのみ）
@@ -83,3 +100,4 @@ uv run ratio-poc --scenario S2 --ods http --ods-url http://127.0.0.1:8787
 - 実ロボット／船上センサ
 - `SDK-docker-compose` 一式の同梱（外部起動。手順は ODS_HANDOFF.ja.md）
 - Arrow／PyO3／Rust コア
+- 本番消費者 UI（A3 デモは `ratio-poc-pull` のみ）

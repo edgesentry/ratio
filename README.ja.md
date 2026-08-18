@@ -98,3 +98,4 @@ ODS ハンドオフ → [`docs/ODS_HANDOFF.ja.md`](docs/ODS_HANDOFF.ja.md)
 - [x] AuthZEN + `operator_id`（[`ODS_HANDOFF.ja.md` §7](docs/ODS_HANDOFF.ja.md#7-authzenoperator_id)；`register-operator.sh` / `enable-authzen.sh`）
 - [x] ODS 認証・認可と参加クライアント要件（[`ODS_COMPLIANCE.ja.md` §4](docs/ODS_COMPLIANCE.ja.md#4-odsの認証認可参加クライアントの要件)）
 - [x] reuse vs build 一覧（[`POC.ja.md`](docs/POC.ja.md#reuse-vs-build両分野)；RB1–RB11）
+- [x] A3 参照 Pull 消費者（[`ODS_HANDOFF.ja.md` §6](docs/ODS_HANDOFF.ja.md#6-消費者-共有可能プロダクトを-pulla3)；`uv run ratio-poc-pull`；RB11 Out）

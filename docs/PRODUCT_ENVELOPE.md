@@ -86,6 +86,5 @@ JSON-LD instance → data/out/
 
 ## Open (outside the envelope)
 
-- Include an external consumer agent in PoC success? (recommended: yes)  
 - Lock production ODS context / catalog URIs  
 - Concrete cell / vessel / vendor (do not block on stubs)

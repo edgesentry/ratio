@@ -150,12 +150,29 @@ uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
 uv run ratio-poc --scenario K1 --ods l2
 ```
 
-### 6. 消費者: L2 Pull 確認
+### 6. 消費者: 共有可能プロダクトを Pull（A3）
+
+参照エージェント（`ratio-poc-pull`）は **RB11 Out** — Ratio コアではない。陸上／パートナー側と同じ L2 GET 形: プロダクトのみ、生データは拒否。
+
+```bash
+cd poc
+
+# industry スタブ（SDK なし）
+uv run ratio-poc-serve          # 起動済み
+uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
+uv run ratio-poc-pull --via http
+uv run ratio-poc-pull --via http k1-<stem>
+# 期待: 意味の JSON 要約；GET /raw/ は 200 ではない；RATIO_RAW_STUB なし
+
+# 公式 L2（Bearer + L2 API-Key）
+uv run ratio-poc-pull --via l2 k1-<stem>
+```
+
+低レベル curl スモーク（任意）:
 
 ```bash
 bash poc/scripts/ods/verify-l2-pull.sh
 bash poc/scripts/ods/verify-l2-pull.sh k1-<stem>
-# /raw は 404 期待（生データは industry も L2 も出さない）
 ```
 
 ### 7. AuthZEN（`operator_id`）
@@ -179,7 +196,8 @@ bash poc/scripts/ods/enable-authzen.sh true
 
 # 4) 事業者トークンで Pull（JWT に operator_id が載る）
 export RATIO_ODS_BEARER="$(bash poc/scripts/ods/fetch-l3-token.sh)"
-bash poc/scripts/ods/verify-l2-pull.sh k1-<stem>
+cd poc && uv run ratio-poc-pull --via l2 k1-<stem>
+# または: bash poc/scripts/ods/verify-l2-pull.sh k1-<stem>
 ```
 
 補助スクリプト: [`poc/scripts/ods/`](../poc/scripts/ods/)。秘密情報は `poc/scripts/ods/.local/`（gitignore）。
@@ -191,6 +209,7 @@ bash poc/scripts/ods/verify-l2-pull.sh k1-<stem>
 | 確認 | 期待 |
 |------|------|
 | `GET L2 /products/...` | JSON-LD の共有可能プロダクト |
+| `uv run ratio-poc-pull --via l2 <stem>` | 意味の要約；`raw_in_body: false` |
 | レスポンスに波形バイナリ／`RATIO_RAW_STUB` | **無い** |
 | `GET …/raw` | 404 |
 | `data/raw/` | ホストローカルのまま |

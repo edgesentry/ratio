@@ -343,6 +343,7 @@ Ratio のスコープ外（このテーゼでは解かない）: ハードリア
 
 - 1デバイス系統を入れ、意味付き JSON-LD の共有可能プロダクトを出す
 - 生データはローカル；プロダクトは ODS SDK で発見／提供可能
+- 陸上／パートナーの Pull エージェント（`ratio-poc-pull`）は意味だけ読む — 生データなし
 - 一覧: 各能力 → OSS／SDK または Ratio 所有（[`POC.ja.md` reuse vs build](POC.ja.md#reuse-vs-build両分野)）
 
 **中期:**

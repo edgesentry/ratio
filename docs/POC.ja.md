@@ -239,7 +239,7 @@
 | RB8 | 構成ランタイム | **Build** | — | 薄いオーケストレータ | Python `ratio-poc` | Rust シェル |
 | RB9 | 業界オントロジー合意 | **Out** | 公開されれば SAMM／ドメイン語彙 | 消費のみ；PoC は最小コード | 薄い K1/S1/S2 コード | コンソーシアム語彙 |
 | RB10 | 深いデバイス SI | **Out** | ベンダー／SI／既存 GW | 薄いアダプタのみ | スタブ | 現場 SI |
-| RB11 | Pull 消費者／Agentic AI | **Out**（任意の別デモ） | 公式 L2 Pull クライアント形 | Ratio コアではない | `verify-l2-pull.sh` のみ | 成功条件に A3 を含めるなら外部エージェント |
+| RB11 | Pull 消費者／Agentic AI | **Out**（任意の別デモ） | 公式 L2 Pull クライアント形 | Ratio コアではない | `ratio-poc-pull` + `verify-l2-pull.sh` | 本番消費者 UI／エージェント |
 
 **作らない:** ODP／L2／L3／L4、AuthZEN PDP、Keycloak、OpenFGA、独自データスペースプロトコル、万能 OT ゲートウェイ、本番消費者 UI。
 
@@ -254,11 +254,11 @@
 | ベンダー／セル／船のブランド | 未定（封筒・パイプラインはブロックしない） |
 | 共有封筒 | [`PRODUCT_ENVELOPE.ja.md`](PRODUCT_ENVELOPE.ja.md) および `schemas/`・`examples/` |
 | reuse vs build | 上記インベントリ（RB1–RB11）でロック |
+| A3 Pull 消費者 | PoC 成功に **含める** — 参照エージェント `ratio-poc-pull`（RB11 **Out**、Ratio コアではない） |
 
 ---
 
 ## 未決（次にロック）
 
-1. PoC 成功に外部消費者エージェントを含めるか（A3 には含めることを推奨）  
-2. 本番 ODS context／カタログ URI  
-3. 具体ベンダー／セル／船のブランド（デバイス**系統**は上記でロック；ブランドはブロックしない）
+1. 本番 ODS context／カタログ URI  
+2. 具体ベンダー／セル／船のブランド（デバイス**系統**は上記でロック；ブランドはブロックしない）
