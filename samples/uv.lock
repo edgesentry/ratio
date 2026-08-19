@@ -121,7 +121,7 @@ wheels = [
 ]
 
 [[package]]
-name = "ratio-poc"
+name = "ratio"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

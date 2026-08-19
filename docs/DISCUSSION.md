@@ -86,7 +86,7 @@ Split gaps into **already supported by official ODS** vs **filled outside the of
 | **Trust / quality assessment procedures** | O7 | ODP L1 assessment protocol family |
 | **Ops / monitoring / logging** | O9–O10 | Middleware common functions, logging services, developer / user guide onboarding |
 
-PoC `ratio-poc-serve` is **not** a substitute for the above (stand-in industry API upstream of L2). Production connects to official Compose / L2 / L3 / L4. Steps: [`ODS_HANDOFF.md`](ODS_HANDOFF.md).
+PoC `ratio-serve` is **not** a substitute for the above (stand-in industry API upstream of L2). Production connects to official Compose / L2 / L3 / L4. Steps: [`ODS_HANDOFF.md`](ODS_HANDOFF.md).
 
 #### 5.2 Not covered by official ODS alone / out of range (others own)
 
@@ -348,7 +348,7 @@ Lock: one device / sensor line per vertical — **done** in [`POC.md`](POC.md) (
 
 - Ingest one device line; emit a meaning-bearing JSON-LD shareable product
 - Raw data stays local; product is discoverable / servable via ODS SDK
-- A shore / partner Pull agent (`ratio-poc-pull`) reads meaning only — no raw data
+- A shore / partner Pull agent (`ratio-pull`) reads meaning only — no raw data
 - Inventory: each capability → OSS / SDK or Ratio-owned ([`POC.md` reuse vs build](POC.md#reuse-vs-build-both-verticals))
 
 **Medium term:**

@@ -47,24 +47,24 @@ The Python SDK is mainly for **L3 authentication**, not a direct “publish data
 
 | Mode | Command | Meaning |
 |------|---------|---------|
-| `stub` | `uv run ratio-poc --scenario K1` | No network. Receipt only (default) |
-| `http` | `uv run ratio-poc --ods http` | POST shareable product to industry URL (does not send raw data) |
-| `l2` | `uv run ratio-poc --ods l2` | POST to official L2 gateway (default `http://127.0.0.1:8090`) with L3 Bearer |
+| `stub` | `uv run ratio --scenario K1` | No network. Receipt only (default) |
+| `http` | `uv run ratio --ods http` | POST shareable product to industry URL (does not send raw data) |
+| `l2` | `uv run ratio --ods l2` | POST to official L2 gateway (default `http://127.0.0.1:8090`) with L3 Bearer |
 
-`ratio-poc-serve` is **not** a substitute for official ODS (stand-in industry API upstream of L2). ODS-side benefits and what Ratio alone lacks: [`DISCUSSION.md`](DISCUSSION.md#4-benefits-on-the-ods-side).
+`ratio-serve` is **not** a substitute for official ODS (stand-in industry API upstream of L2). ODS-side benefits and what Ratio alone lacks: [`DISCUSSION.md`](DISCUSSION.md#4-benefits-on-the-ods-side).
 
 Local industry stub (stand-in upstream of L2):
 
 ```bash
 # Terminal A
-cd samples && uv run ratio-poc-serve
+cd samples && uv run ratio-serve
 
 # Terminal B
-cd samples && uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
+cd samples && uv run ratio --scenario K1 --ods http --ods-url http://127.0.0.1:8787
 curl -s http://127.0.0.1:8787/products | jq .
 ```
 
-`ratio-poc-serve` serves only JSON-LD under `data/out` and does not serve `data/raw`.
+`ratio-serve` serves only JSON-LD under `data/out` and does not serve `data/raw`.
 
 ## Environment variables
 
@@ -90,7 +90,7 @@ The official stack is **not bundled in this repository**. Clone and start it in 
 ### 0. Prerequisites
 
 - Docker / Compose available (see SDK README for machine sizing)
-- Ratio industry: `cd samples && uv run ratio-poc-serve` (host `:8787`)
+- Ratio industry: `cd samples && uv run ratio-serve` (host `:8787`)
 - Helper scripts: [`samples/scripts/ods/`](../samples/scripts/ods/)
 
 ### 1. Start the SDK (official README summary)
@@ -146,35 +146,35 @@ export RATIO_ODS_CLIENT_SECRET=…
 export RATIO_ODS_BEARER="$(bash samples/scripts/ods/fetch-l3-token.sh)"
 ```
 
-Or set only `CLIENT_ID` / `SECRET` and let `ratio-poc --ods l2` fetch automatically.
+Or set only `CLIENT_ID` / `SECRET` and let `ratio --ods l2` fetch automatically.
 
 ### 5. Provider: register a product
 
 ```bash
 cd samples
 # Direct to industry (stub check)
-uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
+uv run ratio --scenario K1 --ods http --ods-url http://127.0.0.1:8787
 
 # Or via L2 (with authorization)
-uv run ratio-poc --scenario K1 --ods l2
+uv run ratio --scenario K1 --ods l2
 ```
 
 ### 6. Consumer: Pull the shareable product (A3)
 
-Reference agent (`ratio-poc-pull`) is **RB11 Out** — not Ratio core. It uses the same L2 GET pattern as a shore / partner client: products only, refuse raw.
+Reference agent (`ratio-pull`) is **RB11 Out** — not Ratio core. It uses the same L2 GET pattern as a shore / partner client: products only, refuse raw.
 
 ```bash
 cd samples
 
 # Against the industry stub (no SDK)
-uv run ratio-poc-serve          # already running
-uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
-uv run ratio-poc-pull --via http
-uv run ratio-poc-pull --via http k1-<stem>
+uv run ratio-serve          # already running
+uv run ratio --scenario K1 --ods http --ods-url http://127.0.0.1:8787
+uv run ratio-pull --via http
+uv run ratio-pull --via http k1-<stem>
 # Expect: JSON meaning summary; GET /raw/ is not 200; no RATIO_RAW_STUB
 
 # Against official L2 (Bearer + L2 API-Key)
-uv run ratio-poc-pull --via l2 k1-<stem>
+uv run ratio-pull --via l2 k1-<stem>
 ```
 
 Low-level curl smoke (optional):
@@ -205,7 +205,7 @@ bash samples/scripts/ods/enable-authzen.sh true
 
 # 4) Pull with operator token (JWT includes operator_id)
 export RATIO_ODS_BEARER="$(bash samples/scripts/ods/fetch-l3-token.sh)"
-cd samples && uv run ratio-poc-pull --via l2 k1-<stem>
+cd samples && uv run ratio-pull --via l2 k1-<stem>
 # or: bash samples/scripts/ods/verify-l2-pull.sh k1-<stem>
 ```
 
@@ -218,7 +218,7 @@ For connectivity smoke tests **before** operator registration, temporarily setti
 | Check | Expectation |
 |-------|-------------|
 | `GET L2 /products/...` | JSON-LD shareable product |
-| `uv run ratio-poc-pull --via l2 <stem>` | Meaning summary; `raw_in_body: false` |
+| `uv run ratio-pull --via l2 <stem>` | Meaning summary; `raw_in_body: false` |
 | Waveform binary / `RATIO_RAW_STUB` in response | **Absent** |
 | `GET …/raw` | 404 |
 | `data/raw/` | Remains host-local |

@@ -47,24 +47,24 @@ Python SDK が直接「データ製品を publish」するのではなく、主�
 
 | モード | コマンド | 意味 |
 |--------|----------|------|
-| `stub` | `uv run ratio-poc --scenario K1` | ネットなし。レシートのみ（既定） |
-| `http` | `uv run ratio-poc --ods http` | 共有可能プロダクトを industry URL へ POST（生データは送らない） |
-| `l2` | `uv run ratio-poc --ods l2` | 公式 L2 ゲートウェイ（既定 `http://127.0.0.1:8090`）へ POST；L3 Bearer 付き |
+| `stub` | `uv run ratio --scenario K1` | ネットなし。レシートのみ（既定） |
+| `http` | `uv run ratio --ods http` | 共有可能プロダクトを industry URL へ POST（生データは送らない） |
+| `l2` | `uv run ratio --ods l2` | 公式 L2 ゲートウェイ（既定 `http://127.0.0.1:8090`）へ POST；L3 Bearer 付き |
 
-`ratio-poc-serve` は **公式 ODS の代替ではない**（L2 上流 industry API の仮置き）。ODS 側メリットと Ratio 単体の不足: [`DISCUSSION.ja.md`](DISCUSSION.ja.md#4-ods-側のメリット)。
+`ratio-serve` は **公式 ODS の代替ではない**（L2 上流 industry API の仮置き）。ODS 側メリットと Ratio 単体の不足: [`DISCUSSION.ja.md`](DISCUSSION.ja.md#4-ods-側のメリット)。
 
 ローカル industry スタブ（L2 上流の仮置き）:
 
 ```bash
 # 端末 A
-cd samples && uv run ratio-poc-serve
+cd samples && uv run ratio-serve
 
 # 端末 B
-cd samples && uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
+cd samples && uv run ratio --scenario K1 --ods http --ods-url http://127.0.0.1:8787
 curl -s http://127.0.0.1:8787/products | jq .
 ```
 
-`ratio-poc-serve` は `data/out` の JSON-LD のみ提供し、`data/raw` は提供しない。
+`ratio-serve` は `data/out` の JSON-LD のみ提供し、`data/raw` は提供しない。
 
 ## 環境変数
 
@@ -90,7 +90,7 @@ curl -s http://127.0.0.1:8787/products | jq .
 ### 0. 前提
 
 - Docker / Compose 利用可（SDK README のマシンスペック目安あり）
-- Ratio industry: `cd samples && uv run ratio-poc-serve`（ホスト `:8787`）
+- Ratio industry: `cd samples && uv run ratio-serve`（ホスト `:8787`）
 - 作業用スクリプト: [`samples/scripts/ods/`](../samples/scripts/ods/)
 
 ### 1. SDK 起動（公式 README 要約）
@@ -146,35 +146,35 @@ export RATIO_ODS_CLIENT_SECRET=…
 export RATIO_ODS_BEARER="$(bash samples/scripts/ods/fetch-l3-token.sh)"
 ```
 
-または `CLIENT_ID`/`SECRET` だけ設定し、`ratio-poc --ods l2` に自動取得させる。
+または `CLIENT_ID`/`SECRET` だけ設定し、`ratio --ods l2` に自動取得させる。
 
 ### 5. 提供者: プロダクト登録
 
 ```bash
 cd samples
 # industry へ直接（スタブ確認）
-uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
+uv run ratio --scenario K1 --ods http --ods-url http://127.0.0.1:8787
 
 # または L2 経由（認可付き）
-uv run ratio-poc --scenario K1 --ods l2
+uv run ratio --scenario K1 --ods l2
 ```
 
 ### 6. 消費者: 共有可能プロダクトを Pull（A3）
 
-参照エージェント（`ratio-poc-pull`）は **RB11 Out** — Ratio コアではない。陸上／パートナー側と同じ L2 GET 形: プロダクトのみ、生データは拒否。
+参照エージェント（`ratio-pull`）は **RB11 Out** — Ratio コアではない。陸上／パートナー側と同じ L2 GET 形: プロダクトのみ、生データは拒否。
 
 ```bash
 cd samples
 
 # industry スタブ（SDK なし）
-uv run ratio-poc-serve          # 起動済み
-uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
-uv run ratio-poc-pull --via http
-uv run ratio-poc-pull --via http k1-<stem>
+uv run ratio-serve          # 起動済み
+uv run ratio --scenario K1 --ods http --ods-url http://127.0.0.1:8787
+uv run ratio-pull --via http
+uv run ratio-pull --via http k1-<stem>
 # 期待: 意味の JSON 要約；GET /raw/ は 200 ではない；RATIO_RAW_STUB なし
 
 # 公式 L2（Bearer + L2 API-Key）
-uv run ratio-poc-pull --via l2 k1-<stem>
+uv run ratio-pull --via l2 k1-<stem>
 ```
 
 低レベル curl スモーク（任意）:
@@ -205,7 +205,7 @@ bash samples/scripts/ods/enable-authzen.sh true
 
 # 4) 事業者トークンで Pull（JWT に operator_id が載る）
 export RATIO_ODS_BEARER="$(bash samples/scripts/ods/fetch-l3-token.sh)"
-cd samples && uv run ratio-poc-pull --via l2 k1-<stem>
+cd samples && uv run ratio-pull --via l2 k1-<stem>
 # または: bash samples/scripts/ods/verify-l2-pull.sh k1-<stem>
 ```
 
@@ -218,7 +218,7 @@ cd samples && uv run ratio-poc-pull --via l2 k1-<stem>
 | 確認 | 期待 |
 |------|------|
 | `GET L2 /products/...` | JSON-LD の共有可能プロダクト |
-| `uv run ratio-poc-pull --via l2 <stem>` | 意味の要約；`raw_in_body: false` |
+| `uv run ratio-pull --via l2 <stem>` | 意味の要約；`raw_in_body: false` |
 | レスポンスに波形バイナリ／`RATIO_RAW_STUB` | **無い** |
 | `GET …/raw` | 404 |
 | `data/raw/` | ホストローカルのまま |

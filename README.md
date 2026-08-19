@@ -100,4 +100,4 @@ ODS handoff (shareable-product metadata) → [`docs/ODS_HANDOFF.md`](docs/ODS_HA
 - [x] AuthZEN with `operator_id` ([`ODS_HANDOFF.md` §7](docs/ODS_HANDOFF.md#7-authzen-operator_id); `register-operator.sh` / `enable-authzen.sh`)
 - [x] ODS authn/authz and client requirements ([`ODS_COMPLIANCE.md` §4](docs/ODS_COMPLIANCE.md#4-authentication-and-authorization-client-requirements))
 - [x] reuse vs build inventory ([`POC.md`](docs/POC.md#reuse-vs-build-both-verticals); RB1–RB11)
-- [x] A3 reference Pull consumer ([`ODS_HANDOFF.md` §6](docs/ODS_HANDOFF.md#6-consumer-pull-the-shareable-product-a3); `uv run ratio-poc-pull`; RB11 Out)
+- [x] A3 reference Pull consumer ([`ODS_HANDOFF.md` §6](docs/ODS_HANDOFF.md#6-consumer-pull-the-shareable-product-a3); `uv run ratio-pull`; RB11 Out)

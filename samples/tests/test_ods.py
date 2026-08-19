@@ -151,7 +151,7 @@ def test_http_handoff_treats_url_error_as_failure(
         base_url="http://industry.test",
     )
     assert not result.ok
-    assert "ratio-poc-serve" in result.receipt["hint"]
+    assert "ratio-serve" in result.receipt["hint"]
 
 
 def test_handoff_unknown_mode_raises(tmp_path: Path) -> None:
