@@ -1,6 +1,8 @@
-# Ratio minimal pipeline (PoC)
+# Ratio samples (ODS wiring)
 
 > Japanese: [README.ja.md](README.ja.md)
+
+The product lives in [`crates/`](../crates/ratio-core). This directory is **how to join official ODS**, not a stand-in for the core. Canonical layout: [`docs/LAYOUT.md`](../docs/LAYOUT.md)
 
 Minimal path to demonstrate the thesis:
 
@@ -25,14 +27,14 @@ L2 route / OpenFGA / L3 token helpers: [`scripts/ods/`](scripts/ods/)
 ## Setup
 
 ```bash
-cd poc
+cd samples
 uv sync
 ```
 
 ## Tests
 
 ```bash
-cd poc
+cd samples
 uv sync --group dev
 uv run pytest
 ```
@@ -40,7 +42,7 @@ uv run pytest
 ## Run
 
 ```bash
-cd poc
+cd samples
 
 # Factory K1 (default TD + stub handoff)
 uv run ratio-poc --scenario K1
@@ -77,7 +79,7 @@ uv run ratio-poc --scenario S2 --ods http --ods-url http://127.0.0.1:8787
 Not the provider pipeline. A shore / partner stand-in that Pulls **products only**.
 
 ```bash
-cd poc
+cd samples
 uv run ratio-poc-serve          # Terminal A
 uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
 uv run ratio-poc-pull --via http
@@ -99,5 +101,5 @@ Artifacts:
 
 - Real robots / shipboard sensors
 - Bundling full `SDK-docker-compose` (start externally; see ODS_HANDOFF.md)
-- Arrow / PyO3 / Rust core (product lives in [`crates/`](../crates/ratio-core); this PoC is ODS handoff glue)
+- Arrow / PyO3 / Rust core (product lives in [`crates/`](../crates/ratio-core); this directory is the ODS handoff sample)
 - Production consumer UI (A3 demo is `ratio-poc-pull` only)

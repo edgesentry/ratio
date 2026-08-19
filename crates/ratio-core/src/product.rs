@@ -247,26 +247,126 @@ mod tests {
     use crate::envelope::validate_envelope;
 
     #[test]
-    fn k1_product_is_metadata_only() {
-        let input = DeriveInput::stub_for(
+    fn all_scenarios_are_metadata_only() {
+        for (scenario, pointer, device, domain) in [
+            (
+                Scenario::K1,
+                "local://storage/K1/raw_wave.bin",
+                "did:example:factory-robot-01",
+                "factory",
+            ),
+            (
+                Scenario::S1,
+                "local://storage/S1/raw_shaft.bin",
+                "did:example:vessel-engine-vib-01",
+                "maritime",
+            ),
+            (
+                Scenario::S2,
+                "local://storage/S2/raw_shaft.bin",
+                "did:example:vessel-engine-vib-01",
+                "maritime",
+            ),
+        ] {
+            let product = build_shareable_product(&DeriveInput::stub_for(
+                scenario,
+                "urn:uuid:00000000-0000-0000-0000-000000000001",
+                "2026-08-18T00:00:00Z",
+                pointer,
+            ))
+            .unwrap();
+            let blob = product.to_json().unwrap();
+            assert!(!blob.contains(RAW_STUB_MARKER), "{scenario:?}");
+            assert_eq!(product.source_device, device);
+            assert_eq!(product.domain, domain);
+            assert_eq!(product.scenario, scenario.as_str());
+            assert!(product.data_governance["rawDataPointer"]
+                .as_str()
+                .unwrap()
+                .starts_with("local://"));
+            validate_envelope(&product.to_value().unwrap()).unwrap();
+        }
+    }
+
+    #[test]
+    fn k1_physical_context_is_motor() {
+        let product = build_shareable_product(&DeriveInput::stub_for(
             Scenario::K1,
             "urn:uuid:00000000-0000-0000-0000-000000000001",
             "2026-08-18T00:00:00Z",
             "local://storage/K1/raw_wave.bin",
+        ))
+        .unwrap();
+        let ctx = &product.inference["physicalContext"];
+        assert!(ctx.get("motorRPM").is_some());
+        assert!(ctx.get("shaftRPM").is_none());
+    }
+
+    #[test]
+    fn maritime_physical_context_is_shaft() {
+        for scenario in [Scenario::S1, Scenario::S2] {
+            let product = build_shareable_product(&DeriveInput::stub_for(
+                scenario,
+                "urn:uuid:00000000-0000-0000-0000-000000000001",
+                "2026-08-18T00:00:00Z",
+                "local://storage/S1/raw_shaft.bin",
+            ))
+            .unwrap();
+            let ctx = &product.inference["physicalContext"];
+            assert!(ctx.get("shaftRPM").is_some());
+            assert!(ctx.get("motorRPM").is_none());
+        }
+    }
+
+    #[test]
+    fn s1_does_not_mark_buffer() {
+        let product = build_shareable_product(&DeriveInput::stub_for(
+            Scenario::S1,
+            "urn:uuid:00000000-0000-0000-0000-000000000002",
+            "2026-08-18T00:00:00Z",
+            "local://storage/S1/raw_shaft.bin",
+        ))
+        .unwrap();
+        assert!(product.provenance.get("firstBufferedAt").is_none());
+    }
+
+    #[test]
+    fn locked_domains_and_parse() {
+        assert_eq!(Scenario::K1.default_domain(), Domain::Factory);
+        assert_eq!(Scenario::S1.default_domain(), Domain::Maritime);
+        assert_eq!(Scenario::S2.default_domain(), Domain::Maritime);
+        assert!(Scenario::parse("K9").is_none());
+        assert_eq!(Scenario::parse("K1"), Some(Scenario::K1));
+    }
+
+    #[test]
+    fn rejects_confidence_out_of_range() {
+        let mut input = DeriveInput::stub_for(
+            Scenario::K1,
+            "urn:uuid:1",
+            "2026-08-18T00:00:00Z",
+            "local://storage/K1/raw.bin",
         );
-        let product = build_shareable_product(&input).unwrap();
-        let blob = product.to_json().unwrap();
-        assert!(!blob.contains(RAW_STUB_MARKER));
-        assert_eq!(product.scenario, "K1");
-        assert_eq!(product.domain, "factory");
-        assert_eq!(
-            product.data_governance["rawDataPointer"].as_str().unwrap(),
-            "local://storage/K1/raw_wave.bin"
+        input.confidence = 1.2;
+        assert!(matches!(
+            build_shareable_product(&input),
+            Err(DeriveError::Confidence(_))
+        ));
+    }
+
+    #[test]
+    fn rejects_raw_stub_in_pointer() {
+        let mut input = DeriveInput::stub_for(
+            Scenario::K1,
+            "urn:uuid:1",
+            "2026-08-18T00:00:00Z",
+            "local://storage/K1/raw.bin",
         );
-        assert!(product.inference["physicalContext"]
-            .get("motorRPM")
-            .is_some());
-        validate_envelope(&product.to_value().unwrap()).unwrap();
+        input.raw_pointer = format!("local://storage/{RAW_STUB_MARKER}");
+        assert!(matches!(
+            build_shareable_product(&input),
+            Err(DeriveError::RawInProduct)
+        ));
     }
 
     #[test]

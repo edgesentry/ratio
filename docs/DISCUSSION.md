@@ -11,7 +11,8 @@ Default-path architecture: [`ARCHITECTURE.md`](ARCHITECTURE.md)
 Assumed PoC sites (factory / maritime): [`POC.md`](POC.md)  
 Shareable-product envelope: [`PRODUCT_ENVELOPE.md`](PRODUCT_ENVELOPE.md)  
 ODS handoff (shareable-product metadata): [`ODS_HANDOFF.md`](ODS_HANDOFF.md)  
-Canonical scope: [`SCOPE.md`](SCOPE.md)
+Canonical scope: [`SCOPE.md`](SCOPE.md)  
+Repository layout: [`LAYOUT.md`](LAYOUT.md)
 
 ---
 

@@ -41,6 +41,6 @@ echo "Waiting for gateway…" >&2
 sleep 4
 
 ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
-bash "$ROOT/poc/scripts/ods/register-ratio-routes.sh"
+bash "$ROOT/samples/scripts/ods/register-ratio-routes.sh"
 echo "OK: AuthZEN=${ENABLE}; Ratio /products/** routes re-registered" >&2
-echo "Verify: source poc/scripts/ods/.local/operator.env && bash poc/scripts/ods/verify-l2-pull.sh k1-<stem>" >&2
+echo "Verify: source samples/scripts/ods/.local/operator.env && bash samples/scripts/ods/verify-l2-pull.sh k1-<stem>" >&2

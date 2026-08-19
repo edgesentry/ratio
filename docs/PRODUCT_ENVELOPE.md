@@ -72,7 +72,7 @@ Keep short and cross-site. May later promote to ontology IRIs.
 
 ## Validation flow (PoC)
 
-Implementation: [`../poc`](../poc) (`uv sync` → `uv run ratio-poc`. Steps: [`../poc/README.md`](../poc/README.md))
+Implementation: [`../samples`](../samples) (`uv sync` → `uv run ratio-poc`. Steps: [`../samples/README.md`](../samples/README.md))
 
 ```
 thin TD (`examples/td/*.td.json`) → raw data → `data/raw/`

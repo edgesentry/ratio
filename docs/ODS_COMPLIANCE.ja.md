@@ -113,7 +113,7 @@ Ratio における「ODS 準拠」の目標の範囲外:
 | **認証** | **L3** Identity and Trust | **O1** | L3 + Keycloak → **JWT**（登録 operator には `operator_id` を含む） |
 | **認可** | **L2** Transaction（＋利用制御） | **O4**、**O8** | L2 ゲートウェイ（**PEP**）→ **AuthZEN** → OpenFGA（**PDP**） |
 
-**OpenFGA** はオープンソースの認可エンジン（[openfga.dev](https://openfga.dev/)；CNCF）で、**関係ベースアクセス制御（ReBAC）** のポリシーをタプルとして保持する（例:「operator *O* はエンドポイント `/products/**` を呼べる」）。公式 ODS SDK の Docker スタックでは OpenFGA が **PDP**（Policy Decision Point）として動作し、L2 ゲートウェイが AuthZEN 経由で OpenFGA に問い合わせ、operator がルートにアクセスできるかに応じて Pull を許可／拒否する。Ratio は OpenFGA を内包しない；PoC では [`register-openfga-products.sh`](../poc/scripts/ods/register-openfga-products.sh) でタプルを登録する。
+**OpenFGA** はオープンソースの認可エンジン（[openfga.dev](https://openfga.dev/)；CNCF）で、**関係ベースアクセス制御（ReBAC）** のポリシーをタプルとして保持する（例:「operator *O* はエンドポイント `/products/**` を呼べる」）。公式 ODS SDK の Docker スタックでは OpenFGA が **PDP**（Policy Decision Point）として動作し、L2 ゲートウェイが AuthZEN 経由で OpenFGA に問い合わせ、operator がルートにアクセスできるかに応じて Pull を許可／拒否する。Ratio は OpenFGA を内包しない；PoC では [`register-openfga-products.sh`](../samples/scripts/ods/register-openfga-products.sh) でタプルを登録する。
 
 **OpenID** と **AuthZEN** は公式スタック**内部で使われる標準**であり、ODS-RAM の別層名ではない:
 
@@ -131,7 +131,7 @@ L2 を呼ぶ消費者（または管理）クライアントは、先に L3 で�
 | A3 | L3 トークンエンドポイントから **JWT 取得** | `client_id` + `client_secret` + L3 `API-Key` |
 | A4 | JWT に **`operator_id`** を含む | L2 で AuthZEN 有効時は必須 |
 
-PoC ヘルパー: [`register-operator.sh`](../poc/scripts/ods/register-operator.sh)、[`fetch-l3-token.sh`](../poc/scripts/ods/fetch-l3-token.sh)。
+PoC ヘルパー: [`register-operator.sh`](../samples/scripts/ods/register-operator.sh)、[`fetch-l3-token.sh`](../samples/scripts/ods/fetch-l3-token.sh)。
 
 ### 4.3 O4 / O8 — 認可（L2 + AuthZEN）: クライアントチェックリスト
 
@@ -147,7 +147,7 @@ L2 ゲートウェイで AuthZEN が有効なとき、Pull クライアントは
 
 L2 は JWT を検証し `operator_id` を読み、AuthZEN 経由で OpenFGA に問い合わせ、許可されたリクエストだけを提供者 industry API へ転送する。
 
-PoC ヘルパー: [`register-openfga-products.sh`](../poc/scripts/ods/register-openfga-products.sh)、[`enable-authzen.sh`](../poc/scripts/ods/enable-authzen.sh)、[`verify-l2-pull.sh`](../poc/scripts/ods/verify-l2-pull.sh)、消費者 `uv run ratio-poc-pull`。
+PoC ヘルパー: [`register-openfga-products.sh`](../samples/scripts/ods/register-openfga-products.sh)、[`enable-authzen.sh`](../samples/scripts/ods/enable-authzen.sh)、[`verify-l2-pull.sh`](../samples/scripts/ods/verify-l2-pull.sh)、消費者 `uv run ratio-poc-pull`。
 
 **接続確認のスモークテストのみ**、`AUTHZEN_AUTHORIZATION_ENABLED=false` の一時設定は可。本番では AuthZEN を有効のまま OpenFGA 付与を完了すること。
 

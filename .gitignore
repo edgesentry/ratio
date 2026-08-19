@@ -3,8 +3,8 @@ data/
 __pycache__/
 *.pyc
 .venv/
-poc/.venv/
+samples/.venv/
 crates/ratio-py/.venv/
 target/
 .DS_Store
-poc/scripts/ods/.local/
+samples/scripts/ods/.local/

@@ -15,7 +15,7 @@ from rdflib import Graph
 from ratio_poc.ods import handoff
 from ratio_poc import queue as product_queue
 
-# poc/src/ratio_poc/cli.py → repo root
+# samples/src/ratio_poc/cli.py → repo root
 ROOT = Path(__file__).resolve().parents[3]
 SCHEMA_DIR = ROOT / "schemas"
 TD_DIR = ROOT / "examples" / "td"

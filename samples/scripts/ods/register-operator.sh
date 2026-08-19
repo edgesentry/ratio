@@ -5,7 +5,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
-OUT_DIR="${RATIO_ODS_ENV_DIR:-$ROOT/poc/scripts/ods/.local}"
+OUT_DIR="${RATIO_ODS_ENV_DIR:-$ROOT/samples/scripts/ods/.local}"
 OUT_ENV="$OUT_DIR/operator.env"
 
 L3_URL="${RATIO_ODS_L3_URL:-http://127.0.0.1:8080}"
@@ -124,5 +124,5 @@ EOF
 
 echo "OK: wrote $OUT_ENV (gitignored)" >&2
 echo "OK: operator_id=$OPERATOR_ID client_id=$CLIENT_ID" >&2
-echo "Next: source $OUT_ENV && bash poc/scripts/ods/register-openfga-products.sh" >&2
-echo "Then:  bash poc/scripts/ods/enable-authzen.sh" >&2
+echo "Next: source $OUT_ENV && bash samples/scripts/ods/register-openfga-products.sh" >&2
+echo "Then:  bash samples/scripts/ods/enable-authzen.sh" >&2

@@ -111,4 +111,45 @@ mod tests {
             .value(0);
         assert!(ptr.starts_with("local://"));
     }
+
+    #[test]
+    fn two_products_metadata_only() {
+        let k1 = build_shareable_product(&DeriveInput::stub_for(
+            Scenario::K1,
+            "urn:uuid:00000000-0000-0000-0000-000000000001",
+            "2026-08-18T00:00:00Z",
+            "local://storage/K1/raw_wave.bin",
+        ))
+        .unwrap();
+        let s1 = build_shareable_product(&DeriveInput::stub_for(
+            Scenario::S1,
+            "urn:uuid:00000000-0000-0000-0000-000000000002",
+            "2026-08-18T00:00:00Z",
+            "local://storage/S1/raw_shaft.bin",
+        ))
+        .unwrap();
+        let batch = products_to_record_batch(&[k1, s1]).unwrap();
+        assert_eq!(batch.num_rows(), 2);
+        let json_col = batch
+            .column_by_name("product_json")
+            .unwrap()
+            .as_any()
+            .downcast_ref::<StringArray>()
+            .unwrap();
+        assert!(!json_col.value(0).contains(crate::RAW_STUB_MARKER));
+        assert!(!json_col.value(1).contains(crate::RAW_STUB_MARKER));
+        let ok = batch
+            .column_by_name("envelope_ok")
+            .unwrap()
+            .as_any()
+            .downcast_ref::<BooleanArray>()
+            .unwrap();
+        assert!(ok.value(0) && ok.value(1));
+    }
+
+    #[test]
+    fn empty_batch() {
+        let batch = products_to_record_batch(&[]).unwrap();
+        assert_eq!(batch.num_rows(), 0);
+    }
 }

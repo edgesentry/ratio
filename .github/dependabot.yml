@@ -19,7 +19,7 @@ updates:
     open-pull-requests-limit: 5
 
   - package-ecosystem: "uv"
-    directory: "/poc"
+    directory: "/samples"
     schedule:
       interval: "weekly"
       day: "monday"

@@ -1,4 +1,4 @@
-//! Edge CLI: derive shareable-product metadata. Does not publish raw data.
+//! Dev binary. Product command is `eds ratio derive` (EdgeSentry `eds`).
 
 use std::env;
 use std::fs;
@@ -9,7 +9,7 @@ use ratio_core::product::{build_shareable_product, DeriveInput, Scenario};
 
 fn usage() -> ExitCode {
     eprintln!(
-        "usage:\n  ratio derive --scenario K1|S1|S2 --pointer local://… [--id URN] [--ts RFC3339] [-o FILE]"
+        "dev:   ratio derive --scenario K1|S1|S2 --pointer local://… [--id URN] [--ts RFC3339] [-o FILE]\nproduct CLI: eds ratio derive …"
     );
     ExitCode::from(2)
 }

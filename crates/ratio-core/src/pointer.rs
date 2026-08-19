@@ -44,5 +44,7 @@ mod tests {
         assert!(!is_local_pointer("local://"));
         assert!(assert_local_pointer("https://cdn.example/raw.bin").is_err());
         assert!(assert_local_pointer("").is_err());
+        assert!(!is_local_pointer("file:///tmp/raw.bin"));
+        assert!(!is_local_pointer("http://example.invalid/raw.bin"));
     }
 }

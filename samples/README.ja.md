@@ -1,6 +1,8 @@
-# Ratio 最小パイプライン（PoC）
+# Ratio サンプル（ODS へのつなぎ）
 
 > English: [README.md](README.md)
+
+製品は [`crates/`](../crates/ratio-core)。ここは **公式 ODS へのつなぎ方** のサンプルであり、コアの代替ではない。構成の正本: [`docs/LAYOUT.ja.md`](../docs/LAYOUT.ja.md)
 
 主張を確かめる最小経路:
 
@@ -25,14 +27,14 @@ L2 ルート／OpenFGA／L3 トークン補助: [`scripts/ods/`](scripts/ods/)
 ## セットアップ
 
 ```bash
-cd poc
+cd samples
 uv sync
 ```
 
 ## テスト
 
 ```bash
-cd poc
+cd samples
 uv sync --group dev
 uv run pytest
 ```
@@ -40,7 +42,7 @@ uv run pytest
 ## 実行
 
 ```bash
-cd poc
+cd samples
 
 # 工場 K1（既定 TD + stub）
 uv run ratio-poc --scenario K1
@@ -77,7 +79,7 @@ uv run ratio-poc --scenario S2 --ods http --ods-url http://127.0.0.1:8787
 提供者パイプラインではない。陸上／パートナーのスタンドインで、**プロダクトだけ**を Pull する。
 
 ```bash
-cd poc
+cd samples
 uv run ratio-poc-serve          # 端末 A
 uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
 uv run ratio-poc-pull --via http
@@ -99,5 +101,5 @@ uv run ratio-poc-pull --via l2 k1-<stem>
 
 - 実ロボット／船上センサ
 - `SDK-docker-compose` 一式の同梱（外部起動。手順は ODS_HANDOFF.ja.md）
-- Arrow／PyO3／Rust コア（本体はリポジトリルートの [`crates/`](../crates/ratio-core)；この PoC は ODS 引き渡しの糊）
+- Arrow／PyO3／Rust コア（本体は [`crates/`](../crates/ratio-core)；このディレクトリは ODS 引き渡しのサンプル）
 - 本番消費者 UI（A3 デモは `ratio-poc-pull` のみ）

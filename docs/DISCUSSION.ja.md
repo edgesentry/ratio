@@ -11,7 +11,8 @@ ODS 依存の目的と準拠要件: [`ODS_COMPLIANCE.ja.md`](ODS_COMPLIANCE.ja.m
 想定 PoC 分野（工場／海事）: [`POC.ja.md`](POC.ja.md)  
 共有可能プロダクトの書式: [`PRODUCT_ENVELOPE.ja.md`](PRODUCT_ENVELOPE.ja.md)  
 ODS への引き渡し（共有可能プロダクトのメタデータ）: [`ODS_HANDOFF.ja.md`](ODS_HANDOFF.ja.md)  
-スコープ正本: [`SCOPE.ja.md`](SCOPE.ja.md)
+スコープ正本: [`SCOPE.ja.md`](SCOPE.ja.md)  
+リポジトリ構成: [`LAYOUT.ja.md`](LAYOUT.ja.md)
 
 ---
 

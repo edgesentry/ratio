@@ -113,7 +113,7 @@ Individual client requirements for **O1** (identity), **O4** (transaction), and 
 | **Authentication** | **L3** Identity and Trust | **O1** | L3 + Keycloak → **JWT** (includes `operator_id` for registered operators) |
 | **Authorization** | **L2** Transaction (+ usage control) | **O4**, **O8** | L2 gateway (**PEP**) → **AuthZEN** → OpenFGA (**PDP**) |
 
-**OpenFGA** is an open-source authorization engine ([openfga.dev](https://openfga.dev/); CNCF) that stores **relationship-based access control (ReBAC)** policies as tuples—for example, “operator *O* may call endpoint `/products/**`”. In the official ODS SDK Docker stack, OpenFGA is the **PDP** (Policy Decision Point): the L2 gateway asks OpenFGA (via AuthZEN) whether a given operator may access a route, and allows or denies the Pull accordingly. Ratio does not embed OpenFGA; PoC operators register tuples with [`register-openfga-products.sh`](../poc/scripts/ods/register-openfga-products.sh).
+**OpenFGA** is an open-source authorization engine ([openfga.dev](https://openfga.dev/); CNCF) that stores **relationship-based access control (ReBAC)** policies as tuples—for example, “operator *O* may call endpoint `/products/**`”. In the official ODS SDK Docker stack, OpenFGA is the **PDP** (Policy Decision Point): the L2 gateway asks OpenFGA (via AuthZEN) whether a given operator may access a route, and allows or denies the Pull accordingly. Ratio does not embed OpenFGA; PoC operators register tuples with [`register-openfga-products.sh`](../samples/scripts/ods/register-openfga-products.sh).
 
 **OpenID** and **AuthZEN** are standards **used inside** the official stack—not separate ODS-RAM layer names:
 
@@ -131,7 +131,7 @@ A consumer (or admin) client that calls L2 must first prove identity via L3:
 | A3 | **JWT obtained** from L3 token endpoint | `client_id` + `client_secret` + L3 `API-Key` |
 | A4 | JWT carries **`operator_id`** | Required when AuthZEN is enabled on L2 |
 
-PoC helpers: [`register-operator.sh`](../poc/scripts/ods/register-operator.sh), [`fetch-l3-token.sh`](../poc/scripts/ods/fetch-l3-token.sh).
+PoC helpers: [`register-operator.sh`](../samples/scripts/ods/register-operator.sh), [`fetch-l3-token.sh`](../samples/scripts/ods/fetch-l3-token.sh).
 
 ### 4.3 O4 / O8 — Authorization (L2 + AuthZEN): client checklist
 
@@ -147,7 +147,7 @@ When AuthZEN is enabled on the L2 gateway, a Pull client must additionally satis
 
 L2 validates the JWT, reads `operator_id`, asks OpenFGA via AuthZEN, and forwards allowed requests to the provider industry API.
 
-PoC helpers: [`register-openfga-products.sh`](../poc/scripts/ods/register-openfga-products.sh), [`enable-authzen.sh`](../poc/scripts/ods/enable-authzen.sh), [`verify-l2-pull.sh`](../poc/scripts/ods/verify-l2-pull.sh), consumer `uv run ratio-poc-pull`.
+PoC helpers: [`register-openfga-products.sh`](../samples/scripts/ods/register-openfga-products.sh), [`enable-authzen.sh`](../samples/scripts/ods/enable-authzen.sh), [`verify-l2-pull.sh`](../samples/scripts/ods/verify-l2-pull.sh), consumer `uv run ratio-poc-pull`.
 
 For **connectivity smoke tests only**, temporarily setting `AUTHZEN_AUTHORIZATION_ENABLED=false` is acceptable. In production, keep AuthZEN enabled and complete OpenFGA grants.
 

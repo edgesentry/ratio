@@ -79,9 +79,9 @@ jobs:
       - name: Setup uv
         uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d  # v10.0.1
 
-      - name: PoC tests
+      - name: Sample tests
         run: |
-          cd poc
+          cd samples
           uv sync --frozen --group dev
           uv run pytest
 

@@ -4,7 +4,7 @@
 
 Lock three tiers: **① official ODS** → **② Ratio** → **③ out of scope (who builds it)**.
 
-Related: [`DISCUSSION.md`](DISCUSSION.md) · [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md) · [`ODS_HANDOFF.md`](ODS_HANDOFF.md)
+Related: [`DISCUSSION.md`](DISCUSSION.md) · [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md) · [`ODS_HANDOFF.md`](ODS_HANDOFF.md) · [`LAYOUT.md`](LAYOUT.md)
 
 ---
 
@@ -65,7 +65,7 @@ Pipeline: **thin ingest → derive / validate → split raw data vs product → 
 |---|------|-------|-------|
 | **2** | Vocabulary / SHACL | **Minimal only** | Envelope + shared SHACL + PoC shapes are Ratio. Industry agreement and large vocab governance are out |
 | **3** | WoT TD / ingest | **Thin layer only** | TD consume, stubs, one-line adapters are Ratio. Deep vendor SI is out |
-| **4** | Reference Pull consumer | **Not in the core** | PoC demo: `ratio-poc-pull`. Production apps stay out. Not a Ratio core duty |
+| **4** | Reference Pull consumer | **Not in the core** | Sample: `ratio-poc-pull` ([`samples/`](../samples/)). Production apps stay out. Not a Ratio core duty |
 
 ---
 
@@ -78,7 +78,7 @@ Pipeline: **thin ingest → derive / validate → split raw data vs product → 
 | **Deep device SI** (all fieldbuses, safety PLC integration, etc.) | SI, control vendors, existing IIoT / WoT gateways | Ratio receives TD streams |
 | **Consumer business apps / production Agentic AI** | Partners, user enterprises, upstream AI platforms | The Pull-and-operate side. Reference demos prefer separate repo / binary |
 | **Legal certification / safety liability / hard RT** | Regulators, control vendors, domain owners | Outside data-space specs (or separate regimes) |
-| **Reference Pull client (optional)** | Ratio team or community as a **separate artifact** | PoC: `ratio-poc-pull`. Do not fold into Ratio core |
+| **Reference Pull client (optional)** | Ratio team or community as a **separate artifact** | Sample: `ratio-poc-pull`. Do not fold into Ratio core |
 
 ---
 

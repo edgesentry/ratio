@@ -1,4 +1,4 @@
-//! Python prototype bindings. ODS handoff stays in `poc/`; this module derives and splits.
+//! Python prototype bindings. ODS wiring samples live in `samples/`; this module derives and splits.
 
 use ::ratio_core::product::{build_shareable_product, DeriveInput, Scenario, ShareableProduct};
 use ::ratio_core::{

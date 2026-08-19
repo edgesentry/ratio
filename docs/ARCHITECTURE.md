@@ -5,7 +5,7 @@
 Implementation sketch for the thesis **participate in ODS without shipping raw data**.
 
 **Build policy:** Compose OSS and the official ODS SDK. Ratio owns on-site derivation, validation, raw-data / product split, and the handoff boundary.  
-See: [`DISCUSSION.md`](DISCUSSION.md) · [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md)
+See: [`DISCUSSION.md`](DISCUSSION.md) · [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md) · [`LAYOUT.md`](LAYOUT.md)
 
 ---
 
@@ -135,10 +135,10 @@ Locked PoC envelope, SHACL, and K1 / S1 / S2 examples: [`PRODUCT_ENVELOPE.md`](P
 └─────────────┘   Arrow IPC   │  split · package │
                               │  envelope gate   │
                               ▼
-                     ODS handoff remains `poc/` (official SDK)
+                     ODS handoff remains `samples/` (official SDK)
 ```
 
-Code: [`crates/ratio-core`](../crates/ratio-core) (`ratio derive`) and [`crates/ratio-py`](../crates/ratio-py) (module `ratio_core`).
+Code: [`crates/ratio-core`](../crates/ratio-core). Product CLI is **`eds ratio derive`** (in-repo dev: `ratio derive`). Python: [`crates/ratio-py`](../crates/ratio-py) (module `ratio_core`).
 
 v0 Arrow columns: `device_id`, `ts`, `scenario`, `result`, `raw_data_pointer` (`local://`), `product_json`, `envelope_ok`. No waveform bytes. Full SHACL via Oxigraph is later; the in-process gate checks `local://` and required fields.
 

@@ -57,10 +57,10 @@ Python SDK が直接「データ製品を publish」するのではなく、主�
 
 ```bash
 # 端末 A
-cd poc && uv run ratio-poc-serve
+cd samples && uv run ratio-poc-serve
 
 # 端末 B
-cd poc && uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
+cd samples && uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
 curl -s http://127.0.0.1:8787/products | jq .
 ```
 
@@ -90,8 +90,8 @@ curl -s http://127.0.0.1:8787/products | jq .
 ### 0. 前提
 
 - Docker / Compose 利用可（SDK README のマシンスペック目安あり）
-- Ratio industry: `cd poc && uv run ratio-poc-serve`（ホスト `:8787`）
-- 作業用スクリプト: [`poc/scripts/ods/`](../poc/scripts/ods/)
+- Ratio industry: `cd samples && uv run ratio-poc-serve`（ホスト `:8787`）
+- 作業用スクリプト: [`samples/scripts/ods/`](../samples/scripts/ods/)
 
 ### 1. SDK 起動（公式 README 要約）
 
@@ -122,7 +122,7 @@ export RATIO_ODS_FGA_MODEL_ID=…   # 同上
 export RATIO_ODS_OPERATOR_ID=…    # 事業者登録で得た operator_id
 
 cd /path/to/ratio
-bash poc/scripts/ods/register-openfga-products.sh
+bash samples/scripts/ods/register-openfga-products.sh
 ```
 
 ### 3. L2 ルート: `/products/**` → Ratio industry
@@ -130,7 +130,7 @@ bash poc/scripts/ods/register-openfga-products.sh
 ```bash
 # Mac/Windows Docker Desktop なら既定の host.docker.internal で可
 export RATIO_ODS_INDUSTRY_URI=http://host.docker.internal:8787
-bash poc/scripts/ods/register-ratio-routes.sh
+bash samples/scripts/ods/register-ratio-routes.sh
 ```
 
 Linux では `host.docker.internal` が無い場合、compose に `extra_hosts` を足すか、ホスト IP を `RATIO_ODS_INDUSTRY_URI` に指定する。
@@ -143,7 +143,7 @@ export RATIO_ODS_API_KEY=API-Key-Sample
 export RATIO_ODS_CLIENT_ID=…      # 事業者クライアント
 export RATIO_ODS_CLIENT_SECRET=…
 
-export RATIO_ODS_BEARER="$(bash poc/scripts/ods/fetch-l3-token.sh)"
+export RATIO_ODS_BEARER="$(bash samples/scripts/ods/fetch-l3-token.sh)"
 ```
 
 または `CLIENT_ID`/`SECRET` だけ設定し、`ratio-poc --ods l2` に自動取得させる。
@@ -151,7 +151,7 @@ export RATIO_ODS_BEARER="$(bash poc/scripts/ods/fetch-l3-token.sh)"
 ### 5. 提供者: プロダクト登録
 
 ```bash
-cd poc
+cd samples
 # industry へ直接（スタブ確認）
 uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
 
@@ -164,7 +164,7 @@ uv run ratio-poc --scenario K1 --ods l2
 参照エージェント（`ratio-poc-pull`）は **RB11 Out** — Ratio コアではない。陸上／パートナー側と同じ L2 GET 形: プロダクトのみ、生データは拒否。
 
 ```bash
-cd poc
+cd samples
 
 # industry スタブ（SDK なし）
 uv run ratio-poc-serve          # 起動済み
@@ -180,8 +180,8 @@ uv run ratio-poc-pull --via l2 k1-<stem>
 低レベル curl スモーク（任意）:
 
 ```bash
-bash poc/scripts/ods/verify-l2-pull.sh
-bash poc/scripts/ods/verify-l2-pull.sh k1-<stem>
+bash samples/scripts/ods/verify-l2-pull.sh
+bash samples/scripts/ods/verify-l2-pull.sh k1-<stem>
 ```
 
 ### 7. AuthZEN（`operator_id`）
@@ -192,24 +192,24 @@ bash poc/scripts/ods/verify-l2-pull.sh k1-<stem>
 # 1) 事業者＋client_credentials クライアント登録（gitignore の env に書き出し）
 export RATIO_ODS_SDK_DIR=~/work/open-dataspaces/SDK-docker-compose
 export RATIO_ODS_CLIENT_SECRET=…   # l3/docker-compose.yml の system-auth-sample 秘密
-bash poc/scripts/ods/register-operator.sh
+bash samples/scripts/ods/register-operator.sh
 
 # 2) OpenFGA 付与（endpoint タプル＋事業者メンバーシップ）
-set -a; source poc/scripts/ods/.local/operator.env; set +a
+set -a; source samples/scripts/ods/.local/operator.env; set +a
 export RATIO_ODS_FGA_STORE_ID=…   # l2/docker-compose.yml から
 export RATIO_ODS_FGA_MODEL_ID=…
-bash poc/scripts/ods/register-openfga-products.sh
+bash samples/scripts/ods/register-openfga-products.sh
 
 # 3) AuthZEN 有効化＋ /products/** ルート再登録
-bash poc/scripts/ods/enable-authzen.sh true
+bash samples/scripts/ods/enable-authzen.sh true
 
 # 4) 事業者トークンで Pull（JWT に operator_id が載る）
-export RATIO_ODS_BEARER="$(bash poc/scripts/ods/fetch-l3-token.sh)"
-cd poc && uv run ratio-poc-pull --via l2 k1-<stem>
-# または: bash poc/scripts/ods/verify-l2-pull.sh k1-<stem>
+export RATIO_ODS_BEARER="$(bash samples/scripts/ods/fetch-l3-token.sh)"
+cd samples && uv run ratio-poc-pull --via l2 k1-<stem>
+# または: bash samples/scripts/ods/verify-l2-pull.sh k1-<stem>
 ```
 
-補助スクリプト: [`poc/scripts/ods/`](../poc/scripts/ods/)。秘密情報は `poc/scripts/ods/.local/`（gitignore）。
+補助スクリプト: [`samples/scripts/ods/`](../samples/scripts/ods/)。秘密情報は `samples/scripts/ods/.local/`（gitignore）。
 
 事業者登録前の疎通では一時的に `AUTHZEN_AUTHORIZATION_ENABLED=false` も可。本番では有効＋OpenFGA 付与。
 
@@ -226,7 +226,7 @@ cd poc && uv run ratio-poc-pull --via l2 k1-<stem>
 ### Colima / macOS メモ（実測）
 
 - Docker は Colima コンテキストで可。ポート競合に注意: OpenFGA playground `3000`→`3005`、MinIO `9000`→`9010` など（他スタックと共有時）。
-- 公式 `setup/setup_l3.sh` は GNU `grep -P` / gawk 前提。macOS では [`poc/scripts/ods/patch-setup-l3-macos.py`](../poc/scripts/ods/patch-setup-l3-macos.py) を当ててから実行。
+- 公式 `setup/setup_l3.sh` は GNU `grep -P` / gawk 前提。macOS では [`samples/scripts/ods/patch-setup-l3-macos.py`](../samples/scripts/ods/patch-setup-l3-macos.py) を当ててから実行。
 - L2 の API-Key は L3 の `API-Key-Sample` ではなく **`l2/docker-compose.yml` の `VALID_API_KEYS`**。
 - ルート Path は `/products/**`（`/products**` だと個別 ID が 404 になる）。
 - AuthZEN は JWT の `operator_id` クレームが必要。事業者登録前の疎通確認では一時的に `AUTHZEN_AUTHORIZATION_ENABLED=false` も可（本番では有効＋OpenFGA 付与）。

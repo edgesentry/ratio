@@ -122,6 +122,57 @@ mod tests {
     }
 
     #[test]
+    fn rejects_unknown_scenario() {
+        let mut p = k1();
+        p["scenario"] = json!("K9");
+        assert_eq!(validate_envelope(&p), Err(EnvelopeError::Scenario));
+    }
+
+    #[test]
+    fn rejects_raw_stub_in_body() {
+        let mut p = k1();
+        p["inference"]["result"] = json!(RAW_STUB_MARKER);
+        assert_eq!(validate_envelope(&p), Err(EnvelopeError::RawInBody));
+    }
+
+    #[test]
+    fn rejects_missing_policy() {
+        let mut p = k1();
+        p["dataGovernance"]
+            .as_object_mut()
+            .unwrap()
+            .remove("policyRef");
+        assert_eq!(
+            validate_envelope(&p),
+            Err(EnvelopeError::Missing("policyRef"))
+        );
+    }
+
+    #[test]
+    fn rejects_empty_id() {
+        let mut p = k1();
+        p["id"] = json!("");
+        assert_eq!(validate_envelope(&p), Err(EnvelopeError::Missing("id")));
+    }
+
+    #[test]
+    fn rejects_confidence_out_of_range() {
+        let mut p = k1();
+        p["inference"]["confidence"] = json!(1.5);
+        assert_eq!(validate_envelope(&p), Err(EnvelopeError::Confidence));
+    }
+
+    #[test]
+    fn allows_missing_raw_pointer() {
+        let mut p = k1();
+        p["dataGovernance"]
+            .as_object_mut()
+            .unwrap()
+            .remove("rawDataPointer");
+        validate_envelope(&p).unwrap();
+    }
+
+    #[test]
     fn rejects_https_pointer() {
         let mut p = k1();
         p["dataGovernance"]["rawDataPointer"] = json!("https://example.invalid/raw.bin");
