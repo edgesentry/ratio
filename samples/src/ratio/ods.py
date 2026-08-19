@@ -97,7 +97,7 @@ def stub_handoff(product_path: Path, conforms: bool, root: Path) -> HandoffResul
         "would_publish": str(product_path.relative_to(root)),
         "shaclConforms": conforms,
         "raw_on_publish_path": False,
-        "next": "uv run ratio-poc-serve  # then --ods http or --ods l2",
+        "next": "uv run ratio-serve  # then --ods http or --ods l2",
     }
     return HandoffResult(mode="stub", ok=True, receipt=receipt)
 
@@ -174,9 +174,9 @@ def http_handoff(
         return HandoffResult(mode=mode, ok=False, receipt=receipt)
     except urllib.error.URLError as e:
         hint = (
-            "Start SDK gateway (L2 :8090) and ratio-poc-serve; see docs/ODS_HANDOFF.md"
+            "Start SDK gateway (L2 :8090) and ratio-serve; see docs/ODS_HANDOFF.md"
             if mode == "l2"
-            else "Start industry stub: uv run ratio-poc-serve"
+            else "Start industry stub: uv run ratio-serve"
         )
         receipt = {
             "status": "error",

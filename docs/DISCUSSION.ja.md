@@ -86,7 +86,7 @@ Ratio は「現場で製品を作り、公式スタックへ渡す糊」まで�
 | **信頼・品質アセスメント手順** | O7 | ODP L1 assessment プロトコル群 |
 | **運用・監視・ロギング** | O9–O10 | Middleware 共通機能、logging サービス、開発者／利用者ガイドのオンボーディング |
 
-PoC の `ratio-poc-serve` は上記の **代替ではない**（L2 上流 industry API の仮置き）。本番では公式 Compose／L2／L3／L4 に接続する。手順: [`ODS_HANDOFF.ja.md`](ODS_HANDOFF.ja.md)。
+PoC の `ratio-serve` は上記の **代替ではない**（L2 上流 industry API の仮置き）。本番では公式 Compose／L2／L3／L4 に接続する。手順: [`ODS_HANDOFF.ja.md`](ODS_HANDOFF.ja.md)。
 
 #### 5.2 公式 ODS だけでは足りない／範囲外（他者が担う）
 
@@ -348,7 +348,7 @@ Ratio のスコープ外（この主張では解かない）: ハードリアル
 
 - 1デバイス系統を入れ、意味付き JSON-LD の共有可能プロダクトを出す
 - 生データはローカル；プロダクトは ODS SDK で発見／提供可能
-- 陸上／パートナーの Pull エージェント（`ratio-poc-pull`）は意味だけ読む — 生データなし
+- 陸上／パートナーの Pull エージェント（`ratio-pull`）は意味だけ読む — 生データなし
 - 一覧: 各能力 → OSS／SDK または Ratio 所有（[`POC.ja.md` reuse vs build](POC.ja.md#reuse-vs-build両分野)）
 
 **中期:**

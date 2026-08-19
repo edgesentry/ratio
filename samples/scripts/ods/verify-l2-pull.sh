@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Low-level curl smoke for L2 Pull. Asserted consumer: uv run ratio-poc-pull --via l2
+# Low-level curl smoke for L2 Pull. Asserted consumer: uv run ratio-pull --via l2
 # Consumer-side Pull check: L2 → Ratio industry (products only; never raw).
 set -euo pipefail
 

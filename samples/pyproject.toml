@@ -1,7 +1,7 @@
 [project]
-name = "ratio-poc"
+name = "ratio"
 version = "0.1.0"
-description = "Minimal Ratio PoC pipeline: stub TD → local raw → shareable product → SHACL → ODS stub"
+description = "Ratio samples pipeline: thin TD → local raw → shareable product → SHACL → ODS stub"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -10,9 +10,9 @@ dependencies = [
 ]
 
 [project.scripts]
-ratio-poc = "ratio.cli:main"
-ratio-poc-serve = "ratio.industry_serve:main"
-ratio-poc-pull = "ratio.consumer:main"
+ratio = "ratio.cli:main"
+ratio-serve = "ratio.industry_serve:main"
+ratio-pull = "ratio.consumer:main"
 
 [build-system]
 requires = ["hatchling"]

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Register L2 gateway routes that forward /products** to Ratio industry stub.
-# Prerequisites: SDK-docker-compose gateway on :8090; ratio-poc-serve on host :8787.
+# Prerequisites: SDK-docker-compose gateway on :8090; ratio-serve on host :8787.
 set -euo pipefail
 
 L2_URL="${RATIO_ODS_L2_URL:-http://localhost:8090}"
