@@ -2,8 +2,8 @@
 
 > English: [ODS_COMPLIANCE.md](ODS_COMPLIANCE.md)
 
-テーゼ **生データを出さずに ODS に参加する** のうち、IPA Open Data Spaces（ODS）に依存する部分を切り出す（現場導出や W3C のみの関心と区別する）。  
-テーゼの文言は **Ratio の運用定義**であり ODS-RAM の引用ではない。ODS 依存の要素は以下。
+「生データを出さずに ODS に参加する」という主張のうち、IPA Open Data Spaces（ODS）に依存する部分を切り出す（現場導出や W3C のみの関心と区別する）。  
+この一文は **Ratio の運用定義**であり ODS-RAM の引用ではない。ODS 依存の要素は以下。
 
 関連: [`DISCUSSION.ja.md`](DISCUSSION.ja.md) · [`SCOPE.ja.md`](SCOPE.ja.md) · [`ARCHITECTURE.ja.md`](ARCHITECTURE.ja.md) · [`ODS_HANDOFF.ja.md`](ODS_HANDOFF.ja.md)
 
@@ -31,13 +31,13 @@
 
 | ID | 目的 | Ratio 読者にとっての意味 |
 |----|------|--------------------------|
-| P1 | 単一中央データ湖なしに **組織横断で相互運用** | パートナー／Agentic AI は統治されたプロダクトを消費し、OT ストアのミラーではない |
+| P1 | 単一の中央データレイクなしに **組織横断で相互運用** | パートナー／Agentic AI は統治されたプロダクトを消費し、OT ストアのミラーではない |
 | P2 | **データと文脈を対**で扱う（DPQM） | 不透明スコアでは不足；Ontology Product 級の意味が必要 |
 | P3 | 中央 Push より **Pull／提供**を優先 | 現場の秘匿・帯域・ドメイン所有と一致 |
 | P4 | **規範プロトコルと参照実装**を再利用 | 独自「データスペース方言」を避け、ODP＋公式 Middleware／SDK |
 | P5 | 信頼できる形で **Agentic AI 向け Context**を供給 | 消費者への透明性＋ドメインオーナーの制御 |
 
-Ratio における「ODS 準拠」の非目標:
+Ratio における「ODS 準拠」の目標の範囲外:
 
 - 独自プロトコルスタックで ODS Middleware を置き換えること
 - 初日に ODS-RAM 全面カバーを主張すること（最小参加経路から）
@@ -47,7 +47,7 @@ Ratio における「ODS 準拠」の非目標:
 
 | メリット | 内容 |
 |----------|------|
-| 実データの供給口 | 湖に出せない OT ドメインが Pull 提供者として参加 |
+| 実データの供給口 | データレイクに出せない OT ドメインが Pull 提供者として参加 |
 | Context 品質 | オントロジー付き・検証可能な製品（スコアのみより GIGO が減る） |
 | DPQM の現場実装 | データと文脈の対が発生点で分離される |
 | 統治 | 利用条件付き連携（生データの無断ミラーを前提にしない） |
@@ -72,7 +72,7 @@ Ratio における「ODS 準拠」の非目標:
 | ID | 要件 | ODS アンカー | 準拠の進め方 |
 |----|------|--------------|--------------|
 | O1 | 相互運用可能な **アイデンティティ＆トラスト**を持つ **ドメイン所有の参加者／ノード** | ODP Identity and Trust（L3）；ODS-RAM trust | 公式 Middleware／SDK バインディング；資格はローカル（例: SQLite）保管—並行 IdP プロトコルを発明しない |
-| O2 | オファリングを記述できるよう **メタデータを登録／交換** | ODP Metadata Exchange（L4） | 主オファリングは共有可能プロダクトのメタ。生データファイルを主にしない |
+| O2 | 提供するものを記述できるよう **メタデータを登録／交換** | ODP Metadata Exchange（L4） | 主に出すのは共有可能プロダクトのメタデータ。生データファイルを主にしない |
 | O3 | 消費者が見つけられる **発見／検索** | ODP Discovery and Search（L4） | カタログは統治されたプロダクトを指す |
 | O4 | ODS 整合の **トランザクション的アクセス**（許可時に提供） | ODP Transaction（L2） | Middleware／SDK 経由で共有可能プロダクトの Pull／提供 |
 | O5 | **DPQM** 整合のプロダクト（データ関心＋オントロジー／文脈関心の対） | ODS-RAM Architecture／DPQM | 現場は結果 **と** 意味（JSON-LD／RDF＋形状）を出す；スコアのみの塊にしない |
@@ -82,7 +82,7 @@ Ratio における「ODS 準拠」の非目標:
 
 | ID | 要件 | ODS アンカー |
 |----|------|--------------|
-| O7 | オファリング上の **データ信頼／信頼性・品質**シグナル | ODP L1 評価プロトコル |
+| O7 | 提供するものに載せる **データ信頼／信頼性・品質**シグナル | ODP L1 評価プロトコル |
 | O8 | ODS パースペクティブに沿った **利用制御／契約**（誰が、何目的） | ODS-RAM perspectives；適用可能な ODP Heuristic Contracting（P1） |
 | O9 | 配備に応じた運用基本: logging／monitoring／notifier | ODP Common Functionalities |
 | O10 | オンボーディングと運用は公式開発者／利用者ガイドに従う | Introductory guides |
@@ -91,10 +91,10 @@ Ratio における「ODS 準拠」の非目標:
 
 | ID | 要件 | 理由 |
 |----|------|------|
-| R1 | 生データ（ペイロードバイト）の **既定非egress** | ドメイン保管；帯域／秘匿；ODS は *プロダクト* の Pull であり湖ミラーではない |
+| R1 | 生データ（ペイロードバイト）の **既定非egress** | ドメイン保管；帯域／秘匿；ODS は *プロダクト* の Pull でありデータレイクのミラーではない |
 | R2 | 現場での **共有可能プロダクト導出**（結果＋文脈＋ポリシー参照＋任意のドメイン内ポインタ） | 生データを出さずに登録／提供するには ODS 妥当な対象が先に必要 |
 | R3 | 主張する場合、公開／行動前の **SHACL（または同等）検証** | 信頼できるプロダクト；W3C ツール（Oxigraph）と連携—O5／O7 を支える |
-| R4 | 明確な境界で ODS スタックへハンドオフ（私的 ODP フォークなし） | O6 を守る |
+| R4 | 明確な境界で ODS スタックへ引き渡す（私的 ODP フォークなし） | O6 を守る |
 
 公式 SDK 経路上の **O1**（アイデンティティ）、**O4**（トランザクション）、**O8**（利用制御）を、参加クライアントがどう満たすかの個別要件: [§4](#4-odsの認証認可参加クライアントの要件)。
 
@@ -104,7 +104,7 @@ Ratio における「ODS 準拠」の非目標:
 
 > English: [§4 Authentication and authorization](ODS_COMPLIANCE.md#4-authentication-and-authorization-client-requirements) · 手順: [`ODS_HANDOFF.ja.md`](ODS_HANDOFF.ja.md) · AuthZEN 設定: [§7](ODS_HANDOFF.ja.md#7-authzenoperator_id)
 
-§3 は**何を**満たすか（O1、O4、O8）を列挙する。本節は公式スタック上で**参加クライアント**が認証・認可をどう満たすかを詳述する。Ratio は L2/L3 を実装しない。
+§3 は**何を**満たすか（O1、O4、O8）を列挙する。本節は公式スタック上で　**参加クライアント**　が認証・認可をどう満たすかを詳述する。Ratio は L2/L3 を実装しない。
 
 ### 4.1 二段階: 認証してから認可
 
@@ -113,7 +113,7 @@ Ratio における「ODS 準拠」の非目標:
 | **認証** | **L3** Identity and Trust | **O1** | L3 + Keycloak → **JWT**（登録 operator には `operator_id` を含む） |
 | **認可** | **L2** Transaction（＋利用制御） | **O4**、**O8** | L2 ゲートウェイ（**PEP**）→ **AuthZEN** → OpenFGA（**PDP**） |
 
-**OpenFGA** はオープンソースの認可エンジン（[openfga.dev](https://openfga.dev/)；CNCF）で、**関係ベースアクセス制御（ReBAC）**のポリシーをタプルとして保持する（例:「operator *O* はエンドポイント `/products/**` を呼べる」）。公式 ODS SDK の Docker スタックでは OpenFGA が **PDP**（Policy Decision Point）として動作し、L2 ゲートウェイが AuthZEN 経由で OpenFGA に問い合わせ、operator がルートにアクセスできるかに応じて Pull を許可／拒否する。Ratio は OpenFGA を内包しない；PoC では [`register-openfga-products.sh`](../poc/scripts/ods/register-openfga-products.sh) でタプルを登録する。
+**OpenFGA** はオープンソースの認可エンジン（[openfga.dev](https://openfga.dev/)；CNCF）で、**関係ベースアクセス制御（ReBAC）** のポリシーをタプルとして保持する（例:「operator *O* はエンドポイント `/products/**` を呼べる」）。公式 ODS SDK の Docker スタックでは OpenFGA が **PDP**（Policy Decision Point）として動作し、L2 ゲートウェイが AuthZEN 経由で OpenFGA に問い合わせ、operator がルートにアクセスできるかに応じて Pull を許可／拒否する。Ratio は OpenFGA を内包しない；PoC では [`register-openfga-products.sh`](../poc/scripts/ods/register-openfga-products.sh) でタプルを登録する。
 
 **OpenID** と **AuthZEN** は公式スタック**内部で使われる標準**であり、ODS-RAM の別層名ではない:
 
@@ -172,7 +172,7 @@ PoC ヘルパー: [`register-openfga-products.sh`](../poc/scripts/ods/register-o
 | ロール | 満たすべきこと | Ratio の仕事 |
 |--------|----------------|--------------|
 | **消費者**（Pull） | AuthZEN 有効時 A1–A4、Z1–Z5；L2 経由で生データは期待しない | 公式スタック向け手順・スクリプト；L2/L3 は再実装しない |
-| **提供者**（Ratio 現場） | industry API で**共有可能プロダクト**を提供；L2 ルート `/products/**` 登録 | 導出・SHACL・生データ／プロダクト分離・ハンドオフ（**R2–R4**） |
+| **提供者**（Ratio 現場） | industry API で**共有可能プロダクト**を提供；L2 ルート `/products/**` 登録 | 導出・SHACL・生データ／プロダクト分離・引き渡し（**R2–R4**） |
 | **運用者／管理者** | 公式 SDK 起動；operator・クライアント・FGA タプル・ルート登録 | PoC ヘルパースクリプトのみ |
 
 ### 4.6 Ratio が行わないこと

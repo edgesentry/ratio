@@ -72,7 +72,7 @@ Split into **required (MVP participation)** / **recommended (provider maturity)*
 | ID | Requirement | ODS anchor | How to comply |
 |----|-------------|------------|---------------|
 | O1 | A **domain-owned participant / node** with interoperable **identity & trust** | ODP Identity and Trust (L3); ODS-RAM trust | Official Middleware / SDK bindings; store credentials locally (e.g. SQLite)—do not invent a parallel IdP protocol |
-| O2 | **Register / exchange metadata** so offerings can be described | ODP Metadata Exchange (L4) | Primary offering metadata is for shareable products—not raw-data files as the main offer |
+| O2 | **Register / exchange metadata** so offerings can be described | ODP Metadata Exchange (L4) | What we primarily publish is shareable-product **metadata**—not raw-data files as the main offer |
 | O3 | **Discovery / search** so consumers can find offerings | ODP Discovery and Search (L4) | Catalogs point at governed products |
 | O4 | ODS-aligned **transactional access** (serve when permitted) | ODP Transaction (L2) | Pull / serve shareable products via Middleware / SDK |
 | O5 | **DPQM**-aligned products (data concern + ontology / context concern as a pair) | ODS-RAM Architecture / DPQM | Site emits result **and** meaning (JSON-LD / RDF + shapes)—not score-only blobs |

@@ -1,11 +1,11 @@
-# 共有可能プロダクト封筒（PoC）
+# 共有可能プロダクトの書式（PoC）
 
 > English: [PRODUCT_ENVELOPE.md](PRODUCT_ENVELOPE.md)
 
 **確定ショートリスト:** K1（工場）→ S1+S2（海事）。  
 **確定デバイス系統:** K1＝セルロボット＋振動波形；S1/S2＝船舶機関シャフト振動（同一 TD）。ベンダー未定。録画／合成の生データでよい。
 
-K／S で **同一封筒**を使う。分野差は `domain`・語彙・任意の `physicalContext`／`provenance` 項目だけ。
+K／S で **同じ書式**を使う。分野差は `domain`・語彙・任意の `physicalContext`／`provenance` 項目だけ。
 
 関連: [`POC.ja.md`](POC.ja.md) · [`ARCHITECTURE.ja.md`](ARCHITECTURE.ja.md) · [`DISCUSSION.ja.md`](DISCUSSION.ja.md)
 
@@ -16,7 +16,7 @@ K／S で **同一封筒**を使う。分野差は `domain`・語彙・任意の
 | [`../schemas/shareable-product.context.jsonld`](../schemas/shareable-product.context.jsonld) | 共通 `@context` |
 | [`../schemas/shareable-product.shacl.ttl`](../schemas/shareable-product.shacl.ttl) | 最小 SHACL |
 | [`../examples/k1-cell-vibration.jsonld`](../examples/k1-cell-vibration.jsonld) | K1 例 |
-| [`../examples/s1-engine-vibration.jsonld`](../examples/s1-engine-vibration.jsonld) | S1 例（S2 は同一本文＋キュー来歴） |
+| [`../examples/s1-engine-vibration.jsonld`](../examples/s1-engine-vibration.jsonld) | S1 例（S2 は同一本文＋キューの記録） |
 
 ---
 
@@ -53,7 +53,7 @@ K／S で **同一封筒**を使う。分野差は `domain`・語彙・任意の
 | `dataGovernance.rawDataPointer` | ドメイン内ポインタ（`local://…`） |
 | `dataGovernance.shaclConforms` | 検証結果ブール（出す場合） |
 | `provenance.producedBy` | Ratio ノード／パイプライン ID |
-| `provenance.queueDepth` / `firstBufferedAt` | **S2** 用ストア＆フォワード来歴 |
+| `provenance.queueDepth` / `firstBufferedAt` | **S2** 用ストア＆フォワードの記録 |
 
 ---
 
@@ -78,13 +78,13 @@ K／S で **同一封筒**を使う。分野差は `domain`・語彙・任意の
 薄い TD（`examples/td/*.td.json`）→ 生データ → `data/raw/`
 JSON-LD インスタンス → data/out/
     → rdflib + pyshacl（schemas/shareable-product.shacl.ttl）
-    → conforms なら ODS ハンドオフ・スタブ（SDK 未接続）
+    → conforms なら ODS への引き渡し（スタブ。SDK 未接続）
     → 生データファイルは publish パスに載せない
 ```
 
 ---
 
-## 未決（封筒以外）
+## 未決（書式以外）
 
 - 本番 ODS context／カタログ URI の確定  
 - 具体セル／船／ベンダー（スタブで遮断しない）

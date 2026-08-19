@@ -62,7 +62,7 @@ WoT ingest → inference (ONNX/TensorRT, etc.)
               ├─ raw data → DuckDB / LanceDB / local files (custody)
               └─ shareable product → JSON-LD(+SHACL) → SQLite(policy/state)
                                    → ODS Middleware/SDK (discover + Pull)
-         → Arrow Memory Broker ←→ Python / Edge SLM (RAG: LanceDB)
+         → Memory Broker (Arrow) ←→ Python / Edge SLM (RAG: LanceDB)
 ```
 
 ---
@@ -75,7 +75,7 @@ WoT ingest → inference (ONNX/TensorRT, etc.)
 | Graph inference & validation | Oxigraph | **OSS** |
 | Local raw-data / artifact store | DuckDB, LanceDB, files | **OSS** |
 | State, credentials, policy records | SQLite | **OSS** |
-| Cross-language I/F | Apache Arrow + PyO3 | Arrow is **OSS**; Memory Broker is **Ratio** |
+| Cross-language I/F | Apache Arrow + PyO3 | Arrow is **OSS**. Ratio plays the Memory Broker that uses it |
 | Inference runtime | ONNX Runtime / TensorRT, etc. | **OSS** / vendor |
 | Semantics representation | JSON-LD / CBOR-LD | **Standard** |
 | ODS participation | IPA ODS Middleware / SDK + ODP | **Official**—do not reimplement |

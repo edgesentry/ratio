@@ -2,14 +2,14 @@
 
 > English: [ARCHITECTURE.md](ARCHITECTURE.md)
 
-テーゼ **生データを出さずに ODS に参加する** の実装スケッチ。
+「生データを出さずに ODS に参加する」という主張の実装スケッチ。
 
-**構築方針:** OSS と公式 ODS SDK を構成する。Ratio は現場での導出・検証・生データ／プロダクト分離・ハンドオフ境界を所有する。  
+**構築方針:** OSS と公式 ODS SDK を構成する。Ratio は現場での導出・検証・生データ／プロダクト分離・引き渡しの境界を所有する。  
 参照: [`DISCUSSION.ja.md`](DISCUSSION.ja.md) · [`ODS_COMPLIANCE.ja.md`](ODS_COMPLIANCE.ja.md)
 
 ---
 
-## 1. 既定パス（全体像）
+## 1. 基本の流れ（全体像）
 
 ```
 [ L1 デバイス ]
@@ -26,7 +26,7 @@
                                    （＋ドメイン内の生データポインタ）
         │                              │
         │                              ▼
-        │                    [ L3 ハンドオフ / 統治 ]
+        │                    [ L3 引き渡し／統治 ]
         │                      DID·VC · ODRL 参照 · プロダクトパッケージ
         │                              │
         │                              ▼
@@ -36,12 +36,12 @@
         └──── 生データは既定でこの経路を通らない ────┘
 ```
 
-| 層 | テーゼ上の仕事 |
+| 層 | 主張における仕事 |
 |----|----------------|
 | **L1** | WoT TD で観測；独自デバイススキーマを発明しない |
 | **L2** | 意味付き結果を導出；SHACL で検証 |
 | **分離** | 生データは残す；外に出せるのは共有可能プロダクト |
-| **L3** | アイデンティティ・ポリシー参照・来歴をハンドオフ用にパッケージ |
+| **L3** | アイデンティティ・ポリシー参照・作成の記録を引き渡し用にまとめる |
 | **L4** | **公式** ODS スタックで参加（O1–O6）— ODP フォークなし |
 
 ### 1.1 ODS の認証・認可
@@ -62,7 +62,7 @@ WoT 取込 → 推論（ONNX/TensorRT 等）
               ├─ 生データ → DuckDB / LanceDB / ローカルファイル（保管）
               └─ 共有可能プロダクト → JSON-LD(+SHACL) → SQLite（ポリシー/状態）
                                    → ODS Middleware/SDK（発見 + Pull）
-         → Arrow Memory Broker ←→ Python / Edge SLM（RAG: LanceDB）
+         → Memory Broker（Arrow）←→ Python / Edge SLM（RAG: LanceDB）
 ```
 
 ---
@@ -75,7 +75,7 @@ WoT 取込 → 推論（ONNX/TensorRT 等）
 | グラフ推論・検証 | Oxigraph | **OSS** |
 | ローカル生データ／成果物ストア | DuckDB、LanceDB、ファイル | **OSS** |
 | 状態・資格・ポリシー記録 | SQLite | **OSS** |
-| 言語横断 I/F | Apache Arrow + PyO3 | Arrow は **OSS**；Memory Broker は **Ratio** |
+| 言語横断 I/F | Apache Arrow + PyO3 | Arrow は **OSS**。それを使う Memory Broker の役割は **Ratio** |
 | 推論ランタイム | ONNX Runtime／TensorRT 等 | **OSS**／ベンダー |
 | セマンティクス表現 | JSON-LD／CBOR-LD | **標準** |
 | ODS 参加 | IPA ODS Middleware／SDK + ODP | **公式**—再実装しない |
@@ -87,7 +87,7 @@ WoT 取込 → 推論（ONNX/TensorRT 等）
 
 **共有可能プロダクト**: Pull 可能なパッケージ。生データではない。定義の全文: [`DISCUSSION.ja.md`](DISCUSSION.ja.md)（「共有可能プロダクトとは」）
 
-テーゼ整合（結果＋意味＋利用条件）:
+主張との整合（結果＋意味＋利用条件）:
 
 1. **結果** — 判断または観測（生データではない）
 2. **意味** — オントロジー／JSON-LD 文脈（どのデバイス、どんな特性、何を根拠に）
@@ -96,7 +96,7 @@ WoT 取込 → 推論（ONNX/TensorRT 等）
 
 ### ペイロード例
 
-PoC 確定封筒・SHACL・K1／S1／S2 例: [`PRODUCT_ENVELOPE.ja.md`](PRODUCT_ENVELOPE.ja.md)
+PoC で確定した書式・SHACL・K1／S1／S2 例: [`PRODUCT_ENVELOPE.ja.md`](PRODUCT_ENVELOPE.ja.md)
 
 ```json
 {
@@ -151,7 +151,7 @@ PoC 確定封筒・SHACL・K1／S1／S2 例: [`PRODUCT_ENVELOPE.ja.md`](PRODUCT_
 
 ## 6. 最初の手順（PoC 順）
 
-テーゼに従う: **保管 → 導出 → 参加**。
+主張に従う: **保管 → 導出 → 参加**。
 
 1. **取込** — ロック済みデバイス系統の WoT TD（工場: ロボット振動；海事: シャフト振動）；生データはローカルストアへ  
 2. **分離とプロダクト化** — JSON-LD 共有可能プロダクト＋SHACL；生データは公開経路に載せない  
@@ -162,11 +162,11 @@ PoC 分野は [`DISCUSSION.ja.md`](DISCUSSION.ja.md) の需要条件を満たす
 
 ---
 
-## 7. 非目標
+## 7. 目標の範囲外
 
-- 生データを ODS の主オファリングとして出荷すること
+- 生データを ODS で主に提供すること
 - ODP／ODS Middleware の再実装
 - 初日からの ODS-RAM 完全カバー（MVP は [`ODS_COMPLIANCE.ja.md`](ODS_COMPLIANCE.ja.md) の O1–O6 経路）
 - 独自デバイスプロトコルの乱立（WoT TD に寄せる）
 - Oxigraph、DuckDB、LanceDB、SQLite、Arrow のフォーク
-- ハードリアルタイム制御平面（せいぜい助言／ゲート）
+- ハードリアルタイム制御（せいぜい助言／ゲート）

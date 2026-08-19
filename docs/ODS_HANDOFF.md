@@ -1,8 +1,17 @@
-# ODS handoff
+# ODS handoff (shareable-product metadata)
 
 > Japanese: [ODS_HANDOFF.ja.md](ODS_HANDOFF.ja.md)
 
-Ratio does not reimplement ODP / Middleware. It hands only shareable products to the **provider industry API** expected by the official stack.
+Ratio does not reimplement ODP / Middleware. What it hands to the official stack is **shareable-product metadata** only. The destination is the **provider industry API** the stack expects.
+
+## What is handed off
+
+| Handed off | Not handed off |
+|------------|----------------|
+| **Shareable-product metadata** (JSON-LD): result + meaning + terms of use | **Raw data** (payload bytes such as waveforms / video, `data/raw`) |
+| In-domain pointer `local://…` (reference string only) | Public URLs or file bodies of raw data |
+
+Canonical envelope: [`PRODUCT_ENVELOPE.md`](PRODUCT_ENVELOPE.md). The same metadata is what ODP metadata registration (O2) carries; raw-data files are not the primary offering.
 
 ## ODS authentication and authorization (summary)
 
