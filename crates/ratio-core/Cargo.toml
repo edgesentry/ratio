@@ -1,0 +1,19 @@
+[package]
+name = "ratio-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Ratio on-site composition: split raw data from shareable-product metadata"
+
+[[bin]]
+name = "ratio"
+path = "src/bin/ratio.rs"
+
+[dependencies]
+arrow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+tempfile = "3"

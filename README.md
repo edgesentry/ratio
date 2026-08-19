@@ -50,12 +50,14 @@ On physical sites that is hard: joining often collapses into either shipping sen
 
 Thesis, scope, demand conditions → [`docs/DISCUSSION.md`](docs/DISCUSSION.md)  
 **Canonical scope (official ODS / Ratio / out-of-scope owners)** → [`docs/SCOPE.md`](docs/SCOPE.md)  
+Repository layout → [`docs/LAYOUT.md`](docs/LAYOUT.md)  
 PoC verticals (factory / maritime) → [`docs/POC.md`](docs/POC.md)  
 Architecture → [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)  
 ODS purpose and compliance (O1–O6, R1–R4) → [`docs/ODS_COMPLIANCE.md`](docs/ODS_COMPLIANCE.md)  
 ODS authn / authz (client requirements) → [`docs/ODS_COMPLIANCE.md` §4](docs/ODS_COMPLIANCE.md#4-authentication-and-authorization-client-requirements) · [`docs/ODS_HANDOFF.md`](docs/ODS_HANDOFF.md#ods-authentication-and-authorization-summary)
 Shareable-product envelope (K1 / S1 / S2) → [`docs/PRODUCT_ENVELOPE.md`](docs/PRODUCT_ENVELOPE.md)  
-Minimal pipeline → [`poc/README.md`](poc/README.md)  
+ODS wiring (samples) → [`samples/README.md`](samples/README.md)  
+Rust core / Python bindings → [`crates/ratio-core`](crates/ratio-core) · [`crates/ratio-py/README.md`](crates/ratio-py/README.md)  
 ODS handoff (shareable-product metadata) → [`docs/ODS_HANDOFF.md`](docs/ODS_HANDOFF.md)
 
 ---
@@ -88,13 +90,13 @@ ODS handoff (shareable-product metadata) → [`docs/ODS_HANDOFF.md`](docs/ODS_HA
 - [x] PoC verticals (factory → maritime); candidate scenarios in [`docs/POC.md`](docs/POC.md)
 - [x] Scenario shortlist locked: **K1 → S1+S2**
 - [x] Shareable-product envelope + minimal SHACL ([`docs/PRODUCT_ENVELOPE.md`](docs/PRODUCT_ENVELOPE.md))
-- [x] Minimal pipeline prototype ([`poc/`](poc/) — stub TD → raw-data custody → product → SHACL → ODS stub/http)
+- [x] ODS wiring sample ([`samples/`](samples/) — stub TD → raw-data custody → product → SHACL → ODS stub/http)
 - [x] ODS / industry handoff ([`docs/ODS_HANDOFF.md`](docs/ODS_HANDOFF.md); official Compose is external)
 - [x] S2 store-and-forward (`data/queue` + `--flush-queue`)
 - [x] Lock per-vertical device / sensor lines ([`POC.md`](docs/POC.md); K1 robot vibration, S1/S2 shaft vibration; vendor TBD)
 - [x] Thin TD files ([`examples/td/`](examples/td/); swappable via `--td`)
-- [ ] Core I/F (Arrow) draft
-- [x] Official `SDK-docker-compose` connection steps ([`ODS_HANDOFF.md`](docs/ODS_HANDOFF.md); `--ods l2` + [`poc/scripts/ods/`](poc/scripts/ods/); Compose started externally)
+- [x] Core I/F v0 (Rust + PyO3 / Arrow; [`crates/ratio-core`](crates/ratio-core), [`crates/ratio-py`](crates/ratio-py))
+- [x] Official `SDK-docker-compose` connection steps ([`ODS_HANDOFF.md`](docs/ODS_HANDOFF.md); `--ods l2` + [`samples/scripts/ods/`](samples/scripts/ods/); Compose started externally)
 - [x] AuthZEN with `operator_id` ([`ODS_HANDOFF.md` §7](docs/ODS_HANDOFF.md#7-authzen-operator_id); `register-operator.sh` / `enable-authzen.sh`)
 - [x] ODS authn/authz and client requirements ([`ODS_COMPLIANCE.md` §4](docs/ODS_COMPLIANCE.md#4-authentication-and-authorization-client-requirements))
 - [x] reuse vs build inventory ([`POC.md`](docs/POC.md#reuse-vs-build-both-verticals); RB1–RB11)

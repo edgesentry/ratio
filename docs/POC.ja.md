@@ -221,7 +221,7 @@
 
 | タスク | タグ | 状態 |
 |--------|------|------|
-| 共有可能プロダクト・パイプライン（取込 → 分離 → 引き渡し） | **Build** | 完了 — [`poc/`](../poc/) |
+| 共有可能プロダクト・パイプライン（取込 → 分離 → 引き渡し） | **Build** | 完了 — [`samples/`](../samples/) |
 | SHACL 形状＋検証タイミング | **Build** 形状；**Reuse** RDF/SHACL エンジン | 完了 — `schemas/` + pyshacl（Oxigraph は後） |
 | ODS SDK 接続（L2/L3、AuthZEN） | **Reuse** 公式スタック；**Build** パッケージング＋補助スクリプト | 完了 — [`ODS_HANDOFF.ja.md`](ODS_HANDOFF.ja.md) |
 
@@ -234,9 +234,9 @@
 | RB3 | グラフ／SHACL | **Reuse** エンジン；**Build** 形状 | RDF／SHACL（現状 pyshacl；意図は Oxigraph） | 書式の検証（公開**前**） | pyshacl + `schemas/` | Rust コアの Oxigraph |
 | RB4 | 生データ／プロダクト保管 | **Reuse** ストア；**Build** 分離 | 現状ファイル；意図は DuckDB／LanceDB／SQLite | 分離規則；`local://` ポインタ；生データは公開しない | `data/raw`、`data/out`、`data/queue` | DuckDB／LanceDB／SQLite |
 | RB5 | 共有可能プロダクトの書式 | **Build** | JSON-LD／ODRL は標準 | 書式、`@context`、policyRef、PoC 例 | [`PRODUCT_ENVELOPE.ja.md`](PRODUCT_ENVELOPE.ja.md) | 本番カタログ／context URI |
-| RB6 | ODS 参加 O1–O6 | **Reuse** SDK；**Build** 引き渡し | IPA Middleware／SDK（L3 認証、L2 転送、AuthZEN→OpenFGA） | プロダクト POST；industry スタブ；ルート／FGA 補助スクリプト | `--ods stub\|http\|l2` + `poc/scripts/ods/` | 実カタログ接続時の L4 Discovery |
-| RB7 | 言語横断 I/F | **Reuse** Arrow；**Build** ブローカー | Apache Arrow + PyO3 | Arrow を使う Memory Broker（Ratio） | **PoC 対象外**（`poc/README.ja.md`） | コア I/F 草案 |
-| RB8 | 構成ランタイム | **Build** | — | 薄いオーケストレータ | Python `ratio-poc` | Rust シェル |
+| RB6 | ODS 参加 O1–O6 | **Reuse** SDK；**Build** 引き渡し | IPA Middleware／SDK（L3 認証、L2 転送、AuthZEN→OpenFGA） | プロダクト POST；industry スタブ；ルート／FGA 補助スクリプト | `--ods stub\|http\|l2` + `samples/scripts/ods/` | 実カタログ接続時の L4 Discovery |
+| RB7 | 言語横断 I/F | **Reuse** Arrow；**Build** ブローカー | Apache Arrow + PyO3 | Arrow を使う Memory Broker（Ratio） | **v0** — [`crates/ratio-py`](../crates/ratio-py) `ratio_core`（IPC 列はメタデータのみ） | ゼロコピー境界・ストリーム |
+| RB8 | 構成ランタイム | **Build** | — | 薄いオーケストレータ | **v0** — [`crates/ratio-core`](../crates/ratio-core)；製品 CLI は `eds ratio derive` | Oxigraph；`samples` をバインディング呼び出しへ |
 | RB9 | 業界オントロジー合意 | **Out** | 公開されれば SAMM／ドメイン語彙 | 消費のみ；PoC は最小コード | 薄い K1/S1/S2 コード | コンソーシアム語彙 |
 | RB10 | 深いデバイス SI | **Out** | ベンダー／SI／既存 GW | 薄いアダプタのみ | スタブ | 現場 SI |
 | RB11 | Pull 消費者／Agentic AI | **Out**（任意の別デモ） | 公式 L2 Pull クライアント形 | Ratio コアではない | `ratio-poc-pull` + `verify-l2-pull.sh` | 本番消費者 UI／エージェント |

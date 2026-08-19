@@ -5,7 +5,7 @@
 「生データを出さずに ODS に参加する」という主張の実装スケッチ。
 
 **構築方針:** OSS と公式 ODS SDK を構成する。Ratio は現場での導出・検証・生データ／プロダクト分離・引き渡しの境界を所有する。  
-参照: [`DISCUSSION.ja.md`](DISCUSSION.ja.md) · [`ODS_COMPLIANCE.ja.md`](ODS_COMPLIANCE.ja.md)
+参照: [`DISCUSSION.ja.md`](DISCUSSION.ja.md) · [`ODS_COMPLIANCE.ja.md`](ODS_COMPLIANCE.ja.md) · [`LAYOUT.ja.md`](LAYOUT.ja.md)
 
 ---
 
@@ -127,25 +127,20 @@ PoC で確定した書式・SHACL・K1／S1／S2 例: [`PRODUCT_ENVELOPE.ja.md`]
 
 ---
 
-## 5. コア I/F（議論用スケッチ）
+## 5. コア I/F（v0）
 
 ```
 ┌─────────────┐     PyO3      ┌───────────────────┐
 │ Python / SLM│ ◄──────────►  │ Ratio Rust コア    │
-└─────────────┘   Arrow IPC   │  Oxigraph         │
-       ▲                      │  SHACL / SPARQL   │
-       │                      │  プロダクトパッケージ │
-       └──── LanceDB / DuckDB / SQLite ───────────┘
-                              │
+└─────────────┘   Arrow IPC   │  分離・プロダクト組立 │
+                              │  書式ゲート         │
                               ▼
-                     ODS Middleware / SDK
+                     ODS への引き渡しは `samples/`（公式 SDK）
 ```
 
-決めること:
+実装: [`crates/ratio-core`](../crates/ratio-core)。製品 CLI は **`eds ratio derive`**（このリポの開発用は `ratio derive`）。Python は [`crates/ratio-py`](../crates/ratio-py)（モジュール `ratio_core`）。
 
-1. プロダクト組立用 Arrow RecordBatch 列（`device_id`、`ts`、`graph_delta`、`shacl_report`、…）
-2. バッファ所有権／ゼロコピー境界
-3. 連続現場導出のための同期 vs ストリーム
+v0 Arrow 列: `device_id`、`ts`、`scenario`、`result`、`raw_data_pointer`（`local://`）、`product_json`、`envelope_ok`。波形バイトは列にしない。Oxigraph のフル SHACL は後；いまは書式ゲート（`local://`・必須項目）。
 
 ---
 

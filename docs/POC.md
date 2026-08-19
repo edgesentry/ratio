@@ -221,7 +221,7 @@ Ownership tiers: [`SCOPE.md`](SCOPE.md). This table is the **PoC inventory**—e
 
 | Task | Tag | Status |
 |------|-----|--------|
-| Shareable-product pipeline (ingest → split → handoff) | **Build** | Done — [`poc/`](../poc/) |
+| Shareable-product pipeline (ingest → split → handoff) | **Build** | Done — [`samples/`](../samples/) |
 | SHACL shapes + validation timing | **Build** shapes; **Reuse** RDF/SHACL engine | Done — `schemas/` + pyshacl (Oxigraph later) |
 | ODS SDK connect (L2/L3, AuthZEN) | **Reuse** official stack; **Build** packaging + helper scripts | Done — [`ODS_HANDOFF.md`](ODS_HANDOFF.md) |
 
@@ -234,9 +234,9 @@ Ownership tiers: [`SCOPE.md`](SCOPE.md). This table is the **PoC inventory**—e
 | RB3 | Graph / SHACL | **Reuse** engine; **Build** shapes | RDF / SHACL (pyshacl now; Oxigraph intended) | Envelope shapes, validation **before** publish | pyshacl + `schemas/` | Oxigraph in Rust core |
 | RB4 | Raw-data / product custody | **Reuse** stores; **Build** split | Files now; DuckDB / LanceDB / SQLite intended | Split rules; `local://` pointer; never publish raw data | `data/raw`, `data/out`, `data/queue` | DuckDB / LanceDB / SQLite |
 | RB5 | Shareable-product envelope | **Build** | JSON-LD / ODRL as standards | Envelope, `@context`, policyRef, PoC examples | [`PRODUCT_ENVELOPE.md`](PRODUCT_ENVELOPE.md) | Production catalog / context URIs |
-| RB6 | ODS participation O1–O6 | **Reuse** SDK; **Build** handoff | IPA Middleware / SDK (L3 identity, L2 transfer, AuthZEN→OpenFGA) | Product POST; industry stub; route/FGA helper scripts | `--ods stub\|http\|l2` + `poc/scripts/ods/` | L4 Discovery when connecting a real catalog |
-| RB7 | Cross-language I/F | **Reuse** Arrow; **Build** broker | Apache Arrow + PyO3 | Memory Broker using Arrow (Ratio) | **Out of PoC** (`poc/README.md`) | Core I/F draft |
-| RB8 | Composition runtime | **Build** | — | Thin orchestrator | Python `ratio-poc` | Rust shell |
+| RB6 | ODS participation O1–O6 | **Reuse** SDK; **Build** handoff | IPA Middleware / SDK (L3 identity, L2 transfer, AuthZEN→OpenFGA) | Product POST; industry stub; route/FGA helper scripts | `--ods stub\|http\|l2` + `samples/scripts/ods/` | L4 Discovery when connecting a real catalog |
+| RB7 | Cross-language I/F | **Reuse** Arrow; **Build** broker | Apache Arrow + PyO3 | Memory Broker using Arrow (Ratio) | **v0** — [`crates/ratio-py`](../crates/ratio-py) `ratio_core` (IPC columns are metadata only) | Zero-copy bounds / streaming |
+| RB8 | Composition runtime | **Build** | — | Thin orchestrator | **v0** — [`crates/ratio-core`](../crates/ratio-core); product CLI is `eds ratio derive` | Oxigraph; point `samples` at the bindings |
 | RB9 | Industry ontology agreement | **Out** | SAMM / domain vocab when published | Consume only; minimal PoC codes | Thin K1/S1/S2 codes | Consortium vocab |
 | RB10 | Deep device SI | **Out** | Vendor / SI / existing GW | Thin adapter only | Stubs | Field SI |
 | RB11 | Pull consumer / Agentic AI | **Out** (optional separate demo) | Official L2 Pull client pattern | Not Ratio core | `ratio-poc-pull` + `verify-l2-pull.sh` | Production consumer UI / agent |

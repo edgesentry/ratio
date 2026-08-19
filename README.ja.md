@@ -50,12 +50,14 @@ ODS はドメインオーナーが、データレイクへ全部 Push するの�
 
 主張・スコープ・需要条件 → [`docs/DISCUSSION.ja.md`](docs/DISCUSSION.ja.md)  
 **スコープ正本（公式 ODS／Ratio／外と担当）** → [`docs/SCOPE.ja.md`](docs/SCOPE.ja.md)  
+リポジトリ構成 → [`docs/LAYOUT.ja.md`](docs/LAYOUT.ja.md)  
 PoC 分野（工場／海事）→ [`docs/POC.ja.md`](docs/POC.ja.md)
 アーキテクチャ → [`docs/ARCHITECTURE.ja.md`](docs/ARCHITECTURE.ja.md)  
 ODS の目的と準拠要件（O1–O6, R1–R4）→ [`docs/ODS_COMPLIANCE.ja.md`](docs/ODS_COMPLIANCE.ja.md)  
 ODS 認証・認可（参加クライアント要件）→ [`docs/ODS_COMPLIANCE.ja.md` §4](docs/ODS_COMPLIANCE.ja.md#4-odsの認証認可参加クライアントの要件) · [`docs/ODS_HANDOFF.ja.md`](docs/ODS_HANDOFF.ja.md#odsの認証認可概要)
 共有可能プロダクトの書式（K1／S1／S2）→ [`docs/PRODUCT_ENVELOPE.ja.md`](docs/PRODUCT_ENVELOPE.ja.md)  
-最小パイプライン → [`poc/README.ja.md`](poc/README.ja.md)  
+ODS へのつなぎ（サンプル）→ [`samples/README.ja.md`](samples/README.ja.md)  
+Rust コア／Python バインディング → [`crates/ratio-core`](crates/ratio-core) · [`crates/ratio-py/README.ja.md`](crates/ratio-py/README.ja.md)  
 ODS への引き渡し（共有可能プロダクトのメタデータ）→ [`docs/ODS_HANDOFF.ja.md`](docs/ODS_HANDOFF.ja.md)
 
 ---
@@ -88,13 +90,13 @@ ODS への引き渡し（共有可能プロダクトのメタデータ）→ [`d
 - [x] PoC 分野想定（工場 → 海事）；候補シナリオは [`docs/POC.ja.md`](docs/POC.ja.md)
 - [x] シナリオ・ショートリスト確定: **K1 → S1+S2**
 - [x] 共有可能プロダクトの書式＋最小 SHACL（[`docs/PRODUCT_ENVELOPE.ja.md`](docs/PRODUCT_ENVELOPE.ja.md)）
-- [x] 最小パイプライン試作（[`poc/`](poc/) — スタブ TD → 生データの保管 → プロダクト → SHACL → ODS stub/http）
+- [x] ODS つなぎのサンプル（[`samples/`](samples/) — スタブ TD → 生データの保管 → プロダクト → SHACL → ODS stub/http）
 - [x] ODS／industry への引き渡し（[`docs/ODS_HANDOFF.ja.md`](docs/ODS_HANDOFF.ja.md)；公式 Compose は外部）
 - [x] S2 ストア＆フォワード（`data/queue` + `--flush-queue`）
 - [x] 分野ごとのデバイス／センサ系統の固定（[`POC.ja.md`](docs/POC.ja.md)；K1 ロボット振動、S1/S2 シャフト振動；ベンダー未定）
 - [x] 薄い TD ファイル化（[`examples/td/`](examples/td/)；`--td` で差し替え可）
-- [ ] コア I/F（Arrow）草案
-- [x] 公式 `SDK-docker-compose` 接続手順（[`ODS_HANDOFF.ja.md`](docs/ODS_HANDOFF.ja.md)；`--ods l2` + [`poc/scripts/ods/`](poc/scripts/ods/)；Compose は外部起動）
+- [x] コア I/F v0（Rust + PyO3／Arrow；[`crates/ratio-core`](crates/ratio-core)、[`crates/ratio-py`](crates/ratio-py)）
+- [x] 公式 `SDK-docker-compose` 接続手順（[`ODS_HANDOFF.ja.md`](docs/ODS_HANDOFF.ja.md)；`--ods l2` + [`samples/scripts/ods/`](samples/scripts/ods/)；Compose は外部起動）
 - [x] AuthZEN + `operator_id`（[`ODS_HANDOFF.ja.md` §7](docs/ODS_HANDOFF.ja.md#7-authzenoperator_id)；`register-operator.sh` / `enable-authzen.sh`）
 - [x] ODS 認証・認可と参加クライアント要件（[`ODS_COMPLIANCE.ja.md` §4](docs/ODS_COMPLIANCE.ja.md#4-odsの認証認可参加クライアントの要件)）
 - [x] reuse vs build 一覧（[`POC.ja.md`](docs/POC.ja.md#reuse-vs-build両分野)；RB1–RB11）

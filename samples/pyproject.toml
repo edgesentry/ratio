@@ -1,0 +1,36 @@
+[project]
+name = "ratio-poc"
+version = "0.1.0"
+description = "Minimal Ratio PoC pipeline: stub TD → local raw → shareable product → SHACL → ODS stub"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "rdflib>=7.0.0",
+    "pyshacl>=0.26.0",
+]
+
+[project.scripts]
+ratio-poc = "ratio.cli:main"
+ratio-poc-serve = "ratio.industry_serve:main"
+ratio-poc-pull = "ratio.consumer:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ratio"]
+
+[dependency-groups]
+dev = ["pytest>=8.0"]
+
+[tool.uv]
+package = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+# rdflib 7.6 JSON-LD parser still constructs ConjunctiveGraph when the sink is a Graph.
+filterwarnings = [
+    "ignore:ConjunctiveGraph is deprecated, use Dataset instead:DeprecationWarning:rdflib.plugins.parsers.jsonld",
+]

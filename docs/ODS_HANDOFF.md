@@ -57,10 +57,10 @@ Local industry stub (stand-in upstream of L2):
 
 ```bash
 # Terminal A
-cd poc && uv run ratio-poc-serve
+cd samples && uv run ratio-poc-serve
 
 # Terminal B
-cd poc && uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
+cd samples && uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
 curl -s http://127.0.0.1:8787/products | jq .
 ```
 
@@ -90,8 +90,8 @@ The official stack is **not bundled in this repository**. Clone and start it in 
 ### 0. Prerequisites
 
 - Docker / Compose available (see SDK README for machine sizing)
-- Ratio industry: `cd poc && uv run ratio-poc-serve` (host `:8787`)
-- Helper scripts: [`poc/scripts/ods/`](../poc/scripts/ods/)
+- Ratio industry: `cd samples && uv run ratio-poc-serve` (host `:8787`)
+- Helper scripts: [`samples/scripts/ods/`](../samples/scripts/ods/)
 
 ### 1. Start the SDK (official README summary)
 
@@ -122,7 +122,7 @@ export RATIO_ODS_FGA_MODEL_ID=…   # same
 export RATIO_ODS_OPERATOR_ID=…    # operator_id from operator registration
 
 cd /path/to/ratio
-bash poc/scripts/ods/register-openfga-products.sh
+bash samples/scripts/ods/register-openfga-products.sh
 ```
 
 ### 3. L2 route: `/products/**` → Ratio industry
@@ -130,7 +130,7 @@ bash poc/scripts/ods/register-openfga-products.sh
 ```bash
 # On Mac/Windows Docker Desktop, default host.docker.internal works
 export RATIO_ODS_INDUSTRY_URI=http://host.docker.internal:8787
-bash poc/scripts/ods/register-ratio-routes.sh
+bash samples/scripts/ods/register-ratio-routes.sh
 ```
 
 On Linux, if `host.docker.internal` is missing, add `extra_hosts` in compose or set `RATIO_ODS_INDUSTRY_URI` to the host IP.
@@ -143,7 +143,7 @@ export RATIO_ODS_API_KEY=API-Key-Sample
 export RATIO_ODS_CLIENT_ID=…      # operator client
 export RATIO_ODS_CLIENT_SECRET=…
 
-export RATIO_ODS_BEARER="$(bash poc/scripts/ods/fetch-l3-token.sh)"
+export RATIO_ODS_BEARER="$(bash samples/scripts/ods/fetch-l3-token.sh)"
 ```
 
 Or set only `CLIENT_ID` / `SECRET` and let `ratio-poc --ods l2` fetch automatically.
@@ -151,7 +151,7 @@ Or set only `CLIENT_ID` / `SECRET` and let `ratio-poc --ods l2` fetch automatica
 ### 5. Provider: register a product
 
 ```bash
-cd poc
+cd samples
 # Direct to industry (stub check)
 uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
 
@@ -164,7 +164,7 @@ uv run ratio-poc --scenario K1 --ods l2
 Reference agent (`ratio-poc-pull`) is **RB11 Out** — not Ratio core. It uses the same L2 GET pattern as a shore / partner client: products only, refuse raw.
 
 ```bash
-cd poc
+cd samples
 
 # Against the industry stub (no SDK)
 uv run ratio-poc-serve          # already running
@@ -180,8 +180,8 @@ uv run ratio-poc-pull --via l2 k1-<stem>
 Low-level curl smoke (optional):
 
 ```bash
-bash poc/scripts/ods/verify-l2-pull.sh
-bash poc/scripts/ods/verify-l2-pull.sh k1-<stem>
+bash samples/scripts/ods/verify-l2-pull.sh
+bash samples/scripts/ods/verify-l2-pull.sh k1-<stem>
 ```
 
 ### 7. AuthZEN (`operator_id`)
@@ -192,24 +192,24 @@ See [`ODS_COMPLIANCE.md` §4](ODS_COMPLIANCE.md#4-authentication-and-authorizati
 # 1) Register operator + client_credentials client (writes gitignored env)
 export RATIO_ODS_SDK_DIR=~/work/open-dataspaces/SDK-docker-compose
 export RATIO_ODS_CLIENT_SECRET=…   # system-auth-sample secret from l3/docker-compose.yml
-bash poc/scripts/ods/register-operator.sh
+bash samples/scripts/ods/register-operator.sh
 
 # 2) Grant OpenFGA (endpoint tuples + operator membership)
-set -a; source poc/scripts/ods/.local/operator.env; set +a
+set -a; source samples/scripts/ods/.local/operator.env; set +a
 export RATIO_ODS_FGA_STORE_ID=…   # from l2/docker-compose.yml
 export RATIO_ODS_FGA_MODEL_ID=…
-bash poc/scripts/ods/register-openfga-products.sh
+bash samples/scripts/ods/register-openfga-products.sh
 
 # 3) Enable AuthZEN and re-register /products/** routes
-bash poc/scripts/ods/enable-authzen.sh true
+bash samples/scripts/ods/enable-authzen.sh true
 
 # 4) Pull with operator token (JWT includes operator_id)
-export RATIO_ODS_BEARER="$(bash poc/scripts/ods/fetch-l3-token.sh)"
-cd poc && uv run ratio-poc-pull --via l2 k1-<stem>
-# or: bash poc/scripts/ods/verify-l2-pull.sh k1-<stem>
+export RATIO_ODS_BEARER="$(bash samples/scripts/ods/fetch-l3-token.sh)"
+cd samples && uv run ratio-poc-pull --via l2 k1-<stem>
+# or: bash samples/scripts/ods/verify-l2-pull.sh k1-<stem>
 ```
 
-Helpers: [`poc/scripts/ods/`](../poc/scripts/ods/). Operator secrets stay in `poc/scripts/ods/.local/` (gitignored).
+Helpers: [`samples/scripts/ods/`](../samples/scripts/ods/). Operator secrets stay in `samples/scripts/ods/.local/` (gitignored).
 
 For connectivity smoke tests **before** operator registration, temporarily setting `AUTHZEN_AUTHORIZATION_ENABLED=false` is acceptable. In production, keep AuthZEN enabled and complete the OpenFGA grant.
 
@@ -226,7 +226,7 @@ For connectivity smoke tests **before** operator registration, temporarily setti
 ### Colima / macOS notes (measured)
 
 - Docker works with a Colima context. Watch port conflicts: OpenFGA playground `3000`→`3005`, MinIO `9000`→`9010`, etc. (when sharing the host with other stacks).
-- Official `setup/setup_l3.sh` assumes GNU `grep -P` / gawk. On macOS, apply [`poc/scripts/ods/patch-setup-l3-macos.py`](../poc/scripts/ods/patch-setup-l3-macos.py) before running it.
+- Official `setup/setup_l3.sh` assumes GNU `grep -P` / gawk. On macOS, apply [`samples/scripts/ods/patch-setup-l3-macos.py`](../samples/scripts/ods/patch-setup-l3-macos.py) before running it.
 - L2 API-Key is **`VALID_API_KEYS` in `l2/docker-compose.yml`**, not L3’s `API-Key-Sample`.
 - Route path must be `/products/**` (`/products**` yields 404 for individual IDs).
 - AuthZEN requires the JWT `operator_id` claim; see §7. Before operator registration, temporary `AUTHZEN_AUTHORIZATION_ENABLED=false` is OK for smoke tests (production: enabled + OpenFGA grant).

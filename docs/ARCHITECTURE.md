@@ -5,7 +5,7 @@
 Implementation sketch for the thesis **participate in ODS without shipping raw data**.
 
 **Build policy:** Compose OSS and the official ODS SDK. Ratio owns on-site derivation, validation, raw-data / product split, and the handoff boundary.  
-See: [`DISCUSSION.md`](DISCUSSION.md) · [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md)
+See: [`DISCUSSION.md`](DISCUSSION.md) · [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md) · [`LAYOUT.md`](LAYOUT.md)
 
 ---
 
@@ -127,25 +127,20 @@ Locked PoC envelope, SHACL, and K1 / S1 / S2 examples: [`PRODUCT_ENVELOPE.md`](P
 
 ---
 
-## 5. Core I/F (discussion sketch)
+## 5. Core I/F (v0)
 
 ```
 ┌─────────────┐     PyO3      ┌──────────────────┐
-│ Python / SLM│ ◄──────────► │ Ratio Rust Core  │
-└─────────────┘   Arrow IPC   │  Oxigraph        │
-       ▲                      │  SHACL / SPARQL  │
-       │                      │  product package │
-       └──── LanceDB / DuckDB / SQLite ──────────┘
-                              │
+│ Python / SLM│ ◄──────────► │ Ratio Rust core  │
+└─────────────┘   Arrow IPC   │  split · package │
+                              │  envelope gate   │
                               ▼
-                     ODS Middleware / SDK
+                     ODS handoff remains `samples/` (official SDK)
 ```
 
-Decide:
+Code: [`crates/ratio-core`](../crates/ratio-core). Product CLI is **`eds ratio derive`** (in-repo dev: `ratio derive`). Python: [`crates/ratio-py`](../crates/ratio-py) (module `ratio_core`).
 
-1. Arrow RecordBatch columns for product assembly (`device_id`, `ts`, `graph_delta`, `shacl_report`, …)
-2. Buffer ownership / zero-copy boundaries
-3. Sync vs stream for continuous on-site derivation
+v0 Arrow columns: `device_id`, `ts`, `scenario`, `result`, `raw_data_pointer` (`local://`), `product_json`, `envelope_ok`. No waveform bytes. Full SHACL via Oxigraph is later; the in-process gate checks `local://` and required fields.
 
 ---
 
