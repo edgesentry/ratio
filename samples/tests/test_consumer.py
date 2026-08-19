@@ -10,8 +10,8 @@ from urllib.parse import urlparse
 
 import pytest
 
-from ratio_poc.cli import SCENARIOS, build_product
-from ratio_poc.consumer import (
+from ratio.cli import SCENARIOS, build_product
+from ratio.consumer import (
     ConsumerError,
     assert_raw_not_served,
     consumer_headers,
@@ -20,8 +20,8 @@ from ratio_poc.consumer import (
     pull_product,
     run,
 )
-from ratio_poc.industry_serve import Handler as IndustryHandler
-import ratio_poc.industry_serve as serve
+from ratio.industry_serve import Handler as IndustryHandler
+import ratio.industry_serve as serve
 
 
 def _product() -> dict:

@@ -18,6 +18,7 @@ Ratio のコードは **製品** と **サンプル** と **例（データ）**
 | 製品 CLI | **`eds ratio …`** | EdgeSentry 共通入り口（edgesentry-rs の `eds`）。例: `eds ratio derive` |
 | このリポの開発用バイナリ | `ratio derive` | `cargo run -p ratio-core --bin ratio`。本番コマンドではない |
 | Python モジュール | `ratio_core` | PyO3。CLI ブランドとは別 |
+| サンプルの Python パッケージ | `ratio` | `samples/src/ratio` — ODS つなぎ。コアではない |
 
 ---
 
@@ -60,6 +61,7 @@ Python バインディングはコアの別実装ではない。同じ Rust を�
 
 公式 ODS スタック（L2／L3／AuthZEN）への **つなぎ方**。本体の置き場ではない。
 
+- パッケージ: `samples/src/ratio`（import は `ratio`）
 - パイプライン CLI（歴史的な名前のまま）: `uv run ratio-poc` / `ratio-poc-serve` / `ratio-poc-pull`
 - ODS 補助: [`samples/scripts/ods/`](../samples/scripts/ods/)
 - 手順: [`ODS_HANDOFF.ja.md`](ODS_HANDOFF.ja.md)

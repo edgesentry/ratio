@@ -12,10 +12,10 @@ from pathlib import Path
 from pyshacl import validate as shacl_validate
 from rdflib import Graph
 
-from ratio_poc.ods import handoff
-from ratio_poc import queue as product_queue
+from ratio.ods import handoff
+from ratio import queue as product_queue
 
-# samples/src/ratio_poc/cli.py → repo root
+# samples/src/ratio/cli.py → repo root
 ROOT = Path(__file__).resolve().parents[3]
 SCHEMA_DIR = ROOT / "schemas"
 TD_DIR = ROOT / "examples" / "td"

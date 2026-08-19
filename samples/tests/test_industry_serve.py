@@ -10,8 +10,8 @@ from pathlib import Path
 
 import pytest
 
-from ratio_poc import industry_serve as serve
-from ratio_poc.cli import SCENARIOS, build_product
+from ratio import industry_serve as serve
+from ratio.cli import SCENARIOS, build_product
 
 
 def _product() -> dict:

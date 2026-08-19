@@ -15,7 +15,7 @@ import urllib.request
 import uuid
 from typing import Any
 
-from ratio_poc.ods import resolve_bearer
+from ratio.ods import resolve_bearer
 
 RAW_STUB = "RATIO_RAW_STUB"
 DEFAULT_HTTP = "http://127.0.0.1:8787"

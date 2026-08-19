@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from ratio_poc.cli import SCENARIOS, load_td
+from ratio.cli import SCENARIOS, load_td
 
 
 def _hrefs(td: dict) -> list[str]:

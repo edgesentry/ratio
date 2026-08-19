@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from ratio_poc import cli
+from ratio import cli
 
 
 @pytest.fixture

@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from ratio_poc import cli
-from ratio_poc.queue import list_queued, queue_depth
+from ratio import cli
+from ratio.queue import list_queued, queue_depth
 
 
 RAW_STUB = "RATIO_RAW_STUB"

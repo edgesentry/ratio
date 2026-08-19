@@ -5,8 +5,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from ratio_poc.cli import SCENARIOS, build_product
-from ratio_poc.queue import dequeue, enqueue, load_queued, queue_depth, refresh_depths
+from ratio.cli import SCENARIOS, build_product
+from ratio.queue import dequeue, enqueue, load_queued, queue_depth, refresh_depths
 
 
 RAW_STUB = "RATIO_RAW_STUB"

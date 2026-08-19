@@ -10,16 +10,16 @@ dependencies = [
 ]
 
 [project.scripts]
-ratio-poc = "ratio_poc.cli:main"
-ratio-poc-serve = "ratio_poc.industry_serve:main"
-ratio-poc-pull = "ratio_poc.consumer:main"
+ratio-poc = "ratio.cli:main"
+ratio-poc-serve = "ratio.industry_serve:main"
+ratio-poc-pull = "ratio.consumer:main"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/ratio_poc"]
+packages = ["src/ratio"]
 
 [dependency-groups]
 dev = ["pytest>=8.0"]

@@ -10,8 +10,8 @@ from urllib.request import Request
 
 import pytest
 
-from ratio_poc.cli import SCENARIOS, build_product
-from ratio_poc.ods import (
+from ratio.cli import SCENARIOS, build_product
+from ratio.ods import (
     _assert_no_raw_in_body,
     fetch_l3_bearer,
     handoff,

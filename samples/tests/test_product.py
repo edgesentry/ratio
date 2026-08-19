@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from ratio_poc.cli import SCENARIOS, build_product, load_context, run_shacl, write_raw
+from ratio.cli import SCENARIOS, build_product, load_context, run_shacl, write_raw
 
 EXAMPLES = Path(__file__).resolve().parents[2] / "examples"
 
