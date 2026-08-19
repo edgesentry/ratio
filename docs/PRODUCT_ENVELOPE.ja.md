@@ -72,7 +72,7 @@ K／S で **同じ書式**を使う。分野差は `domain`・語彙・任意の
 
 ## 検証フロー（PoC）
 
-実装: [`../samples`](../samples)（`uv sync` → `uv run ratio-poc`。手順は [`../samples/README.ja.md`](../samples/README.ja.md)）
+実装: [`../samples`](../samples)（`uv sync` → `uv run ratio`。手順は [`../samples/README.ja.md`](../samples/README.ja.md)）
 
 ```
 薄い TD（`examples/td/*.td.json`）→ 生データ → `data/raw/`

@@ -62,11 +62,11 @@ Python バインディングはコアの別実装ではない。同じ Rust を�
 公式 ODS スタック（L2／L3／AuthZEN）への **つなぎ方**。本体の置き場ではない。
 
 - パッケージ: `samples/src/ratio`（import は `ratio`）
-- パイプライン CLI（歴史的な名前のまま）: `uv run ratio-poc` / `ratio-poc-serve` / `ratio-poc-pull`
+- パイプライン CLI: `uv run ratio` / `ratio-serve` / `ratio-pull`（`samples/` から。製品 CLI は `eds ratio`）
 - ODS 補助: [`samples/scripts/ods/`](../samples/scripts/ods/)
 - 手順: [`ODS_HANDOFF.ja.md`](ODS_HANDOFF.ja.md)
 
-`ratio-poc-serve` は公式の代替ではない。`ratio-poc-pull` は RB11 Out（参照消費者）。
+`ratio-serve` は公式の代替ではない。`ratio-pull` は RB11 Out（参照消費者）。
 
 ---
 

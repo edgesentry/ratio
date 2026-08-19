@@ -160,7 +160,7 @@ def main() -> None:
     DATA_OUT.mkdir(parents=True, exist_ok=True)
     httpd = ThreadingHTTPServer((args.host, args.port), Handler)
     print(
-        f"ratio-poc-serve on http://{args.host}:{args.port} "
+        f"ratio-serve on http://{args.host}:{args.port} "
         f"(products from {DATA_OUT.relative_to(ROOT)}; raw never served)",
         flush=True,
     )

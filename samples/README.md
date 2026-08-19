@@ -45,33 +45,33 @@ uv run pytest
 cd samples
 
 # Factory K1 (default TD + stub handoff)
-uv run ratio-poc --scenario K1
+uv run ratio --scenario K1
 
 # Swap TD (thin SI)
-uv run ratio-poc --scenario K1 --td ../examples/td/k1-robot.td.json
+uv run ratio --scenario K1 --td ../examples/td/k1-robot.td.json
 
 # HTTP to industry stub
-uv run ratio-poc-serve          # Terminal A
-uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
+uv run ratio-serve          # Terminal A
+uv run ratio --scenario K1 --ods http --ods-url http://127.0.0.1:8787
 
 # Official L2 gateway (after SDK-docker-compose is up; Bearer via env or auto-fetch)
-uv run ratio-poc --scenario K1 --ods l2
+uv run ratio --scenario K1 --ods l2
 ```
 
 ### S2 store-and-forward (maritime)
 
 ```bash
 # Onboard: enqueue even without a link (raw data stays in data/raw)
-uv run ratio-poc --scenario S2 --offline
+uv run ratio --scenario S2 --offline
 # Or stub (S2 auto-queues and exits)
-uv run ratio-poc --scenario S2
+uv run ratio --scenario S2
 
 # After link returns: flush queue to industry
-uv run ratio-poc-serve   # shore / reachable industry
-uv run ratio-poc --flush-queue --ods http --ods-url http://127.0.0.1:8787
+uv run ratio-serve   # shore / reachable industry
+uv run ratio --flush-queue --ods http --ods-url http://127.0.0.1:8787
 
 # When online, try transfer in place (on failure queue remains; exit code 0)
-uv run ratio-poc --scenario S2 --ods http --ods-url http://127.0.0.1:8787
+uv run ratio --scenario S2 --ods http --ods-url http://127.0.0.1:8787
 ```
 
 ### A3 consumer Pull (RB11 Out)
@@ -80,13 +80,13 @@ Not the provider pipeline. A shore / partner stand-in that Pulls **products only
 
 ```bash
 cd samples
-uv run ratio-poc-serve          # Terminal A
-uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
-uv run ratio-poc-pull --via http
-uv run ratio-poc-pull --via http k1-<stem>
+uv run ratio-serve          # Terminal A
+uv run ratio --scenario K1 --ods http --ods-url http://127.0.0.1:8787
+uv run ratio-pull --via http
+uv run ratio-pull --via http k1-<stem>
 
 # Official L2 (after SDK-docker-compose + Bearer)
-uv run ratio-poc-pull --via l2 k1-<stem>
+uv run ratio-pull --via l2 k1-<stem>
 ```
 
 The consumer prints a meaning summary and exits non-zero if the body contains raw data or a non-`local://` pointer. `GET /raw/` must not be 200.
@@ -102,4 +102,4 @@ Artifacts:
 - Real robots / shipboard sensors
 - Bundling full `SDK-docker-compose` (start externally; see ODS_HANDOFF.md)
 - Arrow / PyO3 / Rust core (product lives in [`crates/`](../crates/ratio-core); this directory is the ODS handoff sample)
-- Production consumer UI (A3 demo is `ratio-poc-pull` only)
+- Production consumer UI (A3 demo is `ratio-pull` only)

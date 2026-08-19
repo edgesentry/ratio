@@ -147,7 +147,7 @@ L2 ゲートウェイで AuthZEN が有効なとき、Pull クライアントは
 
 L2 は JWT を検証し `operator_id` を読み、AuthZEN 経由で OpenFGA に問い合わせ、許可されたリクエストだけを提供者 industry API へ転送する。
 
-PoC ヘルパー: [`register-openfga-products.sh`](../samples/scripts/ods/register-openfga-products.sh)、[`enable-authzen.sh`](../samples/scripts/ods/enable-authzen.sh)、[`verify-l2-pull.sh`](../samples/scripts/ods/verify-l2-pull.sh)、消費者 `uv run ratio-poc-pull`。
+PoC ヘルパー: [`register-openfga-products.sh`](../samples/scripts/ods/register-openfga-products.sh)、[`enable-authzen.sh`](../samples/scripts/ods/enable-authzen.sh)、[`verify-l2-pull.sh`](../samples/scripts/ods/verify-l2-pull.sh)、消費者 `uv run ratio-pull`。
 
 **接続確認のスモークテストのみ**、`AUTHZEN_AUTHORIZATION_ENABLED=false` の一時設定は可。本番では AuthZEN を有効のまま OpenFGA 付与を完了すること。
 

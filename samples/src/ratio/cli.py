@@ -253,7 +253,7 @@ def run(
     if use_queue and (offline or ods_mode == "stub"):
         # S2: buffering onboard is success; flush when link returns.
         print("OK: buffered onboard (store-and-forward); raw stayed local")
-        print("     later: uv run ratio-poc --flush-queue --ods http")
+        print("     later: uv run ratio --flush-queue --ods http")
         return 0
 
     if offline:
@@ -272,7 +272,7 @@ def run(
             "OK: link/industry unavailable — kept in queue (store-and-forward)",
             file=sys.stderr,
         )
-        print("     later: uv run ratio-poc --flush-queue --ods http")
+        print("     later: uv run ratio --flush-queue --ods http")
         return 0  # buffering is success for S2
 
     if not ok:

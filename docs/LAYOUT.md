@@ -62,11 +62,11 @@ The Python bindings are not a second implementation of the core. They are the pr
 How to **wire** the official ODS stack (L2 / L3 / AuthZEN). Not where the product lives.
 
 - Package: `samples/src/ratio` (import `ratio`)
-- Pipeline CLIs (historical names): `uv run ratio-poc` / `ratio-poc-serve` / `ratio-poc-pull`
+- Pipeline CLIs: `uv run ratio` / `ratio-serve` / `ratio-pull` (from `samples/`; product CLI is `eds ratio`)
 - ODS helpers: [`samples/scripts/ods/`](../samples/scripts/ods/)
 - Steps: [`ODS_HANDOFF.md`](ODS_HANDOFF.md)
 
-`ratio-poc-serve` is not a substitute for official ODS. `ratio-poc-pull` is RB11 Out (reference consumer).
+`ratio-serve` is not a substitute for official ODS. `ratio-pull` is RB11 Out (reference consumer).
 
 ---
 

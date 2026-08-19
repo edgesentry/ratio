@@ -239,7 +239,7 @@
 | RB8 | 構成ランタイム | **Build** | — | 薄いオーケストレータ | **v0** — [`crates/ratio-core`](../crates/ratio-core)；製品 CLI は `eds ratio derive` | Oxigraph；`samples` をバインディング呼び出しへ |
 | RB9 | 業界オントロジー合意 | **Out** | 公開されれば SAMM／ドメイン語彙 | 消費のみ；PoC は最小コード | 薄い K1/S1/S2 コード | コンソーシアム語彙 |
 | RB10 | 深いデバイス SI | **Out** | ベンダー／SI／既存 GW | 薄いアダプタのみ | スタブ | 現場 SI |
-| RB11 | Pull 消費者／Agentic AI | **Out**（任意の別デモ） | 公式 L2 Pull クライアント形 | Ratio コアではない | `ratio-poc-pull` + `verify-l2-pull.sh` | 本番消費者 UI／エージェント |
+| RB11 | Pull 消費者／Agentic AI | **Out**（任意の別デモ） | 公式 L2 Pull クライアント形 | Ratio コアではない | `ratio-pull` + `verify-l2-pull.sh` | 本番消費者 UI／エージェント |
 
 **作らない:** ODP／L2／L3／L4、AuthZEN PDP、Keycloak、OpenFGA、独自データスペースプロトコル、万能 OT ゲートウェイ、本番消費者 UI。
 
@@ -254,7 +254,7 @@
 | ベンダー／セル／船のブランド | 未定（書式・パイプラインはブロックしない） |
 | 共通の書式 | [`PRODUCT_ENVELOPE.ja.md`](PRODUCT_ENVELOPE.ja.md) および `schemas/`・`examples/` |
 | reuse vs build | 上記インベントリ（RB1–RB11）でロック |
-| A3 Pull 消費者 | PoC 成功に **含める** — 参照エージェント `ratio-poc-pull`（RB11 **Out**、Ratio コアではない） |
+| A3 Pull 消費者 | PoC 成功に **含める** — 参照エージェント `ratio-pull`（RB11 **Out**、Ratio コアではない） |
 
 ---
 
