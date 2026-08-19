@@ -1,0 +1,24 @@
+[project]
+name = "ratio-core"
+version = "0.1.0"
+description = "Python bindings for the Ratio Rust core (prototype / SLM)"
+requires-python = ">=3.12"
+readme = "README.md"
+
+[build-system]
+requires = ["maturin>=1.7,<2.0"]
+build-backend = "maturin"
+
+[dependency-groups]
+dev = ["maturin>=1.7,<2.0", "pytest>=8.0", "pyarrow>=17"]
+
+[tool.uv]
+package = true
+
+[tool.maturin]
+manifest-path = "Cargo.toml"
+module-name = "ratio_core"
+features = ["pyo3/extension-module"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

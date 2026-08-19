@@ -99,5 +99,5 @@ Artifacts:
 
 - Real robots / shipboard sensors
 - Bundling full `SDK-docker-compose` (start externally; see ODS_HANDOFF.md)
-- Arrow / PyO3 / Rust core
+- Arrow / PyO3 / Rust core (product lives in [`crates/`](../crates/ratio-core); this PoC is ODS handoff glue)
 - Production consumer UI (A3 demo is `ratio-poc-pull` only)

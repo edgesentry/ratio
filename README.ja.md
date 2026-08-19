@@ -56,6 +56,7 @@ ODS の目的と準拠要件（O1–O6, R1–R4）→ [`docs/ODS_COMPLIANCE.ja.m
 ODS 認証・認可（参加クライアント要件）→ [`docs/ODS_COMPLIANCE.ja.md` §4](docs/ODS_COMPLIANCE.ja.md#4-odsの認証認可参加クライアントの要件) · [`docs/ODS_HANDOFF.ja.md`](docs/ODS_HANDOFF.ja.md#odsの認証認可概要)
 共有可能プロダクトの書式（K1／S1／S2）→ [`docs/PRODUCT_ENVELOPE.ja.md`](docs/PRODUCT_ENVELOPE.ja.md)  
 最小パイプライン → [`poc/README.ja.md`](poc/README.ja.md)  
+Rust コア／Python バインディング → [`crates/ratio-core`](crates/ratio-core) · [`crates/ratio-py/README.ja.md`](crates/ratio-py/README.ja.md)  
 ODS への引き渡し（共有可能プロダクトのメタデータ）→ [`docs/ODS_HANDOFF.ja.md`](docs/ODS_HANDOFF.ja.md)
 
 ---
@@ -93,7 +94,7 @@ ODS への引き渡し（共有可能プロダクトのメタデータ）→ [`d
 - [x] S2 ストア＆フォワード（`data/queue` + `--flush-queue`）
 - [x] 分野ごとのデバイス／センサ系統の固定（[`POC.ja.md`](docs/POC.ja.md)；K1 ロボット振動、S1/S2 シャフト振動；ベンダー未定）
 - [x] 薄い TD ファイル化（[`examples/td/`](examples/td/)；`--td` で差し替え可）
-- [ ] コア I/F（Arrow）草案
+- [x] コア I/F v0（Rust + PyO3／Arrow；[`crates/ratio-core`](crates/ratio-core)、[`crates/ratio-py`](crates/ratio-py)）
 - [x] 公式 `SDK-docker-compose` 接続手順（[`ODS_HANDOFF.ja.md`](docs/ODS_HANDOFF.ja.md)；`--ods l2` + [`poc/scripts/ods/`](poc/scripts/ods/)；Compose は外部起動）
 - [x] AuthZEN + `operator_id`（[`ODS_HANDOFF.ja.md` §7](docs/ODS_HANDOFF.ja.md#7-authzenoperator_id)；`register-operator.sh` / `enable-authzen.sh`）
 - [x] ODS 認証・認可と参加クライアント要件（[`ODS_COMPLIANCE.ja.md` §4](docs/ODS_COMPLIANCE.ja.md#4-odsの認証認可参加クライアントの要件)）

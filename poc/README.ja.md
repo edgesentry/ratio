@@ -99,5 +99,5 @@ uv run ratio-poc-pull --via l2 k1-<stem>
 
 - 実ロボット／船上センサ
 - `SDK-docker-compose` 一式の同梱（外部起動。手順は ODS_HANDOFF.ja.md）
-- Arrow／PyO3／Rust コア
+- Arrow／PyO3／Rust コア（本体はリポジトリルートの [`crates/`](../crates/ratio-core)；この PoC は ODS 引き渡しの糊）
 - 本番消費者 UI（A3 デモは `ratio-poc-pull` のみ）
