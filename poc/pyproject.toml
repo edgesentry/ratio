@@ -12,6 +12,7 @@ dependencies = [
 [project.scripts]
 ratio-poc = "ratio_poc.cli:main"
 ratio-poc-serve = "ratio_poc.industry_serve:main"
+ratio-poc-pull = "ratio_poc.consumer:main"
 
 [build-system]
 requires = ["hatchling"]

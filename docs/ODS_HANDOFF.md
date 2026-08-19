@@ -1,8 +1,17 @@
-# ODS handoff
+# ODS handoff (shareable-product metadata)
 
 > Japanese: [ODS_HANDOFF.ja.md](ODS_HANDOFF.ja.md)
 
-Ratio does not reimplement ODP / Middleware. It hands only shareable products to the **provider industry API** expected by the official stack.
+Ratio does not reimplement ODP / Middleware. What it hands to the official stack is **shareable-product metadata** only. The destination is the **provider industry API** the stack expects.
+
+## What is handed off
+
+| Handed off | Not handed off |
+|------------|----------------|
+| **Shareable-product metadata** (JSON-LD): result + meaning + terms of use | **Raw data** (payload bytes such as waveforms / video, `data/raw`) |
+| In-domain pointer `local://…` (reference string only) | Public URLs or file bodies of raw data |
+
+Canonical envelope: [`PRODUCT_ENVELOPE.md`](PRODUCT_ENVELOPE.md). The same metadata is what ODP metadata registration (O2) carries; raw-data files are not the primary offering.
 
 ## ODS authentication and authorization (summary)
 
@@ -150,12 +159,29 @@ uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
 uv run ratio-poc --scenario K1 --ods l2
 ```
 
-### 6. Consumer: verify L2 Pull
+### 6. Consumer: Pull the shareable product (A3)
+
+Reference agent (`ratio-poc-pull`) is **RB11 Out** — not Ratio core. It uses the same L2 GET pattern as a shore / partner client: products only, refuse raw.
+
+```bash
+cd poc
+
+# Against the industry stub (no SDK)
+uv run ratio-poc-serve          # already running
+uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
+uv run ratio-poc-pull --via http
+uv run ratio-poc-pull --via http k1-<stem>
+# Expect: JSON meaning summary; GET /raw/ is not 200; no RATIO_RAW_STUB
+
+# Against official L2 (Bearer + L2 API-Key)
+uv run ratio-poc-pull --via l2 k1-<stem>
+```
+
+Low-level curl smoke (optional):
 
 ```bash
 bash poc/scripts/ods/verify-l2-pull.sh
 bash poc/scripts/ods/verify-l2-pull.sh k1-<stem>
-# Expect 404 on /raw (neither industry nor L2 serves raw data)
 ```
 
 ### 7. AuthZEN (`operator_id`)
@@ -179,7 +205,8 @@ bash poc/scripts/ods/enable-authzen.sh true
 
 # 4) Pull with operator token (JWT includes operator_id)
 export RATIO_ODS_BEARER="$(bash poc/scripts/ods/fetch-l3-token.sh)"
-bash poc/scripts/ods/verify-l2-pull.sh k1-<stem>
+cd poc && uv run ratio-poc-pull --via l2 k1-<stem>
+# or: bash poc/scripts/ods/verify-l2-pull.sh k1-<stem>
 ```
 
 Helpers: [`poc/scripts/ods/`](../poc/scripts/ods/). Operator secrets stay in `poc/scripts/ods/.local/` (gitignored).
@@ -191,6 +218,7 @@ For connectivity smoke tests **before** operator registration, temporarily setti
 | Check | Expectation |
 |-------|-------------|
 | `GET L2 /products/...` | JSON-LD shareable product |
+| `uv run ratio-poc-pull --via l2 <stem>` | Meaning summary; `raw_in_body: false` |
 | Waveform binary / `RATIO_RAW_STUB` in response | **Absent** |
 | `GET …/raw` | 404 |
 | `data/raw/` | Remains host-local |

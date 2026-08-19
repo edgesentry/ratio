@@ -13,7 +13,7 @@ Shareable-product definition and positioning → [`docs/DISCUSSION.md`](docs/DIS
 |------|--------|
 | Name | **Ratio** (Latin *ratio* = reason, inference, rationale) |
 | Thesis | Participate in ODS without shipping raw data |
-| Role | Semantics / inference core that derives and validates shareable products on site |
+| Role | On-site composition layer that turns a judgment’s rationale into a shareable product and hands it to official ODS |
 | Standards | W3C (WoT / JSON-LD / RDF / SHACL / DID·VC / ODRL) × IPA ODS (ODP / DPQM) |
 | Policy | Raw data stays in-domain · Pull products · **OSS by default** |
 
@@ -56,7 +56,7 @@ ODS purpose and compliance (O1–O6, R1–R4) → [`docs/ODS_COMPLIANCE.md`](doc
 ODS authn / authz (client requirements) → [`docs/ODS_COMPLIANCE.md` §4](docs/ODS_COMPLIANCE.md#4-authentication-and-authorization-client-requirements) · [`docs/ODS_HANDOFF.md`](docs/ODS_HANDOFF.md#ods-authentication-and-authorization-summary)
 Shareable-product envelope (K1 / S1 / S2) → [`docs/PRODUCT_ENVELOPE.md`](docs/PRODUCT_ENVELOPE.md)  
 Minimal pipeline → [`poc/README.md`](poc/README.md)  
-ODS handoff → [`docs/ODS_HANDOFF.md`](docs/ODS_HANDOFF.md)
+ODS handoff (shareable-product metadata) → [`docs/ODS_HANDOFF.md`](docs/ODS_HANDOFF.md)
 
 ---
 
@@ -68,7 +68,7 @@ ODS handoff → [`docs/ODS_HANDOFF.md`](docs/ODS_HANDOFF.md)
 | Why Oxigraph? | RDF / SPARQL / SHACL for meaning and validation |
 | Why DuckDB / LanceDB / files? | Local custody of raw data and derivatives |
 | Why SQLite? | Node state, credentials, policy records |
-| Why Arrow? | Zero-copy bridge to Python / SLM. Memory Broker is Ratio-owned |
+| Why Arrow? | Zero-copy bridge to Python / SLM. Ratio plays the Memory Broker that uses Arrow |
 | Why ODS SDK? | Official participation path. Do not reimplement ODP |
 | What do we build? | Ingest → derive / validate → split raw data vs product → ODS handoff |
 
@@ -98,3 +98,4 @@ ODS handoff → [`docs/ODS_HANDOFF.md`](docs/ODS_HANDOFF.md)
 - [x] AuthZEN with `operator_id` ([`ODS_HANDOFF.md` §7](docs/ODS_HANDOFF.md#7-authzen-operator_id); `register-operator.sh` / `enable-authzen.sh`)
 - [x] ODS authn/authz and client requirements ([`ODS_COMPLIANCE.md` §4](docs/ODS_COMPLIANCE.md#4-authentication-and-authorization-client-requirements))
 - [x] reuse vs build inventory ([`POC.md`](docs/POC.md#reuse-vs-build-both-verticals); RB1–RB11)
+- [x] A3 reference Pull consumer ([`ODS_HANDOFF.md` §6](docs/ODS_HANDOFF.md#6-consumer-pull-the-shareable-product-a3); `uv run ratio-poc-pull`; RB11 Out)

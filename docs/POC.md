@@ -108,7 +108,7 @@ Concrete vendors and cells are **TBD**. Prefer scenarios that best show the diff
 
 | Advantage | Scenario shows this when |
 |-----------|--------------------------|
-| **A1 raw-data non-egress** | Raw data is clearly sensitive or huge (video, waveforms); shipping is absurd |
+| **A1 raw-data non-egress** | Raw data is clearly sensitive or huge (video, waveforms); sending it to ODS is unrealistic |
 | **A2 meaning-bearing product** | Bare scores are not actionable; device / process / voyage context is required |
 | **A3 official ODS Pull** | Cross-org or shore / partner consumers want discover / serve—not only plant HMI |
 | **A4 same pipeline, two physics** | Factory and vessel share the product envelope; only shapes / config change |
@@ -182,7 +182,7 @@ Legend: **S** = strong advantage demo, **M** = medium, **W** = weak / easy to co
 
 For each proposed cell / vessel, ask:
 
-1. What raw data is painful / expensive to ship?  
+1. What raw data is painful / expensive to send to ODS?  
 2. Who outside needs meaning and will Pull via ODS (lab consumers OK)?  
 3. Can we proceed 90 days on stub TD + recorded raw data even if access slips?  
 
@@ -235,11 +235,11 @@ Ownership tiers: [`SCOPE.md`](SCOPE.md). This table is the **PoC inventory**—e
 | RB4 | Raw-data / product custody | **Reuse** stores; **Build** split | Files now; DuckDB / LanceDB / SQLite intended | Split rules; `local://` pointer; never publish raw data | `data/raw`, `data/out`, `data/queue` | DuckDB / LanceDB / SQLite |
 | RB5 | Shareable-product envelope | **Build** | JSON-LD / ODRL as standards | Envelope, `@context`, policyRef, PoC examples | [`PRODUCT_ENVELOPE.md`](PRODUCT_ENVELOPE.md) | Production catalog / context URIs |
 | RB6 | ODS participation O1–O6 | **Reuse** SDK; **Build** handoff | IPA Middleware / SDK (L3 identity, L2 transfer, AuthZEN→OpenFGA) | Product POST; industry stub; route/FGA helper scripts | `--ods stub\|http\|l2` + `poc/scripts/ods/` | L4 Discovery when connecting a real catalog |
-| RB7 | Cross-language I/F | **Reuse** Arrow; **Build** broker | Apache Arrow + PyO3 | Memory Broker (Ratio) | **Out of PoC** (`poc/README.md`) | Core I/F draft |
+| RB7 | Cross-language I/F | **Reuse** Arrow; **Build** broker | Apache Arrow + PyO3 | Memory Broker using Arrow (Ratio) | **Out of PoC** (`poc/README.md`) | Core I/F draft |
 | RB8 | Composition runtime | **Build** | — | Thin orchestrator | Python `ratio-poc` | Rust shell |
 | RB9 | Industry ontology agreement | **Out** | SAMM / domain vocab when published | Consume only; minimal PoC codes | Thin K1/S1/S2 codes | Consortium vocab |
 | RB10 | Deep device SI | **Out** | Vendor / SI / existing GW | Thin adapter only | Stubs | Field SI |
-| RB11 | Pull consumer / Agentic AI | **Out** (optional separate demo) | Official L2 Pull client pattern | Not Ratio core | `verify-l2-pull.sh` only | External agent if PoC success includes A3 |
+| RB11 | Pull consumer / Agentic AI | **Out** (optional separate demo) | Official L2 Pull client pattern | Not Ratio core | `ratio-poc-pull` + `verify-l2-pull.sh` | Production consumer UI / agent |
 
 **Do not build:** ODP / L2 / L3 / L4, AuthZEN PDP, Keycloak, OpenFGA, a private data-space protocol, a universal OT gateway, production consumer UIs.
 
@@ -254,11 +254,11 @@ Ownership tiers: [`SCOPE.md`](SCOPE.md). This table is the **PoC inventory**—e
 | Vendor / cell / vessel brand | TBD (does not block envelope / pipeline) |
 | Shared envelope | [`PRODUCT_ENVELOPE.md`](PRODUCT_ENVELOPE.md) and `schemas/` · `examples/` |
 | reuse vs build | Locked in the inventory above (RB1–RB11) |
+| A3 Pull consumer | **Yes** for PoC success — reference agent `ratio-poc-pull` (RB11 **Out**, not Ratio core) |
 
 ---
 
 ## Open (lock next)
 
-1. Include an external consumer agent in PoC success? (recommended for A3)  
-2. Production ODS context / catalog URIs  
-3. Concrete vendor / cell / vessel brand (device **line** is locked above; brand does not block)
+1. Production ODS context / catalog URIs  
+2. Concrete vendor / cell / vessel brand (device **line** is locked above; brand does not block)

@@ -2,12 +2,12 @@
 
 > English: [README.md](README.md)
 
-テーゼ実証の最小経路:
+主張を確かめる最小経路:
 
 ```
 薄い WoT TD（examples/td/*.td.json）→ 生データを `data/raw` に保管 → 共有可能プロダクト JSON-LD
-    → SHACL → ODS／industry ハンドオフ（stub | http | l2）
-S2: さらに data/queue にストア → リンク復帰で flush
+    → SHACL → ODS／industry への引き渡し（stub | http | l2）
+S2: さらに data/queue にストア → 通信が戻ったら flush
 ```
 
 生データは **publish しない**。外に出る候補はプロダクトだけ。TD の `forms.href` は `local://`（生データの egress なし）。
@@ -42,7 +42,7 @@ uv run pytest
 ```bash
 cd poc
 
-# 工場 K1（既定 TD + stub handoff）
+# 工場 K1（既定 TD + stub）
 uv run ratio-poc --scenario K1
 
 # TD を差し替え（薄い SI）
@@ -59,18 +59,35 @@ uv run ratio-poc --scenario K1 --ods l2
 ### S2 ストア＆フォワード（海事）
 
 ```bash
-# 船上: リンク無しでもキューに積む（生データは `data/raw` のまま）
+# 船上: 通信がなくてもキューに積む（生データは `data/raw` のまま）
 uv run ratio-poc --scenario S2 --offline
 # または stub（S2 は自動でキューして終了）
 uv run ratio-poc --scenario S2
 
-# リンク復帰後: キューを industry へ flush
+# 通信が戻ったあと: キューを industry へ flush
 uv run ratio-poc-serve   # 陸上／到達可能な industry
 uv run ratio-poc --flush-queue --ods http --ods-url http://127.0.0.1:8787
 
 # オンライン時にその場で転送を試す（失敗時はキュー残存、終了コード 0）
 uv run ratio-poc --scenario S2 --ods http --ods-url http://127.0.0.1:8787
 ```
+
+### A3 消費者 Pull（RB11 Out）
+
+提供者パイプラインではない。陸上／パートナーのスタンドインで、**プロダクトだけ**を Pull する。
+
+```bash
+cd poc
+uv run ratio-poc-serve          # 端末 A
+uv run ratio-poc --scenario K1 --ods http --ods-url http://127.0.0.1:8787
+uv run ratio-poc-pull --via http
+uv run ratio-poc-pull --via http k1-<stem>
+
+# 公式 L2（SDK-docker-compose ＋ Bearer の後）
+uv run ratio-poc-pull --via l2 k1-<stem>
+```
+
+消費者は意味の要約を出し、本文に生データや非 `local://` ポインタがあれば非ゼロ終了。`GET /raw/` は 200 であってはならない。
 
 成果物:
 
@@ -83,3 +100,4 @@ uv run ratio-poc --scenario S2 --ods http --ods-url http://127.0.0.1:8787
 - 実ロボット／船上センサ
 - `SDK-docker-compose` 一式の同梱（外部起動。手順は ODS_HANDOFF.ja.md）
 - Arrow／PyO3／Rust コア
+- 本番消費者 UI（A3 デモは `ratio-poc-pull` のみ）

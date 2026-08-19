@@ -10,7 +10,7 @@ ODS-dependent purpose and compliance: [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md)
 Default-path architecture: [`ARCHITECTURE.md`](ARCHITECTURE.md)  
 Assumed PoC sites (factory / maritime): [`POC.md`](POC.md)  
 Shareable-product envelope: [`PRODUCT_ENVELOPE.md`](PRODUCT_ENVELOPE.md)  
-ODS handoff: [`ODS_HANDOFF.md`](ODS_HANDOFF.md)  
+ODS handoff (shareable-product metadata): [`ODS_HANDOFF.md`](ODS_HANDOFF.md)  
 Canonical scope: [`SCOPE.md`](SCOPE.md)
 
 ---
@@ -223,7 +223,7 @@ Normative mapping (O1–O6, etc.): [`ODS_COMPLIANCE.md`](ODS_COMPLIANCE.md)
 | Prefer to reuse | Build as Ratio |
 |-----------------|----------------|
 | Oxigraph, DuckDB, LanceDB, SQLite, Arrow | Orchestration: ingest → derive / validate → split → ODS handoff |
-| W3C WoT TD, JSON-LD / RDF, SHACL, DID / VC, ODRL | Shareable-product shape + Arrow Memory Broker contract |
+| W3C WoT TD, JSON-LD / RDF, SHACL, DID / VC, ODRL | Shareable-product shape + Memory Broker contract (uses Arrow) |
 | IPA ODS Middleware / SDK, ODP | Packaging at the handoff boundary to satisfy R1–R4 |
 | ONNX Runtime / common inference runtimes | Domain PoC wiring (device lines, SHACL shapes) |
 
@@ -237,7 +237,23 @@ Ratio is justified only when **all three** hold:
 2. Someone outside the cell / vessel needs **meaning** (a local dashboard alone is not enough), **and**
 3. You want **ODS Pull participation** (not one-off file exchange)
 
+### Concrete scenes (all three at once)
+
+| Condition | Factory (K1: cell-robot vibration) | Shipboard (S1/S2: engine shaft vibration) |
+|-----------|-----------------------------------|-------------------------------------------|
+| **1. Raw data does not leave** | Vibration waveforms from a weld / assemble cell cannot leave the plant (know-how, bandwidth). Line camera video stays too. | High-rate shaft samples cannot go ashore: the pipe is thin and connectivity drops. Hull CCTV stays onboard. |
+| **2. Outsiders need meaning** | A partner OEM or quality agent needs “which robot, which process, `vibration_abnormal`.” A cell-side HMI score is not enough for the counterpart to act. | Shore fleet ops (or insurance / yard) need “this vessel’s engine is abnormal, when, which sensor”—not the waveform. |
+| **3. Pull via ODS** | The counterpart wants to discover and Pull the product on the data space. USB or emailed JSON skips membership, terms, and discovery. | When connectivity returns, shore / partners Pull the same envelope via ODS. This is not “uplink raw data over satellite and run ODS in IT.” |
+
+When all three hold: waveforms stay on site; what leaves is JSON-LD judgment + context + terms (factory: online Pull; shipboard: queue then Pull if needed).
+
 If any is missing: a cloud ODS node, plain edge AI, or non-ODS integration may suffice. Ratio is optional.
+
+| Missing | What already suffices (examples) |
+|---------|----------------------------------|
+| 1 (raw data may leave) | Land in a data lake; an IT-side ODS node is enough |
+| 2 (outsiders do not need meaning) | Cell / shipboard HMI or standalone edge AI is enough |
+| 3 (ODS participation is not required) | An MQTT dashboard or ad-hoc file hand-off is enough |
 
 ### Problems that motivate the thesis
 
@@ -266,7 +282,7 @@ Out of Ratio scope (this thesis does not solve): hard real-time control (E1), un
 ## Role inside EdgeSentry
 
 - **EdgeSentry** — parent brand for on-site governance & security  
-- **Ratio** — semantics / inference core that materializes the thesis (derive / validate shareable products; hand off to ODS)
+- **Ratio** — on-site composition layer that turns a judgment’s rationale (result + meaning + terms) into a shareable product and hands it to official ODS
 
 ---
 
@@ -278,7 +294,7 @@ Out of Ratio scope (this thesis does not solve): hard real-time control (E1), un
 | **Oxigraph** | Meaning + SHACL validation | W3C-native engine |
 | **DuckDB / LanceDB / files** | Local custody of raw data / artifacts | Storage is a solved problem |
 | **SQLite** | Node state, DID / VC, policy records | Mature ACID |
-| **Apache Arrow** | Bridge to Python / SLM | Standard memory format; Broker contract is Ratio |
+| **Apache Arrow** | Bridge to Python / SLM | Standard memory format; Ratio plays the Memory Broker that uses it |
 | **IPA ODS SDK** | Participation (O1–O6) | Official path |
 
 **Single principle:** raw data and heavy compute stay in-domain; **what rides ODS is the shareable product.**
@@ -325,24 +341,13 @@ Lock: one device / sensor line per vertical — **done** in [`POC.md`](POC.md) (
 
 ---
 
-## Weak phrasing → strong phrasing
-
-| Weak | Strong |
-|------|--------|
-| “Extend ODS to the edge” | “Participate in ODS without shipping raw data” |
-| “Our own data space” | “Official ODS Middleware / SDK; Ratio prepares shareable products” |
-| “Our own graph DB” | “SHACL / SPARQL via Oxigraph; Ratio orchestrates” |
-| “Upload to ODS” | “Register shareable products and serve via Pull” |
-| “Metadata only” (ambiguous) | “Shareable product = result + meaning + terms; raw data stays local” |
-
----
-
 ## Definition of success
 
 **Near term (PoC):**
 
 - Ingest one device line; emit a meaning-bearing JSON-LD shareable product
 - Raw data stays local; product is discoverable / servable via ODS SDK
+- A shore / partner Pull agent (`ratio-poc-pull`) reads meaning only — no raw data
 - Inventory: each capability → OSS / SDK or Ratio-owned ([`POC.md` reuse vs build](POC.md#reuse-vs-build-both-verticals))
 
 **Medium term:**
